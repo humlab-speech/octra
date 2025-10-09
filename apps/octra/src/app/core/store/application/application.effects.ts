@@ -788,7 +788,7 @@ export class ApplicationEffects {
           if (a.mode !== LoginMode.URL) {
             const lastPagePath = this.sessStr.retrieve('last_page_path');
             let queryParams: any = undefined;
-
+            console.warn(lastPagePath);
             if (lastPagePath) {
               if (lastPagePath.indexOf('?') > -1) {
                 queryParams = {};

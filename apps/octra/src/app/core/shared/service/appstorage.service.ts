@@ -26,6 +26,7 @@ import {
 } from '../../store/login-mode/annotation';
 import { AnnotationActions } from '../../store/login-mode/annotation/annotation.actions';
 import { ConsoleEntry, ConsoleGroupEntry } from './bug-report.service';
+import { OctraAPIService } from '@octra/ngx-octra-api';
 
 @Injectable({
   providedIn: 'root',
@@ -215,6 +216,7 @@ export class AppStorageService {
     private store: Store<RootState>,
     private actions: Actions,
     private sessionStorage: SessionStorageService,
+    private apiService: OctraAPIService,
   ) {
     this.subscrManager.add(
       this.store.subscribe((state: RootState) => {

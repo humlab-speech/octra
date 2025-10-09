@@ -275,6 +275,7 @@ export class LoginModeReducers {
           },
         ) => {
           if (this.mode === mode) {
+            console.log("Project:", project);
             return {
               ...state,
               projectConfig: projectSettings,
@@ -300,6 +301,7 @@ export class LoginModeReducers {
                         ...project.statistics,
                         tasks:
                           project.statistics?.tasks.map((a) => {
+                            console.log(a);
                             if (a.type === 'annotation') {
                               return {
                                 ...a,

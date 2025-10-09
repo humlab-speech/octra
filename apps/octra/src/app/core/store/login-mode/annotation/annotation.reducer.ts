@@ -496,6 +496,8 @@ export class AnnotationStateReducers {
       })),
       on(AnnotationActions.startNewAnnotation.do, (state, { mode }) => {
         if (mode === this.mode) {
+          console.log(`startNewAnnotation for mode ${mode}`);
+          // Reset the transcript to a new empty annotation
           return {
             ...state,
             transcript: new OctraAnnotation<

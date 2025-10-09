@@ -91,9 +91,16 @@ export class AnnotationEffects {
       ofType(AnnotationActions.startNewAnnotation.do),
       withLatestFrom(this.store),
       exhaustMap(([a, state]) => {
+        console.log(`Start new annotation in mode ${a.mode}`);
+        console.log(a);
+        console.log(a.mode, LoginMode.ONLINE, a.mode === LoginMode.ONLINE);
+
+        console.log("apiInit", this.apiService.initialized);
+
         if (a.mode === LoginMode.ONLINE) {
           this.store.dispatch(ApplicationActions.waitForEffects.do());
-
+          
+          // start
           return this.apiService
             .startTask(a.project.id, {
               task_type: 'annotation',
@@ -153,6 +160,8 @@ export class AnnotationEffects {
       ofType(AnnotationActions.prepareTaskDataForAnnotation.do),
       withLatestFrom(this.store),
       map(([{ task, currentProject, mode }, state]) => {
+        console.log(`Prepare task for annotation: ${task.id} in mode ${mode}`);
+        console.log(task);
         if (!task.tool_configuration) {
           return AnnotationActions.startAnnotation.fail({
             error: 'Missing tool configuration',
@@ -1276,6 +1285,7 @@ export class AnnotationEffects {
     this.actions$.pipe(
       ofType(AnnotationActions.redirectToProjects.do),
       exhaustMap((a) => {
+        console.warn('redirect to projects');
         this.routingService.navigate(
           'redirect to projects after quit',
           ['/intern/projects'],

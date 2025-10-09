@@ -17,6 +17,7 @@ import {
 } from './core/shared/guard/appconfig-load.guard';
 import { IDB_LOADED_GUARD } from './core/shared/guard/idb.activateguard';
 import { StresstestComponent } from './core/tools/stresstest/stresstest.component';
+import { VispTaskComponent } from './core/pages/intern/visp-task/visp-task.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'load', component: LoadingComponent },
@@ -61,4 +62,9 @@ export const APP_ROUTES: Routes = [
     component: StresstestComponent,
     canActivate: [APP_INITIALIZED_GUARD, CONFIG_LOADED_GUARD],
   },
+  {
+    path: 'visp-task/project/:projectId/session/:sessionId/bundle/:bundleId',
+    component: VispTaskComponent,
+  },
+  
 ];

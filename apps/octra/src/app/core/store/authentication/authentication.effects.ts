@@ -118,6 +118,7 @@ export class AuthenticationEffects {
           map((auth) => {
             if (auth.openURL !== undefined) {
               // need to open windowURL
+              console.warn('openURL', auth.openURL);
               const urlParams = {
                 cid: Date.now(),
                 r: joinURL(
@@ -417,6 +418,7 @@ export class AuthenticationEffects {
       this.actions$.pipe(
         ofType(AuthenticationActions.redirectToProjects.do),
         tap((a) => {
+          console.warn('redirectToProjects$ effect triggered', a);
           this.routingService.navigate(
             'redirect to projects after authentication',
             ['/intern/projects'],

@@ -94,6 +94,7 @@ export class OctraAnnotation<
       item: number;
     },
   ) {
+    console.log(`Created OctraAnnotation with ${levels?.length ?? 0} levels and ${links?.length ?? 0} links`);
     this._levels = levels ?? [];
     this._links = links ?? [];
 

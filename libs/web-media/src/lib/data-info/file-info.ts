@@ -192,6 +192,9 @@ export class FileInfo extends DataInfo {
     name: string;
     extension: string;
   } {
+    console.log(`extractFileName: ${fullname}`);
+    //console.trace('Call stack for extractFileName');
+
     if (fullname && fullname !== '') {
       const lastSlash = fullname.lastIndexOf('/');
       if (lastSlash > -1) {

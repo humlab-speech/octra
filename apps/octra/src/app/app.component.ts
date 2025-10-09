@@ -15,6 +15,7 @@ import { ApplicationStoreService } from './core/store/application/application-st
 import { AnnotationStoreService } from './core/store/login-mode/annotation/annotation.store.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LoginMode } from './core/store';
+import { RoutePrinterService } from './core/shared/service/router-printer.service';
 
 @Component({
   selector: 'octra-app',
@@ -50,6 +51,7 @@ export class AppComponent
     private appStoreService: ApplicationStoreService,
     private annotationStoreService: AnnotationStoreService,
     protected versionChecker: VersionCheckerService,
+    routePrinter: RoutePrinterService
   ) {
     super();
     this.appStoreService.initApplication();
@@ -68,6 +70,8 @@ export class AppComponent
         },
       });
     }
+
+    routePrinter.printRoutes();
   }
 
   ngOnInit() {
