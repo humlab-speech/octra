@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "api": {
+    "url": "http://localhost:3000",
+    "appToken":"960e14f598da9765777f44942034a49b3fd754af"
+  },
+  "octra": {
+    "database": {
+      "name": "octra-2"
+    },
+    "login": {
+      "enabled": true
+    },
+    "supportEmail": "support@humlab.umu.se",
+    "allowed_browsers": [
+      {
+        "name": "Chrome",
+        "version": ""
+      },
+      {
+        "name": "Firefox",
+        "version": ""
+      },
+      {
+        "name": "Opera",
+        "version": ""
+      },
+      {
+        "name": "Microsoft Edge",
+        "version": ""
+      }
+    ],
+    "languages": ["en", "de", "nl", "it", "ko", "zh"],
+    "audioExamples": [
+      {
+        "language": "de",
+        "url": "media/Bahnauskunft.wav",
+        "description": "Individuelle Beschreibung der Audiosequenz"
+      },
+      {
+        "language": "en",
+        "url": "media/Bahnauskunft.wav",
+        "description": "Description for the audio sequence"
+      }
+    ],
+    "inactivityNotice": {
+      "showAfter": 60
+    }
+  },
+  "octraBackend": {
+    "enabled": true,
+    "url": "http://localhost:3000"
+  }
+}
