@@ -5,7 +5,7 @@
   "author": "Julian Pömp, Christoph Draxler; Institut für Phonetik und Sprachverarbeitung, LMU München",
   "scripts": {
     "start": "npm run start:octra",
-    "start:octra": "nx serve octra --host 0.0.0.0",
+    "start:octra": "nx serve octra --host 0.0.0.0 --disable-host-check",
     "start:json-sets-demo": "nx serve json-sets-demo",
     "build": "nx build octra",
     "build:docs": "typedoc --out typedocs && node runner.js prepare:docs",
