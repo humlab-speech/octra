@@ -113,10 +113,7 @@ export class OctraDropzoneService {
 
     if (
       isValidaAudioFile ||
-      !(
-        progressFile.file.type.includes('video') ||
-        progressFile.file.type.includes('image')
-      )
+      !progressFile.file.type.includes('image')
     ) {
       const typeToDrop = isValidaAudioFile ? 'audio' : 'transcript';
       this.dropFiles(typeToDrop);

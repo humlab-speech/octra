@@ -6,9 +6,13 @@ import {
   AudioManager,
   AudioResource,
   getAudioInfo,
+  LibavFormat,
   MusicMetadataFormat,
   WavFormat,
 } from '@octra/web-media';
+import { needsResampling, resampleChannels } from './audio-resampler';
+import { decodeWithLibAV } from './libav-decoder';
+import { WavWriter } from './binary/wavwriter';
 import { concat, map, Observable, Subject, Subscription, timer } from 'rxjs';
 import { SourceType } from '../types';
 import {
@@ -26,6 +30,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
   private audioFormats: AudioFormat[] = [
     new WavFormat(),
     new MusicMetadataFormat(),
+    new LibavFormat(),
   ];
   private decoder?: AudioDecoder;
 
@@ -161,6 +166,8 @@ export class HtmlAudioMechanism extends AudioMechanism {
               this.decodeAudioWithOctraDecoder(subj);
             } else if (audioformat.decoder === 'web-audio') {
               this.decodeAudioWithWebAPIDecoder(subj);
+            } else if (audioformat.decoder === 'libav') {
+              this.decodeAudioWithLibavDecoder(subj);
             }
           })
           .catch((e) => {
@@ -268,10 +275,69 @@ export class HtmlAudioMechanism extends AudioMechanism {
             subj.complete();
           }, 0);
         })
-        .catch((e) => {
-          subj.error(e);
+        .catch((_e) => {
+          // Fallback covers Safari + sub-44100 Hz decodeAudioData failures
+          this.decodeAudioWithLibavDecoder(subj);
         });
     } catch (e) {}
+  }
+
+  private decodeAudioWithLibavDecoder(
+    subj: Subject<{
+      decodeProgress: number;
+    }>,
+  ) {
+    this.statistics.decoding.started = Date.now();
+
+    decodeWithLibAV(this._resource!.arraybuffer!).then((audioBuffer) => {
+      // Collect per-channel Float32Arrays
+      const channels: Float32Array[] = [];
+      for (let ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
+        channels.push(audioBuffer.getChannelData(ch));
+      }
+
+      // Resample to 44100 Hz on Safari for sub-44100 Hz source material
+      const targetRate = needsResampling(audioBuffer.sampleRate)
+        ? 44100
+        : audioBuffer.sampleRate;
+      const finalChannels =
+        targetRate !== audioBuffer.sampleRate
+          ? resampleChannels(channels, audioBuffer.sampleRate, targetRate)
+          : channels;
+
+      // Re-encode to WAV so the <audio> element can play any input format uniformly
+      const wavBytes = new WavWriter().write(finalChannels, targetRate);
+      this._resource!.arraybuffer = wavBytes.buffer;
+
+      // Replace AudioInfo with accurate values from libav decode result.
+      // AudioInfo.sampleRate is readonly, so we construct a new instance.
+      const oldInfo = this._resource!.info;
+      const newInfo = new AudioInfo(
+        oldInfo.fullname,
+        'audio/wav',
+        wavBytes.byteLength,
+        targetRate,
+        finalChannels[0].length,
+        finalChannels.length,
+        oldInfo.bitrate,
+        { sampleRate: targetRate, samples: finalChannels[0].length },
+      );
+      this._resource!.info = newInfo;
+
+      this._channel = finalChannels[0];
+      this.onChannelDataChange.next();
+      this.onChannelDataChange.complete();
+      this.statistics.decoding.duration =
+        Date.now() - this.statistics.decoding.started;
+      this.changeStatus(PlayBackStatus.INITIALIZED);
+
+      setTimeout(() => {
+        subj.next({ decodeProgress: 1 });
+        subj.complete();
+      }, 0);
+    }).catch((e) => {
+      subj.error(e instanceof Error ? e.message : String(e));
+    });
   }
 
   override decodeAudio(resource: AudioResource) {

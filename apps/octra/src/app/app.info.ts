@@ -13,12 +13,13 @@ import {
   WebVTTConverter,
   WhisperJSONConverter,
 } from '@octra/annotation';
-import { MusicMetadataFormat, WavFormat } from '@octra/web-media';
+import { LibavFormat, MusicMetadataFormat, WavFormat } from '@octra/web-media';
 
 export class AppInfo {
   public static readonly audioformats = [
     new WavFormat(),
     new MusicMetadataFormat(),
+    new LibavFormat(),
   ];
 
   public static readonly converters: Converter[] = [

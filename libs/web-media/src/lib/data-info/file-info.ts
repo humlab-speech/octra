@@ -122,10 +122,34 @@ export class FileInfo extends DataInfo {
       case 'ogg':
         return 'audio/ogg';
       case 'opus':
-        return 'audio/opus';
+        return 'audio/ogg; codecs=opus';
+      case 'flac':
+        return 'audio/flac';
+      case 'm4a':
+        return 'audio/mp4';
+      case 'aac':
+        return 'audio/aac';
+      case 'wma':
+        return 'audio/x-ms-wma';
+      case 'mp2':
+        return 'audio/mpeg';
+      case 'amr':
+        return 'audio/amr';
+      case '3gp':
+        return 'video/3gpp';
+      case 'mka':
+        return 'audio/x-matroska';
       // video
       case 'mp4':
         return 'video/mp4';
+      case 'webm':
+        return 'video/webm';
+      case 'mkv':
+        return 'video/x-matroska';
+      case 'avi':
+        return 'video/x-msvideo';
+      case 'mov':
+        return 'video/quicktime';
       case 'png':
         return 'image/png';
       case 'jpg':
