@@ -24,7 +24,16 @@
           "ajv",
           "x2js",
           "konva",
-          "platform"
+          "platform",
+          "content-type",
+          "debug",
+          "media-typer",
+          "@videojs/xhr",
+          "global/document",
+          "global/window",
+          "mux.js/lib/tools/parse-sidx",
+          "mux.js/lib/utils/clock",
+          "videojs-vtt.js"
         ],
         "assets": [
           "apps/octra/src/assets",
