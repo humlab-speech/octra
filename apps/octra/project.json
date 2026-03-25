@@ -50,8 +50,7 @@
           "apps/octra/src/styles.scss"
         ],
         "scripts": [
-          "apps/octra/src/assets/js/modernizr.js",
-          "node_modules/hammerjs/hammer.min.js"
+          "apps/octra/src/assets/js/modernizr.js"
         ],
         "extractLicenses": true,
         "serviceWorker": true,

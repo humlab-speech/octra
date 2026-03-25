@@ -15,6 +15,10 @@
   RewriteRule ^(?!.*\.).*$ index.html [NC,L]
 </IfModule>
 
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/javascript application/javascript application/json text/css text/html
+</IfModule>
+
 # Disable browser caching for all files that don't get a hash string by Angular.
 <FilesMatch "^(?!.*\.([0-9a-z]{20})\.).*$">
   <IfModule mod_headers.c>

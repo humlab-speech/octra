@@ -38,12 +38,12 @@
     "audioExamples": [
       {
         "language": "de",
-        "url": "media/Bahnauskunft.wav",
+        "url": "media/Bahnauskunft.mp3",
         "description": "Individuelle Beschreibung der Audiosequenz"
       },
       {
         "language": "en",
-        "url": "media/Bahnauskunft.wav",
+        "url": "media/Bahnauskunft.mp3",
         "description": "Description for the audio sequence"
       }
     ],
