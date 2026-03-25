@@ -194,12 +194,20 @@ export class OctraDropzoneService {
           break;
       }
 
+      const getBasename = (filename: string): string => {
+        const m = /^(.*?)((?:_annot)?\.[^.]+)$/.exec(filename);
+        return m ? m[1] : filename;
+      };
+
       if (
         !this.oldFiles.some(
           (a) =>
-            a.type === file.file.type &&
-            a.name === file.file.fullname &&
-            a.size === file.file.size,
+            // Exact match: type + full filename + size (original behaviour)
+            (a.type === file.file.type &&
+              a.name === file.file.fullname &&
+              a.size === file.file.size) ||
+            // Basename match: same recording uploaded in a different format
+            (getBasename(a.name) === file.file.name && file.file.name !== ''),
         )
       ) {
         result.new++;
