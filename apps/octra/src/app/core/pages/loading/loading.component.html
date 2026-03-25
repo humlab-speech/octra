@@ -29,6 +29,9 @@
   @if (settService.log === '') {
     <div class="description">
       {{ text }}{{ state }}<br />
+      @for (error of loading.errors; track error) {
+        <div class="text-danger" style="font-size:0.85rem;margin-top:0.5rem;">{{ error }}</div>
+      }
       <div class="text-info">{{ warning }}</div>
       @if (warning !== undefined && warning !== '') {
         <div>

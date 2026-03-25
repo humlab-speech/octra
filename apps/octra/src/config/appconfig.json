@@ -28,6 +28,10 @@
       {
         "name": "Microsoft Edge",
         "version": ""
+      },
+      {
+        "name": "Safari",
+        "version": ""
       }
     ],
     "languages": ["en", "de", "nl", "it", "ko", "zh"],

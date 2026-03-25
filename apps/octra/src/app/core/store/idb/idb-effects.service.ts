@@ -435,7 +435,11 @@ export class IDBEffects {
       exhaustMap(() => {
         const subject = new Subject<Action>();
 
-        this.sessStr.store('loggedIn', false);
+        try {
+          this.sessStr.store('loggedIn', false);
+        } catch (e) {
+          // Safari private browsing may throw QuotaExceededError
+        }
         timer(0).subscribe(() => {
           subject.next(IDBActions.logoutSession.success());
           subject.complete();
@@ -646,7 +650,11 @@ export class IDBEffects {
           AuthenticationActions.loginOnline.success,
         ),
         tap(async (action) => {
-          this.sessStr.store('loggedIn', true);
+          try {
+            this.sessStr.store('loggedIn', true);
+          } catch (e) {
+            // Safari private browsing may throw QuotaExceededError
+          }
           await this.idbService.saveOption('useMode', action.mode);
         }),
       ),
@@ -657,7 +665,11 @@ export class IDBEffects {
     this.actions$.pipe(
       ofType(AuthenticationActions.logout.success),
       exhaustMap((action) => {
-        this.sessStr.store('loggedIn', false);
+        try {
+          this.sessStr.store('loggedIn', false);
+        } catch (e) {
+          // Safari private browsing may throw QuotaExceededError
+        }
         return this.idbService.saveOption('useMode', undefined).pipe(
           map(() => IDBActions.saveLogout.success()),
           catchError((error: Error) => {
@@ -954,7 +966,11 @@ export class IDBEffects {
         ofType(IDBActions.clearAllData.do),
         withLatestFrom(this.store),
         tap(([action, state]) => {
-          this.sessStr.clear();
+          try {
+            this.sessStr.clear();
+          } catch (e) {
+            // Safari private browsing may throw QuotaExceededError
+          }
           this.idbService.clearAllData().then(() => {
             this.store.dispatch(IDBActions.clearAllData.success());
           });

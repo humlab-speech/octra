@@ -97,7 +97,7 @@ export class ApplicationEffects {
             {
               responseType: 'json',
             },
-            'config/appconfig.json',
+            `config/appconfig.json?v=${Date.now()}`,
             undefined,
           ),
         ]).pipe(
@@ -924,7 +924,11 @@ export class ApplicationEffects {
     this.actions$.pipe(
       ofType(AuthenticationActions.logout.success),
       exhaustMap((action) => {
-        this.sessStr.clear();
+        try {
+          this.sessStr.clear();
+        } catch (e) {
+          // Safari private browsing may throw QuotaExceededError
+        }
         // clear undo history
         this.store.dispatch(ApplicationActions.clear());
 

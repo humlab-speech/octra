@@ -545,7 +545,11 @@ export class AppStorageService {
   public saveCurrentPageAsLastPage() {
     const part: string = window.location.href.replace(getBaseHrefURL(), '');
     if (part !== 'load') {
-      this.sessionStorage.store('last_page_path', `/${part}`);
+      try {
+        this.sessionStorage.store('last_page_path', `/${part}`);
+      } catch (e) {
+        // Safari private browsing may throw QuotaExceededError
+      }
     }
   }
 }

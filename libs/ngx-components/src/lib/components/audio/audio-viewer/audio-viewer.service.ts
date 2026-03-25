@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, Renderer2 } from '@angular/core';
+import { EventEmitter, Injectable, NgZone, Renderer2 } from '@angular/core';
 import {
   AnnotationAnySegment,
   AnnotationLevelType,
@@ -369,7 +369,10 @@ export class AudioViewerService {
     return this.itemIDCounter - 1;
   }
 
-  constructor(private multiThreadingService: MultiThreadingService) {
+  constructor(
+    private multiThreadingService: MultiThreadingService,
+    private ngZone: NgZone,
+  ) {
     this.shortcutsManager = new ShortcutManager();
     this._boundaryDragging = new Subject<{
       status: 'started' | 'stopped' | 'dragging';
@@ -855,7 +858,9 @@ export class AudioViewerService {
 
   public onPlaybackStarted() {
     if (this.animation.playHead && !this.animation.playHead.isRunning()) {
-      this.animation.playHead.start();
+      this.ngZone.runOutsideAngular(() => {
+        this.animation.playHead!.start();
+      });
     }
   }
 

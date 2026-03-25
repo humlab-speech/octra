@@ -18,7 +18,7 @@ export class CompatibilityService {
       name: 'browser',
       description: 'Browser is supported.',
       state: 'processing',
-      help: `Please make sure, that you are using the latest version of your browser. It is recommended using Chrome.
+      help: `Please make sure that you are using the latest version of your browser.
 <br/>Supported Browsers: `,
     },
     {

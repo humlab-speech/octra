@@ -91,7 +91,16 @@ export class OctraDatabase extends Dexie {
 
     this.app_options = this.table('app_options');
 
-    await this.open();
+    try {
+      await this.open();
+    } catch (e) {
+      this.onReady.error(
+        new Error(
+          `Failed to open IndexedDB database. This may happen in private browsing mode. Original error: ${e}`
+        )
+      );
+      return;
+    }
     try {
       await this.checkAndFillPopulation();
       this.onReady.next();
