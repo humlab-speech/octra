@@ -33,7 +33,7 @@ async function getLibAV(): Promise<any> {
   // Dynamic import of the libav ES module from deployed assets.
   // webpackIgnore keeps Angular's bundler from trying to resolve this path at build time.
   const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-default.mjs' as any);
-  libavInstance = await m.LibAV({ noworker: true, base: '/assets/libav/' });
+  libavInstance = await m.LibAV({ noworker: true });
   return libavInstance;
 }
 
