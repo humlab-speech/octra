@@ -2,7 +2,7 @@ import { parseBlob } from 'music-metadata';
 import { AudioFormat } from './audio-format';
 
 export class LibavFormat extends AudioFormat {
-  protected override _decoder: 'web-audio' | 'octra' | 'libav' = 'libav';
+  protected override _decoder: 'web-audio' | 'octra' | 'libav' = 'web-audio';
 
   constructor() {
     super();

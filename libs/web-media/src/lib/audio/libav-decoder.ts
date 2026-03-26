@@ -52,6 +52,15 @@ export async function decodeWithLibAV(buf: ArrayBuffer): Promise<AudioBufferLike
     throw new Error('No audio stream found in file.');
   }
 
+  // Discard all non-audio streams so ff_read_multi skips video packets entirely,
+  // preventing H.264/video data from being loaded into WASM memory.
+  for (const s of streams) {
+    if (s.codec_type !== libav.AVMEDIA_TYPE_AUDIO) {
+      const streamPtr = await libav.AVFormatContext_streams_a(fmt_ctx, s.index);
+      await libav.AVStream_discard_s(streamPtr, libav.AVDISCARD_ALL);
+    }
+  }
+
   const [, c, pkt, frame] = await libav.ff_init_decoder(
     audioStream.codec_id,
     audioStream.codecpar,

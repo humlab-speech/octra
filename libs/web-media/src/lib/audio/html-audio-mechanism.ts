@@ -240,46 +240,105 @@ export class HtmlAudioMechanism extends AudioMechanism {
       this.statistics.decoding.started = Date.now();
       this.initAudioContext();
       this._audioContext!.decodeAudioData(this._resource.arraybuffer?.slice(0)!)
-        .then((audioBuffer) => {
-          const info = this._resource?.info!;
+        .then(async (audioBuffer) => {
+          try {
+            const info = this._resource?.info!;
 
-          info.audioBufferInfo = {
-            sampleRate: audioBuffer.sampleRate,
-            samples: audioBuffer.getChannelData(0).length,
-          };
+            info.audioBufferInfo = {
+              sampleRate: audioBuffer.sampleRate,
+              samples: audioBuffer.getChannelData(0).length,
+            };
 
-          if (['.mp3', '.m4a'].includes(info.extension)) {
-            // fix number of samples. web value by web audio api is more exact.
-            info.duration = new SampleUnit(
-              Math.ceil(audioBuffer.duration * info.sampleRate),
-              info.sampleRate,
-            );
+            if (['.mp3', '.m4a'].includes(info.extension)) {
+              // fix number of samples. web value by web audio api is more exact.
+              info.duration = new SampleUnit(
+                Math.ceil(audioBuffer.duration * info.sampleRate),
+                info.sampleRate,
+              );
+            }
+
+            if (needsResampling(audioBuffer.sampleRate)) {
+              // Tier 2: Safari sub-44100 Hz — resample via OfflineAudioContext then re-encode to WAV.
+              await this.applyNativeResampleAndFinalize(audioBuffer, subj);
+            } else {
+              // Tier 1: native decode, no resampling needed.
+              this._channel = audioBuffer.getChannelData(0);
+              this._channelDataFactor =
+                this._resource?.info.sampleRate! /
+                (this._resource?.info.audioBufferInfo!.sampleRate ??
+                  this._resource?.info.sampleRate!);
+              this.onChannelDataChange.next();
+              this.onChannelDataChange.complete();
+              this.statistics.decoding.duration =
+                Date.now() - this.statistics.decoding.started;
+              this.changeStatus(PlayBackStatus.INITIALIZED);
+              setTimeout(() => {
+                subj.next({ decodeProgress: 1 });
+                subj.complete();
+              }, 0);
+            }
+          } catch (_resampleError) {
+            // Tier 2 failed (OfflineAudioContext error) → Tier 3.
+            this.decodeAudioWithLibavDecoder(subj);
           }
-
-          this._channel = audioBuffer.getChannelData(0);
-          this.onChannelDataChange.next();
-          this.onChannelDataChange.complete();
-          this.statistics.decoding.duration =
-            Date.now() - this.statistics.decoding.started;
-          this._channelDataFactor =
-            this._resource?.info.sampleRate! /
-            (this._resource?.info.audioBufferInfo!.sampleRate ??
-              this._resource?.info.sampleRate!);
-
-          this.changeStatus(PlayBackStatus.INITIALIZED);
-
-          setTimeout(() => {
-            subj.next({
-              decodeProgress: 1,
-            });
-            subj.complete();
-          }, 0);
         })
         .catch((_e) => {
-          // Fallback covers Safari + sub-44100 Hz decodeAudioData failures
+          // Tier 1 failed (decodeAudioData rejected) → Tier 3.
           this.decodeAudioWithLibavDecoder(subj);
         });
     } catch (e) {}
+  }
+
+  private async applyNativeResampleAndFinalize(
+    audioBuffer: AudioBuffer,
+    subj: Subject<{ decodeProgress: number }>,
+  ): Promise<void> {
+    const targetRate = 44100;
+    const numChannels = audioBuffer.numberOfChannels;
+    const targetLength = Math.ceil(
+      (audioBuffer.length * targetRate) / audioBuffer.sampleRate,
+    );
+
+    const offlineCtx = new OfflineAudioContext(numChannels, targetLength, targetRate);
+    const source = offlineCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(offlineCtx.destination);
+    source.start(0);
+    const resampledBuffer = await offlineCtx.startRendering();
+
+    const channels: Float32Array[] = [];
+    for (let ch = 0; ch < numChannels; ch++) {
+      channels.push(resampledBuffer.getChannelData(ch));
+    }
+
+    const wavBytes = new WavWriter().write(channels, targetRate);
+    this._resource!.arraybuffer = wavBytes.buffer;
+
+    const oldInfo = this._resource!.info;
+    const newInfo = new AudioInfo(
+      oldInfo.fullname,
+      'audio/wav',
+      wavBytes.byteLength,
+      targetRate,
+      channels[0].length,
+      numChannels,
+      oldInfo.bitrate,
+      { sampleRate: targetRate, samples: channels[0].length },
+    );
+    this._resource!.info = newInfo;
+
+    this._channel = channels[0];
+    this._channelDataFactor = 1;
+    this.onChannelDataChange.next();
+    this.onChannelDataChange.complete();
+    this.statistics.decoding.duration =
+      Date.now() - this.statistics.decoding.started;
+    this.changeStatus(PlayBackStatus.INITIALIZED);
+
+    setTimeout(() => {
+      subj.next({ decodeProgress: 1 });
+      subj.complete();
+    }, 0);
   }
 
   private decodeAudioWithLibavDecoder(
