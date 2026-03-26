@@ -27,7 +27,6 @@
                   ></i>
                 }
               </td>
-              <td>max. {{ extension.maxFileSize | filesize }}</td>
               <td>
                 @if (extension.info) {
                   <i
@@ -41,6 +40,9 @@
         }
       </tbody>
     </table>
+    <p class="text-muted small mb-0">
+      Max. file size: 500 MB &nbsp;·&nbsp; WAV up to 1.9 GB
+    </p>
     <h4>{{ 'modal.supported.file formats for import' | transloco }}:</h4>
 
     <table class="table table-sm table-striped">
