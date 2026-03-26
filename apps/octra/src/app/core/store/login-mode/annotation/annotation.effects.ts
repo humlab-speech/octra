@@ -225,7 +225,7 @@ export class AnnotationEffects {
             a.task,
             'audio',
             (io: TaskInputOutputDto) => {
-              if (io.fileType && io.fileType.includes('audio')) {
+              if (io.fileType && (io.fileType.includes('audio') || io.fileType.includes('video'))) {
                 return io;
               }
               return undefined;
