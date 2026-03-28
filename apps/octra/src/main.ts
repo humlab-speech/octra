@@ -54,9 +54,12 @@ import { BugReportService } from './app/core/shared/service/bug-report.service';
 import { CompatibilityService } from './app/core/shared/service/compatibility.service';
 import { IDBService } from './app/core/shared/service/idb.service';
 import { APIEffects } from './app/core/store/api';
-import { ApplicationEffects } from './app/core/store/application/application.effects';
+import { ApplicationInitEffects } from './app/core/store/application/application-init.effects';
+import { ApplicationSessionEffects } from './app/core/store/application/application-session.effects';
+import { ApplicationUiEffects } from './app/core/store/application/application-ui.effects';
 import * as fromApplication from './app/core/store/application/application.reducer';
-import { AsrEffects } from './app/core/store/asr/asr.effects.service';
+import { AsrProcessingEffects } from './app/core/store/asr/asr-processing.effects';
+import { AsrQueueEffects } from './app/core/store/asr/asr-queue.effects';
 import * as fromASR from './app/core/store/asr/asr.reducer';
 import {
   AuthenticationEffects,
@@ -100,8 +103,11 @@ bootstrapApplication(AppComponent, {
         : [],
       EffectsModule.forRoot([
         IDBEffects,
-        ApplicationEffects,
-        AsrEffects,
+        ApplicationInitEffects,
+        ApplicationSessionEffects,
+        ApplicationUiEffects,
+        AsrQueueEffects,
+        AsrProcessingEffects,
         APIEffects,
         AuthenticationEffects,
       ]),

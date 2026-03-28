@@ -1,13 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { getBrowserLang, TranslocoService } from '@jsverse/transloco';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
 import { uniqueHTTPRequest } from '@octra/ngx-utilities';
 import { isNumber } from '@octra/utilities';
 import { findElements, getAttr } from '@octra/web-media';
 import { DateTime } from 'luxon';
-import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 import {
   catchError,
   exhaustMap,
@@ -16,19 +13,13 @@ import {
   map,
   Observable,
   of,
-  Subject,
-  tap,
-  withLatestFrom,
 } from 'rxjs';
 import X2JS from 'x2js';
 import { environment } from '../../../../environments/environment';
 import { AppInfo } from '../../../app.info';
-import { ErrorModalComponent } from '../../modals/error-modal/error-modal.component';
-import { OctraModalService } from '../../modals/octra-modal.service';
-import { AppSettings, ASRSettings } from '../../obj';
+import { ASRSettings } from '../../obj';
 import { AppConfigSchema } from '../../schemata/appconfig.schema';
-import { isIgnoredAction, isIgnoredConsoleAction } from '../../shared';
-import { SettingsService } from '../../shared/service';
+import { isIgnoredAction } from '../../shared';
 import { AppStorageService } from '../../shared/service/appstorage.service';
 import {
   BugReportService,
@@ -36,19 +27,13 @@ import {
 } from '../../shared/service/bug-report.service';
 import { ConfigurationService } from '../../shared/service/configuration.service';
 import { RoutingService } from '../../shared/service/routing.service';
-import { APIActions } from '../api';
-import { ApplicationActions } from '../application/application.actions';
-import { AuthenticationActions } from '../authentication';
-import { IDBActions } from '../idb/idb.actions';
-import { getModeState, LoginMode, RootState } from '../index';
-import { LoginModeActions } from '../login-mode';
-import { AnnotationActions } from '../login-mode/annotation/annotation.actions';
+import { ApplicationActions } from './application.actions';
 import { URLParameters } from './index';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ApplicationEffects {
+export class ApplicationInitEffects {
   initApp$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ApplicationActions.initApplication.do),
@@ -453,6 +438,15 @@ export class ApplicationEffects {
     ),
   );
 
+  constructor(
+    private actions$: Actions,
+    private http: HttpClient,
+    private configurationService: ConfigurationService,
+    private appStorage: AppStorageService,
+    private routerService: RoutingService,
+    private bugService: BugReportService,
+  ) {}
+
   public async updateASRQuotaInfo(
     asrSettings: ASRSettings,
   ): Promise<ASRSettings> {
@@ -598,462 +592,7 @@ export class ApplicationEffects {
     }
   }
 
-  settingsLoaded$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApplicationActions.loadSettings.success),
-      exhaustMap((a) => {
-        // set language
-        const language = this.localStorage.retrieve('language');
-        this.transloco.setAvailableLangs(a.settings.octra.languages);
-
-        this.transloco.setActiveLang(
-          language?.replace(/-.*/g, '') ?? getBrowserLang() ?? 'en',
-        );
-
-        if (a.settings.octra.plugins?.asr?.enabled) {
-          this.store.dispatch(
-            ApplicationActions.loadASRSettings.do({
-              settings: a.settings,
-            }),
-          );
-        }
-
-        const webToken = this.sessStr.retrieve('webToken');
-        const authType = this.sessStr.retrieve('authType');
-        const authenticated = this.sessStr.retrieve('loggedIn');
-
-        this.transloco.setAvailableLangs(a.settings.octra.languages);
-
-        if (a.settings.api?.url && a.settings.api?.appToken) {
-          return of(
-            APIActions.init.do({
-              url: a.settings.api.url,
-              appToken: a.settings.api.appToken,
-              authType,
-              authenticated,
-              webToken,
-            }),
-          );
-        } else {
-          return of(
-            APIActions.init.initWithoutAPI({
-              authenticated: false,
-            }),
-          );
-        }
-      }),
-    ),
-  );
-
-  afterAPIInit$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(APIActions.init.success, APIActions.init.initWithoutAPI),
-        withLatestFrom(this.store),
-        tap(([a, state]) => {
-          if (
-            state.application.appConfiguration?.octra?.tracking?.active &&
-            state.application.appConfiguration.octra.tracking.active !== ''
-          ) {
-            this.appendTrackingCode(
-              state.application.appConfiguration.octra.tracking.active,
-              state.application.appConfiguration,
-            );
-          }
-
-          this.store.dispatch(
-            ApplicationActions.initApplication.setSessionStorageOptions({
-              loggedIn:
-                this.sessStr.retrieve('loggedIn') ?? a.authenticated ?? false,
-              reloaded: this.sessStr.retrieve('reloaded') ?? false,
-            }),
-          );
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  afterInitApplication$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(
-          ApplicationActions.initApplication.finish,
-          LoginModeActions.loadProjectAndTaskInformation.success,
-        ),
-        withLatestFrom(this.store),
-        tap(([a, state]) => {
-          if (state.application.initialized && !(a as any).startup) {
-            if (!state.application.mode) {
-              // no mode active
-              if (
-                state.authentication.authenticated &&
-                !this.routerService.staticQueryParams.audio_url
-              ) {
-                this.store.dispatch(
-                  AuthenticationActions.logout.do({
-                    message: 'logout due undefined mode',
-                    messageType: 'error',
-                    mode: undefined,
-                    clearSession: false,
-                  }),
-                );
-              } else if (!this.routerService.staticQueryParams.audio_url) {
-                this.store.dispatch(
-                  ApplicationActions.redirectToLastPage.do({
-                    mode: state.application.mode!,
-                  }),
-                );
-              }
-              return;
-            }
-            const modeState = getModeState(state)!;
-
-            if (!this.routerService.staticQueryParams.audio_url) {
-              if (!state.application.loggedIn) {
-                this.store.dispatch(
-                  ApplicationActions.redirectToLastPage.do({
-                    mode: state.application.mode!,
-                  }),
-                );
-              } else {
-                // logged in
-                if (
-                  modeState.currentSession.currentProject &&
-                  modeState.currentSession.task
-                ) {
-                  this.store.dispatch(
-                    AnnotationActions.prepareTaskDataForAnnotation.do({
-                      currentProject: modeState.currentSession.currentProject,
-                      mode: state.application.mode,
-                      task: modeState.currentSession.task,
-                    }),
-                  );
-                } else if (
-                  this.sessionStorage.retrieve('last_page_path') !==
-                  '/help-tools'
-                ) {
-                  this.store.dispatch(
-                    AuthenticationActions.redirectToProjects.do(),
-                  );
-                } else {
-                  this.store.dispatch(
-                    ApplicationActions.redirectToLastPage.do({
-                      mode: state.application.mode!,
-                    }),
-                  );
-                }
-              }
-            } else {
-              if (
-                modeState.currentSession.currentProject &&
-                modeState.currentSession.task
-              ) {
-                this.store.dispatch(
-                  AnnotationActions.prepareTaskDataForAnnotation.do({
-                    currentProject: modeState.currentSession.currentProject,
-                    mode: state.application.mode,
-                    task: modeState.currentSession.task,
-                  }),
-                );
-              } else {
-                this.store.dispatch(ApplicationActions.waitForEffects.do());
-              }
-            }
-          }
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  onProjectAndTaskInfoLoaded$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(LoginModeActions.loadProjectAndTaskInformation.success),
-        withLatestFrom(this.store),
-        tap(([action, state]) => {
-          if (!state.application.initialized) {
-            // load on startup
-            this.store.dispatch(IDBActions.loadAnnotation.do());
-          }
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  redirectToLastPage$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ApplicationActions.redirectToLastPage.do),
-        tap((a) => {
-          if (a.mode !== LoginMode.URL) {
-            const lastPagePath = this.sessStr.retrieve('last_page_path');
-            let queryParams: any = undefined;
-            console.warn(lastPagePath);
-            if (lastPagePath) {
-              if (lastPagePath.indexOf('?') > -1) {
-                queryParams = {};
-                const splitted = lastPagePath
-                  .substring(lastPagePath.indexOf('?') + 1)
-                  .split('&')
-                  .map((str: string) => {
-                    const matched = /([^&]+)=([^&]+)/g.exec(str);
-
-                    return {
-                      key: matched![1],
-                      value: matched![2],
-                    };
-                  });
-
-                for (const splittedElement of splitted) {
-                  queryParams[splittedElement.key] = splittedElement.value;
-                }
-              }
-
-              if (
-                lastPagePath &&
-                !['', '/', '/load'].includes(lastPagePath) &&
-                !/^\/http/g.exec(lastPagePath)
-              ) {
-                this.routerService.navigate('last page', [lastPagePath], {
-                  queryParams,
-                });
-              } else {
-                this.routerService.navigate('no last page', ['/login']);
-              }
-            } else {
-              this.routerService.navigate('no last page', ['/login']);
-            }
-          }
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  redirectTo$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ApplicationActions.redirectTo.success),
-        tap((a) => {
-          if (a.needsRedirectionTo) {
-            this.routerService.navigate('last page', [a.needsRedirectionTo]);
-          }
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  afterIDBLoaded$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(IDBActions.loadConsoleEntries.success),
-        withLatestFrom(this.store),
-        tap(([a, state]: [Action, RootState]) => {
-          this.bugService.addEntriesFromDB(this.appStorage.consoleEntries);
-
-          // define languages
-          const languages = state.application.appConfiguration!.octra.languages;
-          const browserLang =
-            navigator.language || (navigator as any).userLanguage;
-
-          // check if browser language is available in translations
-          if (
-            this.appStorage.language === undefined ||
-            this.appStorage.language === ''
-          ) {
-            if (
-              state.application.appConfiguration!.octra.languages.find(
-                (value) => {
-                  return value === browserLang;
-                },
-              ) !== undefined
-            ) {
-              this.transloco.setActiveLang(browserLang);
-            } else {
-              // use first language defined as default language
-              this.transloco.setActiveLang(languages[0]);
-            }
-          } else {
-            if (
-              state.application.appConfiguration!.octra.languages.find(
-                (value) => {
-                  return value === this.appStorage.language;
-                },
-              ) !== undefined
-            ) {
-              this.transloco.setActiveLang(this.appStorage.language);
-            } else {
-              this.transloco.setActiveLang(languages[0]);
-            }
-          }
-
-          if (this.routerService.staticQueryParams?.audio_url) {
-            this.store.dispatch(
-              AuthenticationActions.loginURL.do({
-                mode: LoginMode.URL,
-              }),
-            );
-          }
-
-          this.store.dispatch(ApplicationActions.initApplication.finish());
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  loadLanguage$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApplicationActions.loadLanguage.do),
-      exhaustMap((a) => {
-        this.transloco.setAvailableLangs(['en']);
-        this.transloco.setActiveLang('en');
-        return of(ApplicationActions.loadLanguage.success());
-      }),
-    ),
-  );
-
-  loadLanguageSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApplicationActions.loadLanguage.success),
-      exhaustMap((a) => {
-        return of(ApplicationActions.loadSettings.do());
-      }),
-    ),
-  );
-
-  logoutSession$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthenticationActions.logout.success),
-      exhaustMap((action) => {
-        try {
-          this.sessStr.clear();
-        } catch (e) {
-          // Safari private browsing may throw QuotaExceededError
-        }
-        // clear undo history
-        this.store.dispatch(ApplicationActions.clear());
-
-        const subject = new Subject<Action>();
-
-        subject.next(LoginModeActions.clearSessionStorage.success());
-        subject.complete();
-
-        this.routerService.clear();
-        this.routerService
-          .navigate(
-            'after logout success',
-            ['/login'],
-            {
-              queryParams: {},
-            },
-            'replace',
-          )
-          .catch((error) => {
-            console.error(error);
-          });
-
-        return subject;
-      }),
-    ),
-  );
-
-  wait$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ApplicationActions.waitForEffects.do),
-        tap((a) => {
-          this.routerService.navigate(
-            'wait for effects',
-            ['/load'],
-            AppInfo.queryParamsHandling,
-          );
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  showErrorMessage$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ApplicationActions.showErrorModal.do),
-        tap((a) => {
-          const ref = this.modalService.openModalRef<ErrorModalComponent>(
-            ErrorModalComponent,
-            {
-              ...ErrorModalComponent.options,
-              backdrop: a.showOKButton ? true : 'static',
-            },
-            {
-              text: a.error,
-              showOKButton: a.showOKButton,
-            },
-          );
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  logActionsToConsole$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        tap((action) => {
-          if (
-            !isIgnoredConsoleAction(action.type) &&
-            environment.debugging.enabled &&
-            environment.debugging.logging.actions &&
-            action.type.indexOf('Set Console Entries') < 0 &&
-            (!environment.production || !isIgnoredAction(action.type))
-          ) {
-            console.groupCollapsed(`ACTION ${action.type} ---`);
-            console.log(action);
-            console.groupEnd();
-          }
-        }),
-      ),
-    {
-      dispatch: false,
-    },
-  );
-
-  appLoadingFail$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ApplicationActions.loadSettings.fail),
-        tap((a) => {
-          const ref = this.modalService.openModalRef<ErrorModalComponent>(
-            ErrorModalComponent,
-            {
-              ...ErrorModalComponent.options,
-              backdrop: 'static',
-            },
-            {
-              text: `Can't load application settings: ${a.error}`,
-            },
-          );
-
-          ref.componentInstance.showOKButton = false;
-        }),
-      ),
-    { dispatch: false },
-  );
-
-  constructor(
-    private actions$: Actions,
-    private transloco: TranslocoService,
-    private sessStr: SessionStorageService,
-    private localStorage: LocalStorageService,
-    private store: Store<RootState>,
-    private http: HttpClient,
-    private configurationService: ConfigurationService,
-    private bugService: BugReportService,
-    private appStorage: AppStorageService,
-    private settingsService: SettingsService,
-    private routerService: RoutingService,
-    private modalService: OctraModalService,
-    private sessionStorage: SessionStorageService,
-  ) {}
-
   private initConsoleLogging() {
-    // overwrite console.log
     if (environment.debugging.logging.console) {
       const oldLog = console.log;
       const serv = this.bugService;
@@ -1159,44 +698,6 @@ export class ApplicationEffects {
           oldGroupEnd.apply(console, args);
         };
       })();
-    }
-  }
-
-  private appendTrackingCode(type: string, settings: AppSettings) {
-    // check if matomo is activated
-    if (type === 'matomo') {
-      if (
-        settings.octra.tracking.matomo !== undefined &&
-        settings.octra.tracking.matomo.host !== undefined &&
-        settings.octra.tracking.matomo.siteID !== undefined
-      ) {
-        const matomoSettings = settings.octra.tracking.matomo;
-
-        const trackingCode = document.createElement('script');
-        trackingCode.setAttribute('type', 'text/javascript');
-        trackingCode.innerHTML = `
-<!-- Matomo -->
-  var _paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="${matomoSettings.host}";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', '${matomoSettings.siteID}']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
-<!-- End Matomo Code -->`;
-
-        document.body.appendChild(trackingCode);
-      } else {
-        console.error(
-          `attributes for piwik tracking in appconfig.json are invalid.`,
-        );
-      }
-    } else {
-      console.error(`tracking type ${type} is not supported.`);
     }
   }
 
