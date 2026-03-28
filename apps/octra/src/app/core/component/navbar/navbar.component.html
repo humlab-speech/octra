@@ -664,14 +664,14 @@
                     'g.asr options' | transloco
                   }}</label>
                   <octra-asr-options
-                    [options]="asrStoreService.asrOptions$ | async"
+                    [options]="(asrStoreService.asrOptions$ | async) ?? undefined"
                     (optionsChange)="asrStoreService.setASRSettings($event)"
                     [languageSettings]="
-                      asrStoreService.languageSettings$ | async
+                      (asrStoreService.languageSettings$ | async) ?? undefined
                     "
-                    [manualURL]="api.appProperties?.support?.manual_url"
-                    [mausLanguages]="asrStoreService.mausLanguages$ | async"
-                    [asrLanguages]="asrStoreService.asrLanguages$ | async"
+                    [manualURL]="api.appProperties?.support?.manual_url ?? ''"
+                    [mausLanguages]="(asrStoreService.mausLanguages$ | async) ?? undefined"
+                    [asrLanguages]="(asrStoreService.asrLanguages$ | async) ?? undefined"
                     [showAccessCode]="true"
                     [i18n]="{
                       header: 'p.language and provider' | transloco,

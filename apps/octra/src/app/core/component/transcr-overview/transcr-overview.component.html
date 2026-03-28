@@ -195,10 +195,10 @@
                     [settings]="editorConfig"
                     [height]="60"
                     [validationEnabled]="
-                      appStorage.useMode !== 'url' &&
+                      (appStorage.useMode !== 'url' &&
                       (appStorage.useMode! === 'demo' ||
                         settingsService.projectsettings?.octra
-                          ?.validationEnabled)
+                          ?.validationEnabled)) ?? false
                     "
                     [markers]="
                       annotationStoreService.guidelines !== undefined

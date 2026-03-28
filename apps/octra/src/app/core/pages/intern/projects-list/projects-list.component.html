@@ -57,8 +57,8 @@
               <div class="col-auto text-right">
                 <ngb-pagination
                   [size]="'sm'"
-                  [page]="currentPage.page"
-                  [collectionSize]="currentPage.collectionSize"
+                  [page]="currentPage?.page ?? 1"
+                  [collectionSize]="currentPage?.collectionSize ?? 0"
                   [pageSize]="itemsPerPage"
                   (pageChange)="showProjects($event)"
                 ></ngb-pagination>
@@ -118,7 +118,7 @@
                           project.enddate
                             | luxonShortDateTime
                               : {
-                                  locale: (authStoreService.me$ | async).locale,
+                                  locale: (authStoreService.me$ | async)?.locale,
                                 }
                         }}
                       </span>
