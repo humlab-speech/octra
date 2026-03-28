@@ -34,6 +34,16 @@ import { ApplicationActions } from '../../application/application.actions';
 import { getModeState, LoginMode, RootState } from '../../index';
 import { LoginModeActions } from '../login-mode.actions';
 import { AnnotationActions } from './annotation.actions';
+import {
+  selectAnnotationCurrentLevel,
+  selectAnnotationCurrentLevelIndex,
+  selectAnnotationTranscript,
+  selectCurrentSession,
+  selectCurrentTask,
+  selectGuidelines,
+  selectImportConverter,
+  selectImportOptions,
+} from './annotation.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -136,33 +146,23 @@ export class AnnotationStoreService {
     return this._transcriptValid;
   }
 
-  task$ = this.store.select(
-    (state: RootState) => getModeState(state)?.currentSession?.task,
+  task$ = this.store.select(selectCurrentTask);
+
+  textInput$ = this.store.select(selectCurrentSession).pipe(
+    map((session) => {
+      if (!session) return undefined;
+      if (
+        this.appStoreService.useMode === undefined ||
+        this.appStoreService.useMode === LoginMode.LOCAL ||
+        this.appStoreService.useMode === LoginMode.URL
+      ) {
+        return undefined;
+      }
+      return getTranscriptFromIO(session.task?.inputs ?? []) as TaskInputOutputDto;
+    }),
   );
 
-  textInput$ = this.store.select((state: RootState) => {
-    if (
-      state.application.mode === undefined ||
-      state.application.mode === LoginMode.LOCAL ||
-      state.application.mode === LoginMode.URL
-    ) {
-      return undefined;
-    }
-
-    const mode = getModeState(state);
-    const result = getTranscriptFromIO(
-      mode?.currentSession?.task?.inputs ?? [],
-    ) as TaskInputOutputDto;
-    return result;
-  });
-
-  currentLevel$ = this.store.select((state: RootState) => {
-    const transcriptState = getModeState(state)?.transcript;
-    if (transcriptState) {
-      return transcriptState.currentLevel;
-    }
-    return undefined;
-  });
+  currentLevel$ = this.store.select(selectAnnotationCurrentLevel);
   private _currentLevel?: OctraAnnotationAnyLevel<OctraAnnotationSegment>;
 
   get currentLevel():
@@ -171,24 +171,16 @@ export class AnnotationStoreService {
     return this._currentLevel;
   }
 
-  currentLevelIndex$ = this.store.select((state: RootState) => {
-    const transcriptState = getModeState(state)?.transcript;
-    if (transcriptState) {
-      return transcriptState.selectedLevelIndex ?? 0;
-    }
-    return 0;
-  });
+  currentLevelIndex$ = this.store.select(selectAnnotationCurrentLevelIndex);
   private _currentLevelIndex = 0;
 
   get currentLevelIndex(): number {
     return this._currentLevelIndex;
   }
 
-  transcript$ = this.store.select(
-    (state: RootState) => getModeState(state)?.transcript,
-  );
-  status$ = this.store.select(
-    (state: RootState) => getModeState(state)?.currentSession?.status,
+  transcript$ = this.store.select(selectAnnotationTranscript);
+  status$ = this.store.select(selectCurrentSession).pipe(
+    map((s) => s?.status),
   );
   private _transcript?: OctraAnnotation<ASRContext, OctraAnnotationSegment>;
   private _task?: TaskDto;
@@ -214,30 +206,26 @@ export class AnnotationStoreService {
     }),
   );
 
-  guidelines$ = this.store.select(
-    (state: RootState) => getModeState(state)?.guidelines,
-  );
+  guidelines$ = this.store.select(selectGuidelines);
   private _guidelines?: OctraGuidelines;
 
   get guidelines(): OctraGuidelines | undefined {
     return this._guidelines;
   }
 
-  feedback$ = this.store.select(
-    (state: RootState) => getModeState(state)?.currentSession.assessment,
+  feedback$ = this.store.select(selectCurrentSession).pipe(
+    map((s) => s?.assessment),
   );
   private _feedback: any; // TODO check feedback
 
-  breakMarker$ = this.store.select((state: RootState) =>
-    getModeState(state)?.guidelines?.selected?.json?.markers?.find(
-      (a) => a.type === 'break',
-    ),
+  breakMarker$ = this.store.select(selectGuidelines).pipe(
+    map((g) => g?.selected?.json?.markers?.find((a) => a.type === 'break')),
   );
 
   importOptions$ = new BehaviorSubject<Record<string, any> | undefined>(
     undefined,
   );
-  importConverter$ = new BehaviorSubject<string>(undefined);
+  importConverter$ = new BehaviorSubject<string | undefined>(undefined);
 
   public set comment(value: string | undefined) {
     this.changeComment(value ?? '');
@@ -305,15 +293,11 @@ export class AnnotationStoreService {
     );
 
     this.store
-      .select((state: RootState) => {
-        return getModeState(state)?.importOptions;
-      })
+      .select(selectImportOptions)
       .subscribe(this.importOptions$);
 
     this.store
-      .select((state: RootState) => {
-        return getModeState(state)?.importConverter;
-      })
+      .select(selectImportConverter)
       .subscribe(this.importConverter$);
   }
 
@@ -400,7 +384,7 @@ export class AnnotationStoreService {
   }
 
   public validate(rawText: string): any[] {
-    const results = validateAnnotation(rawText, this.guidelines);
+    const results = validateAnnotation(rawText, this.guidelines!);
 
     // check if selection is in the raw text
     const sPos = rawText.indexOf('✉✉✉sel-start/📩📩📩');
@@ -968,7 +952,7 @@ export class AnnotationStoreService {
   overwriteTidyUpAnnotation() {
     const tidyUp = (window as any).tidyUpAnnotation;
 
-    (window as any).tidyUpAnnotation = (transcript, guidelines) => {
+    (window as any).tidyUpAnnotation = (transcript: any, guidelines: any) => {
       transcript = tidyUp(transcript, guidelines);
 
       // make sure there is only one speaker label for each unit if exists

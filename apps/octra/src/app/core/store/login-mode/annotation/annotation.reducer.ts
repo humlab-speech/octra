@@ -350,7 +350,7 @@ export class AnnotationStateReducers {
                       (transcript: string) => {
                         return tidyUpAnnotation(
                           transcript,
-                          state.guidelines?.selected?.json,
+                          state.guidelines?.selected?.json!,
                         );
                       },
                     );
@@ -364,7 +364,7 @@ export class AnnotationStateReducers {
                       (transcript: string) => {
                         return tidyUpAnnotation(
                           transcript,
-                          state.guidelines?.selected?.json,
+                          state.guidelines?.selected?.json!,
                         );
                       },
                     );

@@ -41,9 +41,9 @@ export class VersionNotificationComponent
     reload: '<i class="bi bi-arrow-clockwise" style="color: white;"></i>',
   };
 
-  @ViewChild('toast', { static: true }) toast: NgbToast;
+  @ViewChild('toast', { static: true }) toast!: NgbToast;
 
-  preparedI18n: {
+  preparedI18n!: {
     'reload now': SafeHtml;
     later: SafeHtml;
     'new update': {
@@ -52,7 +52,7 @@ export class VersionNotificationComponent
     };
   };
 
-  preparedIcons: {
+  preparedIcons!: {
     reload: SafeHtml;
     'new update': SafeHtml;
   };

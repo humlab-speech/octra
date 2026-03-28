@@ -416,11 +416,11 @@ export class ApplicationSessionEffects {
     // check if matomo is activated
     if (type === 'matomo') {
       if (
-        settings.octra.tracking.matomo !== undefined &&
-        settings.octra.tracking.matomo.host !== undefined &&
-        settings.octra.tracking.matomo.siteID !== undefined
+        settings.octra.tracking?.matomo !== undefined &&
+        settings.octra.tracking?.matomo.host !== undefined &&
+        settings.octra.tracking?.matomo.siteID !== undefined
       ) {
-        const matomoSettings = settings.octra.tracking.matomo;
+        const matomoSettings = settings.octra.tracking!.matomo;
 
         const trackingCode = document.createElement('script');
         trackingCode.setAttribute('type', 'text/javascript');

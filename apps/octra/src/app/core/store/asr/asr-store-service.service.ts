@@ -5,13 +5,21 @@ import { SubscriptionManager } from '@octra/utilities';
 import { map } from 'rxjs';
 import { RootState } from '../index';
 import { ASRActions } from './asr.actions';
+import {
+  selectASREnabled,
+  selectASRLanguageSettings,
+  selectASRLanguages,
+  selectASRQueue,
+  selectASRSettings,
+  selectMausLanguages,
+} from './asr.selectors';
 import { ASRQueueItemType, ASRStateSettings, ASRTimeInterval } from './index';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AsrStoreService {
-  asrOptions$ = this.store.select((state) => state.asr.settings);
+  asrOptions$ = this.store.select(selectASRSettings);
   private _asrOptions?: ASRStateSettings;
   private subscrManager = new SubscriptionManager();
 
@@ -19,11 +27,11 @@ export class AsrStoreService {
     return this._asrOptions;
   }
 
-  queue$ = this.store.select((state) => state.asr.queue);
-  languageSettings$ = this.store.select((state) => state.asr.languageSettings);
-  mausLanguages$ = this.store.select((state) => state.asr.mausLanguages);
-  asrLanguages$ = this.store.select((state) => state.asr.asrLanguages);
-  asrEnabled$ = this.store.select((state) => state.asr.isEnabled);
+  queue$ = this.store.select(selectASRQueue);
+  languageSettings$ = this.store.select(selectASRLanguageSettings);
+  mausLanguages$ = this.store.select(selectMausLanguages);
+  asrLanguages$ = this.store.select(selectASRLanguages);
+  asrEnabled$ = this.store.select(selectASREnabled);
   itemChange$ = this.actions$.pipe(
     ofType(
       ASRActions.processQueueItem.success,

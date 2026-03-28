@@ -42,11 +42,8 @@ export class AudioDecoder {
   private nextWorker = 0;
   private parallelJobs = 2;
 
-  private joblist: {
-    jobId: number;
-    start: number;
-    duration: number;
-  }[] = [];
+  // Map from jobId → {start, duration} for O(1) lookup and removal.
+  private joblist = new Map<number, { start: number; duration: number }>();
   private subscriptionManager = new SubscriptionManager();
 
   private stopDecoding = false;
@@ -74,18 +71,16 @@ export class AudioDecoder {
       for (let i = 0; i < this.parallelJobs; i++) {
         const worker = new TsWorker();
         worker.jobstatuschange.subscribe(async (job: TsWorkerJob) => {
-          const jobItem = this.joblist.findIndex((a) => {
-            return a.jobId === job.id;
-          });
+          const jobEntry = this.joblist.get(job.id);
 
           if (
             job.status === TsWorkerStatus.FINISHED &&
             job.result !== undefined
           ) {
-            if (jobItem > -1) {
-              const j = this.joblist[jobItem];
+            if (jobEntry !== undefined) {
+              const j = jobEntry;
               this.writtenChannel += j.duration;
-              this.joblist.splice(jobItem, 1);
+              this.joblist.delete(job.id);
 
               if (this.channelData === undefined || this.channelData === null) {
                 this.channelData = new Float32Array(
@@ -347,11 +342,7 @@ export class AudioDecoder {
 
   private addJobToWorker(start: number, duration: number, job: TsWorkerJob) {
     this.tsWorkers[this.nextWorker].addJob(job);
-    this.joblist.push({
-      jobId: job.id,
-      start,
-      duration,
-    });
+    this.joblist.set(job.id, { start, duration });
     this.nextWorker = (this.nextWorker + 1) % this.parallelJobs;
   }
 }

@@ -3,7 +3,7 @@
     "target": "es2022",
     "useDefineForClassFields": false,
     "forceConsistentCasingInFileNames": false,
-    "strict": false,
+    "strict": true,
     "noImplicitOverride": false,
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": false,

@@ -75,12 +75,14 @@ export class AppComponent
   }
 
   ngOnInit() {
-    this.route.fragment.subscribe((fragment) => {
-      switch (fragment) {
-        case 'feedback':
-          this.navigation?.openBugReport();
-          break;
-      }
+    this.subscribe(this.route.fragment, {
+      next: (fragment) => {
+        switch (fragment) {
+          case 'feedback':
+            this.navigation?.openBugReport();
+            break;
+        }
+      },
     });
   }
 

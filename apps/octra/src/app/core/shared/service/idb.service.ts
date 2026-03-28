@@ -163,8 +163,8 @@ export class IDBService {
     );
   }
 
-  public loadImportOptions(mode: LoginMode): Observable<IIDBModeOptions> {
-    return this.database.loadDataOfMode<IIDBModeOptions>(
+  public loadImportOptions(mode: LoginMode): Observable<IIDBModeOptions | undefined> {
+    return this.database.loadDataOfMode<IIDBModeOptions | undefined>(
       mode,
       'importOptions',
       undefined,

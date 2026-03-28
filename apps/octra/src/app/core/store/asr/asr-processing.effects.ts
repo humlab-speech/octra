@@ -52,7 +52,7 @@ export class AsrProcessingEffects {
           cutter.cutAudioFileFromChannelData(
             this.audio.audioManager.resource.info,
             `OCTRA_ASRqueueItem_${action.item.id}.wav`,
-            audioManager.channel,
+            audioManager.channel!,
             {
               number: 1,
               sampleStart: Math.ceil(

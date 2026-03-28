@@ -74,7 +74,7 @@ export class AuthenticationEffects {
             r: joinURL(baseURL, 'auth-success'),
           };
 
-          const newURL = appendURLQueryParams(url, params);
+          const newURL = appendURLQueryParams(url, params as Record<string, string | number | boolean>);
           popupCenter(
             newURL,
             'Octra-Backend - Authenticate via Shibboleth',
@@ -126,7 +126,7 @@ export class AuthenticationEffects {
                   'intern',
                   'projects',
                 ),
-                uuid: this.apiService.appProperties.server.uuid,
+                uuid: this.apiService.appProperties?.server.uuid,
                 t: auth.agreementToken,
               };
               let url = `${auth.openURL}`;
@@ -134,7 +134,7 @@ export class AuthenticationEffects {
 
               if (a.type === AuthenticationActions.loginOnline.do.type) {
                 // redirect directly
-                url = appendURLQueryParams(url, urlParams);
+                url = appendURLQueryParams(url, urlParams as Record<string, string | number | boolean>);
 
                 if (auth.agreementToken) {
                   this.sessionStorageService.store('authType', a.method);

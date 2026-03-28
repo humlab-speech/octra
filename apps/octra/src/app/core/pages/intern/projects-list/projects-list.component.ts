@@ -146,13 +146,13 @@ export class ProjectsListComponent extends DefaultComponent implements OnInit {
   showProjects(page: number) {
     console.log('showProjects', page);
     console.log(this.projects);
-    this.shownProjects = this.projects.list.slice(
+    this.shownProjects = this.projects!.list!.slice(
       (page - 1) * this.itemsPerPage,
       page * this.itemsPerPage,
     );
     this.currentPage = {
       page,
-      collectionSize: this.projects.list.length,
+      collectionSize: this.projects!.list!.length,
     };
   }
 

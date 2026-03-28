@@ -170,21 +170,21 @@ export class OctraModalService implements OnDestroy {
     );
     this.subscrManager.add(
       ref.componentInstance.profileChange.subscribe({
-        next: ({ email, name }) => {
-          this.store.dispatch(UserActions.setUserProfile({ email, name }));
+        next: ({ email, name }: { email?: string; name?: string }) => {
+          this.store.dispatch(UserActions.setUserProfile({ email: email ?? '', name: name ?? '' }));
         },
       }),
     );
 
     this.subscrManager.add(
       ref.componentInstance.send.subscribe({
-        next: ({ name, email, message, sendProtocol, screenshots }) => {
+        next: ({ name, email, message, sendProtocol, screenshots }: { name?: string; email?: string; message: string; sendProtocol: boolean; screenshots: any[] }) => {
           console.log('Sending bug report...');
           ref.componentInstance.sendStatus = 'sending';
           ref.componentInstance.waitForSendResponse(
             this.bugService.sendReport(
-              name,
-              email,
+              name ?? '',
+              email ?? '',
               message,
               sendProtocol,
               screenshots,

@@ -818,8 +818,8 @@ export class AnnotationEffects {
                     inputs: [
                       {
                         id: Date.now().toString(),
-                        filename: state.localMode.sessionFile?.name,
-                        fileType: state.localMode.sessionFile?.type,
+                        filename: state.localMode.sessionFile?.name ?? '',
+                        fileType: state.localMode.sessionFile?.type ?? '',
                         chain_position: 0,
                         type: 'input',
                         creator_type: TaskInputOutputCreatorType.user,
@@ -863,13 +863,14 @@ export class AnnotationEffects {
                     )
                   : undefined;
 
+                const urlInfoIndexed = urlInfo as Record<string, { url?: string; fileInfo?: FileInfo }>;
                 for (const key of Object.keys(urlInfo)) {
-                  if (urlInfo[key].url) {
+                  if (urlInfoIndexed[key].url) {
                     let mediaType: string | undefined =
                       key === 'audio'
                         ? this.routingService.staticQueryParams.audio_type
                         : undefined;
-                    let decodedURL = decodeURIComponent(urlInfo[key].url);
+                    let decodedURL = decodeURIComponent(urlInfoIndexed[key].url!);
 
                     if (decodedURL.includes('?')) {
                       const regex = /mediatype=([^&]+)/g;
@@ -895,11 +896,11 @@ export class AnnotationEffects {
                     }
 
                     if (!mediaType) {
-                      mediaType = mime.getType(extension);
+                      mediaType = mime.getType(extension) ?? undefined;
                     }
 
-                    urlInfo[key].url = decodedURL;
-                    urlInfo[key].fileInfo = FileInfo.fromURL(
+                    urlInfoIndexed[key].url = decodedURL;
+                    urlInfoIndexed[key].fileInfo = FileInfo.fromURL(
                       decodedURL,
                       mediaType,
                       key === 'audio' &&
@@ -929,22 +930,22 @@ export class AnnotationEffects {
                       const inputs: TaskInputOutputDto[] = [
                         {
                           id: Date.now().toString(),
-                          filename: urlInfo.audio.fileInfo.fullname,
-                          fileType: urlInfo.audio.fileInfo.type,
+                          filename: urlInfo.audio.fileInfo!.fullname,
+                          fileType: urlInfo.audio.fileInfo!.type,
                           chain_position: 0,
                           type: 'input',
                           url: urlInfo.audio.url,
                           creator_type: TaskInputOutputCreatorType.user,
-                          content: undefined,
-                          content_type: undefined,
+                          content: '',
+                          content_type: '',
                         },
                       ];
 
                       if (urlInfo.transcript.url) {
                         inputs.push({
                           id: Date.now().toString(),
-                          filename: urlInfo.transcript.fileInfo.fullname,
-                          fileType: urlInfo.transcript.fileInfo.type,
+                          filename: urlInfo.transcript.fileInfo!.fullname,
+                          fileType: urlInfo.transcript.fileInfo!.type,
                           chain_position: 0,
                           type: 'input',
                           url: urlInfo.transcript.url,
@@ -1111,7 +1112,7 @@ export class AnnotationEffects {
                       (transcript: string) => {
                         return tidyUpAnnotation(
                           transcript,
-                          modeState.guidelines.selected.json,
+                          modeState.guidelines!.selected!.json,
                         );
                       },
                     );
@@ -1616,8 +1617,8 @@ export class AnnotationEffects {
             // import server transcript
             this.store.dispatch(
               LoginModeActions.setImportConverter.do({
-                mode: rootState.application.mode,
-                importConverter: importResult?.converter,
+                mode: rootState.application.mode!,
+                importConverter: importResult?.converter ?? '',
               }),
             );
             newAnnotation = OctraAnnotation.deserialize(

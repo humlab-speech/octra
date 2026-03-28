@@ -173,9 +173,9 @@ export class IDBEffects {
                   LoginModeActions.loadProjectAndTaskInformation.do({
                     projectID: action.demoOptions?.project?.id ?? '1234',
                     taskID: action.demoOptions?.transcriptID ?? '38295',
-                    mode: this.routingService.staticQueryParams.audio_url
+                    mode: (this.routingService.staticQueryParams.audio_url
                       ? undefined
-                      : state.application.mode!,
+                      : state.application.mode!) as any,
                     startup: true,
                   }),
                 );
@@ -958,7 +958,7 @@ export class IDBEffects {
       ofType(LoginModeActions.changeImportOptions.do),
       exhaustMap((action) =>
         this.idbService
-          .saveImportOptions(action.mode, action.importOptions)
+          .saveImportOptions(action.mode, action.importOptions!)
           .pipe(map(() => IDBActions.saveImportOptions.success())),
       ),
     ),

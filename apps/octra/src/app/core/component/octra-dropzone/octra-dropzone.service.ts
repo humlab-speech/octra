@@ -32,7 +32,7 @@ export interface DropzoneStatistics {
 @Injectable()
 export class OctraDropzoneService {
   get oannotation(): OAnnotJSON {
-    return this._oannotation;
+    return this._oannotation!;
   }
   get oldFiles(): {
     name: string;
@@ -55,11 +55,11 @@ export class OctraDropzoneService {
     return this._statistics;
   }
   get oaudiofile(): OAudiofile {
-    return this._oaudiofile;
+    return this._oaudiofile!;
   }
 
   get audioManager(): AudioManager {
-    return this._audioManager;
+    return this._audioManager!;
   }
 
   get files(): FileProgress[] {
@@ -236,7 +236,7 @@ export class OctraDropzoneService {
     }
 
     return forkJoin([
-      readFile<ArrayBuffer>(fileProgress.file.file, 'arraybuffer').pipe(
+      readFile<ArrayBuffer>(fileProgress.file.file!, 'arraybuffer').pipe(
         map((a) => {
           fileProgress.progress = a.progress * 0.5;
           return a;
@@ -291,7 +291,7 @@ export class OctraDropzoneService {
 
   private readTextFile(fileProgress: FileProgress) {
     return forkJoin([
-      readFile<string>(fileProgress.file.file, 'text', 'utf-8').pipe(
+      readFile<string>(fileProgress.file.file!, 'text', 'utf-8').pipe(
         map((a) => {
           fileProgress.progress = a.progress;
           return a;
@@ -571,13 +571,13 @@ export class OctraDropzoneService {
       fileProgress.options = result.result;
     }
 
-    const importOptions = {};
-    importOptions[fileProgress.converter.name] = fileProgress.options;
+    const importOptions: Record<string, any> = {};
+    importOptions[fileProgress.converter!.name] = fileProgress.options;
 
     this.store.dispatch(
       LoginModeActions.setImportConverter.do({
         mode: LoginMode.LOCAL,
-        importConverter: fileProgress.converter.name,
+        importConverter: fileProgress.converter!.name,
       }),
     );
     this.store.dispatch(

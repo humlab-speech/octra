@@ -2,49 +2,40 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { SubscriptionManager } from '@octra/utilities';
 import { IDBApplicationOptionName } from '../../shared/octra-database';
-import { LoginMode, RootState } from '../index';
+import { RootState } from '../index';
 import { ApplicationActions } from './application.actions';
+import {
+  selectAppConfiguration,
+  selectIdb,
+  selectInitialized,
+  selectLoggedIn,
+  selectLoading,
+  selectMode,
+  selectOptions,
+  selectShortcutsEnabled,
+} from './application.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationStoreService {
-  private _useMode?: LoginMode;
+  private _useMode = this.store.selectSignal(selectMode);
 
-  get useMode(): LoginMode | undefined {
-    return this._useMode;
+  get useMode() {
+    return this._useMode();
   }
 
   private subscrManager = new SubscriptionManager();
 
-  constructor(private store: Store<RootState>) {
-    this.subscrManager.add(
-      this.store
-        .select((state: RootState) => state.application.mode)
-        .subscribe({
-          next: (mode) => {
-            this._useMode = mode;
-          },
-        }),
-    );
-  }
+  constructor(private store: Store<RootState>) {}
 
-  loading$ = this.store.select((state: RootState) => state.application.loading);
-  appconfig$ = this.store.select(
-    (state: RootState) => state.application.appConfiguration,
-  );
-  idb$ = this.store.select((state: RootState) => state.application.idb);
-  loggedIn$ = this.store.select(
-    (state: RootState) => state.application.loggedIn,
-  );
-  appInitialized = this.store.select(
-    (state: RootState) => state.application.initialized,
-  );
-  shortcutsEnabled$ = this.store.select(
-    (state: RootState) => state.application.shortcutsEnabled,
-  );
-
-  options$ = this.store.select((state: RootState) => state.application.options);
+  loading$ = this.store.select(selectLoading);
+  appconfig$ = this.store.select(selectAppConfiguration);
+  idb$ = this.store.select(selectIdb);
+  loggedIn$ = this.store.select(selectLoggedIn);
+  appInitialized = this.store.select(selectInitialized);
+  shortcutsEnabled$ = this.store.select(selectShortcutsEnabled);
+  options$ = this.store.select(selectOptions);
 
   public initApplication() {
     this.store.dispatch(ApplicationActions.initApplication.do());

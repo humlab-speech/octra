@@ -61,8 +61,8 @@ export class OverviewModalComponent
   }
 
   public get sendValidTranscriptOnly(): boolean {
-    return this.settingsService.projectsettings.octra
-      ?.sendValidatedTranscriptionOnly;
+    return this.settingsService.projectsettings?.octra
+      ?.sendValidatedTranscriptionOnly ?? false;
   }
 
   public shownSegments: {

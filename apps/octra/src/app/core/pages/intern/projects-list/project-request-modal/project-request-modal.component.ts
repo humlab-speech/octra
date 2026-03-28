@@ -36,9 +36,9 @@ export class ProjectRequestModalComponent extends SubscriberComponent {
     private transloco: TranslocoService,
   ) {
     super();
-    if (this.api.appProperties.support?.admin_email) {
+    if (this.api.appProperties?.support?.admin_email) {
       this.supportEmailURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `mailto:${this.api.appProperties.support?.admin_email}`,
+        `mailto:${this.api.appProperties?.support?.admin_email}`,
       );
     }
 

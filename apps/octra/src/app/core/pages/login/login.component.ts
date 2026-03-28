@@ -123,10 +123,10 @@ I just want to let you know, that the OCTRA server is currently offline.
   }
 
   onOfflineSubmit = (removeData: boolean) => {
-    this.audioService.registerAudioManager(this.dropzone.audioManager!);
+    this.audioService.registerAudioManager(this.dropzone!.audioManager!);
     this.authStoreService.loginLocal(
-      this.dropzone.files.map((a) => a.file.file),
-      this.dropzone.oannotation,
+      this.dropzone!.files.map((a) => a.file.file!),
+      this.dropzone!.oannotation,
       removeData,
     );
   };

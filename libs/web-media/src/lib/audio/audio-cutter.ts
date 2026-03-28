@@ -85,16 +85,15 @@ export class AudioCutter {
     /* data chunk length */
     dataView.setUint32(40, subChunk2Size, true);
 
-    for (let i = 0; i < data.length; i++) {
-      if (data instanceof Uint8Array) {
-        dataView.setUint8(44 + i, data[i]);
-      } else if (this.audioInfo.bitrate === 16) {
-        // little endian must be set!
-        dataView.setUint16(44 + i * 2, data[i], true);
-      } else {
-        //TODO check this
-        dataView.setUint32(44 + i * 4, data[i], true);
-      }
+    // Bulk-copy sample data into the buffer instead of per-sample DataView writes.
+    // TypedArray views use native (little-endian on all modern CPUs) byte order,
+    // which matches the WAV spec — safe for all browser targets.
+    if (data instanceof Uint8Array) {
+      new Uint8Array(buffer, 44).set(data);
+    } else if (this.audioInfo.bitrate === 16) {
+      new Int16Array(buffer, 44).set(data as unknown as Int16Array);
+    } else {
+      new Int32Array(buffer, 44).set(data as unknown as Int32Array);
     }
     return dataView.buffer;
   }

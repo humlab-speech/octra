@@ -486,9 +486,9 @@ export class ToolsModalComponent extends OctraModal implements OnDestroy {
         this.tools.audioCutting.zippingSpeed = zipFactor;
 
         cuttingStarted = Date.now();
-        this.tools.audioCutting.cutter.cutChannelDataSequentially(
+        this.tools.audioCutting.cutter!.cutChannelDataSequentially(
           this.namingConvention.namingConvention,
-          this.audio.audioManager.channel,
+          this.audio.audioManager.channel!,
           cutList,
         );
       })
