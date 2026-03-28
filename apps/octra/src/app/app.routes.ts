@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { InternModule, LoadingComponent } from './core/pages';
+import { LoadingComponent } from './core/pages';
 import { LoginComponent } from './core/pages/login';
 import {
   APP_INITIALIZED_GUARD,
@@ -19,7 +19,8 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'intern',
-    loadChildren: () => InternModule,
+    loadChildren: () =>
+      import('./core/pages/intern/intern.module').then((m) => m.InternModule),
     canActivate: [APP_INITIALIZED_GUARD],
   },
   {

@@ -64,14 +64,6 @@ export class AsrQueueEffects {
           );
         }
 
-        if (!state.asr.settings?.selectedASRLanguage) {
-          return of(
-            ASRActions.addToQueue.fail({
-              error: `missing asr language`,
-            }),
-          );
-        }
-
         return of(
           ASRActions.addToQueue.success({
             item: {

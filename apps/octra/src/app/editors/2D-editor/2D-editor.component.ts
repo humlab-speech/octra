@@ -420,6 +420,7 @@ export class TwoDEditorComponent
             'do_asr_maus',
           );
         }
+        this.cd.markForCheck();
       },
     });
     this.subscribe(this.viewer.alert, (result: any) => {
@@ -458,6 +459,7 @@ export class TwoDEditorComponent
             this.scrolltimer.unsubscribe();
           }
         }
+        this.cd.markForCheck();
       },
     );
 
@@ -533,6 +535,7 @@ export class TwoDEditorComponent
           }
         }
       }
+      this.cd.markForCheck();
     });
 
     this.subscribe(
@@ -706,6 +709,7 @@ export class TwoDEditorComponent
           () => {
             this.changeMagnifierPosition($event.event!, $event.time!);
             this.mousestate = 'ended';
+            this.cd.markForCheck();
           },
           'mouseTimer',
         );
@@ -715,6 +719,7 @@ export class TwoDEditorComponent
     } else {
       this.magnifierHidden = true;
     }
+    this.cd.markForCheck();
   }
 
   public changeMagnifierPosition(

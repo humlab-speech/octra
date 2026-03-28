@@ -55,8 +55,8 @@
       </div>
     </div>
     @if (
-      shownGuidelines === undefined ||
-      shownGuidelines.instructions === undefined ||
+      shownGuidelines == null ||
+      shownGuidelines.instructions == null ||
       shownGuidelines!.instructions.length === 0
     ) {
       <div class="bg-warning">

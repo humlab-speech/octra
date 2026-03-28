@@ -196,7 +196,7 @@
                     [height]="60"
                     [validationEnabled]="
                       (appStorage.useMode !== 'url' &&
-                      (appStorage.useMode! === 'demo' ||
+                      (appStorage.useMode === 'demo' ||
                         settingsService.projectsettings?.octra
                           ?.validationEnabled)) ?? false
                     "

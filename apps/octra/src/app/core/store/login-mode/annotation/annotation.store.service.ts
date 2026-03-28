@@ -384,7 +384,10 @@ export class AnnotationStoreService {
   }
 
   public validate(rawText: string): any[] {
-    const results = validateAnnotation(rawText, this.guidelines!);
+    if (!this.guidelines) {
+      return [];
+    }
+    const results = validateAnnotation(rawText, this.guidelines);
 
     // check if selection is in the raw text
     const sPos = rawText.indexOf('✉✉✉sel-start/📩📩📩');

@@ -56,10 +56,11 @@ export class ProjectRequestModalComponent extends SubscriberComponent {
         this.introductionHTML = this.sanitizer.bypassSecurityTrustHtml(
           this.sanitizer.sanitize(SecurityContext.HTML, introRaw) ?? '',
         );
+        const adminEmail = this.api.appProperties?.support?.admin_email;
         const descRaw = this.transloco.translate(
           'modals.create project request.description',
           {
-            adminEmail: `<a href="mailto:${this.api.appProperties?.support?.admin_email}">${this.api.appProperties?.support?.admin_email}</a>`,
+            adminEmail: adminEmail ? `<a href="mailto:${adminEmail}">${adminEmail}</a>` : '',
           },
         );
         this.description = this.sanitizer.bypassSecurityTrustHtml(

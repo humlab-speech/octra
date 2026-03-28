@@ -811,11 +811,13 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
         (a) => a.id === validationArrayElement.level,
       );
       if (index < 0) {
+        const level = this.annotationStoreService.transcript!.levels.find(
+          (a) => a.id === validationArrayElement.level,
+        );
+        if (!level) continue;
         result.push({
           id: validationArrayElement.level,
-          level: this.annotationStoreService.transcript!.levels.find(
-            (a) => a.id === validationArrayElement.level,
-          )!.name,
+          level: level.name,
           errors: validationArrayElement.validation.length,
         });
       } else {

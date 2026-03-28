@@ -294,7 +294,9 @@ export class HtmlAudioMechanism extends AudioMechanism {
           // Tier 1 failed (decodeAudioData rejected) → Tier 3.
           this.decodeAudioWithLibavDecoder(subj, settle);
         });
-    } catch (e) {}
+    } catch (e) {
+      subj.error(e instanceof Error ? e.message : String(e));
+    }
   }
 
   private async applyNativeResampleAndFinalize(

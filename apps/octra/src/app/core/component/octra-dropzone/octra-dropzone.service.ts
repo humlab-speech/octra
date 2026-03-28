@@ -32,7 +32,8 @@ export interface DropzoneStatistics {
 @Injectable()
 export class OctraDropzoneService {
   get oannotation(): OAnnotJSON {
-    return this._oannotation!;
+    if (!this._oannotation) throw new Error('oannotation accessed before initialization');
+    return this._oannotation;
   }
   get oldFiles(): {
     name: string;
@@ -55,11 +56,13 @@ export class OctraDropzoneService {
     return this._statistics;
   }
   get oaudiofile(): OAudiofile {
-    return this._oaudiofile!;
+    if (!this._oaudiofile) throw new Error('oaudiofile accessed before initialization');
+    return this._oaudiofile;
   }
 
   get audioManager(): AudioManager {
-    return this._audioManager!;
+    if (!this._audioManager) throw new Error('audioManager accessed before initialization');
+    return this._audioManager;
   }
 
   get files(): FileProgress[] {

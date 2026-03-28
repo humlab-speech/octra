@@ -178,7 +178,7 @@ export class ApplicationSessionEffects {
                     }),
                   );
                 } else if (
-                  this.sessionStorage.retrieve('last_page_path') !==
+                  this.sessStr.retrieve('last_page_path') !==
                   '/help-tools'
                 ) {
                   this.store.dispatch(
@@ -246,12 +246,10 @@ export class ApplicationSessionEffects {
                   .split('&')
                   .map((str: string) => {
                     const matched = /([^&]+)=([^&]+)/g.exec(str);
-
-                    return {
-                      key: matched![1],
-                      value: matched![2],
-                    };
-                  });
+                    if (!matched) return null;
+                    return { key: matched[1], value: matched[2] };
+                  })
+                  .filter((item: { key: string; value: string } | null): item is { key: string; value: string } => item !== null);
 
                 for (const splittedElement of splitted) {
                   queryParams[splittedElement.key] = splittedElement.value;
@@ -409,7 +407,6 @@ export class ApplicationSessionEffects {
     private appStorage: AppStorageService,
     private bugService: BugReportService,
     private routerService: RoutingService,
-    private sessionStorage: SessionStorageService,
   ) {}
 
   private appendTrackingCode(type: string, settings: AppSettings) {

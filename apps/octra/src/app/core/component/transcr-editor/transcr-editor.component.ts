@@ -1500,7 +1500,7 @@ export class TranscrEditorComponent
    * tidy up the raw text, remove white spaces etc.
    */
   private tidyUpRaw(raw: string): string {
-    return tidyUpAnnotation(raw, this.guidelines!);
+    return this.guidelines ? tidyUpAnnotation(raw, this.guidelines) : raw;
   }
 
   private onSegmentBoundaryOver = (event: MouseEvent) => {

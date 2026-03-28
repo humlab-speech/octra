@@ -74,7 +74,10 @@ export class AuthenticationEffects {
             r: joinURL(baseURL, 'auth-success'),
           };
 
-          const newURL = appendURLQueryParams(url, params as Record<string, string | number | boolean>);
+          const filteredParams = Object.fromEntries(
+            Object.entries(params).filter(([, v]) => v != null)
+          ) as Record<string, string | number | boolean>;
+          const newURL = appendURLQueryParams(url, filteredParams);
           popupCenter(
             newURL,
             'Octra-Backend - Authenticate via Shibboleth',

@@ -38,6 +38,7 @@ import {
   of,
   Subscription,
   tap,
+  throwError,
   timer,
   withLatestFrom,
 } from 'rxjs';
@@ -927,11 +928,14 @@ export class AnnotationEffects {
                       : of({ progress: 1, result: undefined }),
                   ]).pipe(
                     exhaustMap(([event]) => {
+                      if (!urlInfo.audio.fileInfo) {
+                        return throwError(() => new Error('Audio URL is required for URL mode'));
+                      }
                       const inputs: TaskInputOutputDto[] = [
                         {
                           id: Date.now().toString(),
-                          filename: urlInfo.audio.fileInfo!.fullname,
-                          fileType: urlInfo.audio.fileInfo!.type,
+                          filename: urlInfo.audio.fileInfo.fullname,
+                          fileType: urlInfo.audio.fileInfo.type,
                           chain_position: 0,
                           type: 'input',
                           url: urlInfo.audio.url,
@@ -1110,10 +1114,11 @@ export class AnnotationEffects {
                       '',
                       false,
                       (transcript: string) => {
-                        return tidyUpAnnotation(
-                          transcript,
-                          modeState.guidelines!.selected!.json,
-                        );
+                        const guidelinesJson = modeState.guidelines?.selected?.json;
+                        if (!guidelinesJson) {
+                          return transcript;
+                        }
+                        return tidyUpAnnotation(transcript, guidelinesJson);
                       },
                     );
                     currentLevel = transcript.currentLevel as any;

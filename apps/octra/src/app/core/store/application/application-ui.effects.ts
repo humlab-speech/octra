@@ -59,7 +59,7 @@ export class ApplicationUiEffects {
       this.actions$.pipe(
         ofType(ApplicationActions.loadSettings.fail),
         tap((a) => {
-          const ref = this.modalService.openModalRef<ErrorModalComponent>(
+          this.modalService.openModalRef<ErrorModalComponent>(
             ErrorModalComponent,
             {
               ...ErrorModalComponent.options,
@@ -67,10 +67,9 @@ export class ApplicationUiEffects {
             },
             {
               text: `Can't load application settings: ${a.error}`,
+              showOKButton: false,
             },
           );
-
-          ref.componentInstance.showOKButton = false;
         }),
       ),
     { dispatch: false },

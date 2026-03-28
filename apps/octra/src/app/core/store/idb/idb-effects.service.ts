@@ -956,10 +956,14 @@ export class IDBEffects {
   saveImportOptions$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LoginModeActions.changeImportOptions.do),
+      filter((action) => action.importOptions != null),
       exhaustMap((action) =>
         this.idbService
           .saveImportOptions(action.mode, action.importOptions!)
-          .pipe(map(() => IDBActions.saveImportOptions.success())),
+          .pipe(
+            map(() => IDBActions.saveImportOptions.success()),
+            catchError((error: Error) => of(IDBActions.saveImportOptions.fail({ error: error.message }))),
+          ),
       ),
     ),
   );
