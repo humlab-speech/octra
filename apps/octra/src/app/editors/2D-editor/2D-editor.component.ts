@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -60,6 +61,7 @@ import { TranscrWindowComponent } from './transcr-window';
   templateUrl: './2D-editor.component.html',
   styleUrls: ['./2D-editor.component.scss'],
   imports: [OctraComponentsModule, NgStyle, AudioNavigationComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TwoDEditorComponent
   extends OCTRAEditor

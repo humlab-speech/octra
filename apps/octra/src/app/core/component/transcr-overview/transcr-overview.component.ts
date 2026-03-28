@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SecurityContext,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -228,7 +229,9 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   sanitizeHTML(str: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(str);
+    // Sanitize first to strip dangerous tags/attributes, then trust the clean result.
+    const clean = this.sanitizer.sanitize(SecurityContext.HTML, str) ?? '';
+    return this.sanitizer.bypassSecurityTrustHtml(clean);
   }
 
   async onMouseOver(

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -48,6 +49,7 @@ export interface CurrentLevelChangeEvent {
   styleUrls: ['./audio-viewer.component.css'],
   providers: [AudioViewerService],
   encapsulation: ViewEncapsulation.ShadowDom,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioViewerComponent
   implements OnInit, OnChanges, OnDestroy, AfterViewInit

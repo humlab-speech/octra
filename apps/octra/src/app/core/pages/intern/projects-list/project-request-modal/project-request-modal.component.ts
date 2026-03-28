@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, SecurityContext } from '@angular/core';
 import {
   DomSanitizer,
   SafeHtml,
@@ -44,24 +44,26 @@ export class ProjectRequestModalComponent extends SubscriberComponent {
 
     this.subscribe(this.appStorage.appconfig$, {
       next: (appSettings) => {
+        const introRaw = this.transloco.translate(
+          'modals.create project request.introduction',
+          {
+            octraBackendURL:
+              "<a href='" +
+              appSettings?.octraBackend?.url +
+              "' target='_blank'>OCTRA-Backend</a>",
+          },
+        );
         this.introductionHTML = this.sanitizer.bypassSecurityTrustHtml(
-          this.transloco.translate(
-            'modals.create project request.introduction',
-            {
-              octraBackendURL:
-                "<a href='" +
-                appSettings?.octraBackend?.url +
-                "' target='_blank'>OCTRA-Backend</a>",
-            },
-          ),
+          this.sanitizer.sanitize(SecurityContext.HTML, introRaw) ?? '',
+        );
+        const descRaw = this.transloco.translate(
+          'modals.create project request.description',
+          {
+            adminEmail: `<a href="mailto:${this.api.appProperties?.support?.admin_email}">${this.api.appProperties?.support?.admin_email}</a>`,
+          },
         );
         this.description = this.sanitizer.bypassSecurityTrustHtml(
-          this.transloco.translate(
-            'modals.create project request.description',
-            {
-              adminEmail: `<a href="mailto:${this.api.appProperties?.support?.admin_email}">${this.api.appProperties?.support?.admin_email}</a>`,
-            },
-          ),
+          this.sanitizer.sanitize(SecurityContext.HTML, descRaw) ?? '',
         );
       },
     });

@@ -655,7 +655,11 @@ export class IDBEffects {
           } catch (e) {
             // Safari private browsing may throw QuotaExceededError
           }
-          await this.idbService.saveOption('useMode', action.mode);
+          try {
+            await this.idbService.saveOption('useMode', action.mode);
+          } catch (e) {
+            console.error('Failed to save useMode to IDB:', e);
+          }
         }),
       ),
     { dispatch: false },
@@ -973,6 +977,9 @@ export class IDBEffects {
           }
           this.idbService.clearAllData().then(() => {
             this.store.dispatch(IDBActions.clearAllData.success());
+          }).catch((e: Error) => {
+            console.error('Failed to clear IDB data:', e);
+            this.store.dispatch(IDBActions.clearAllData.fail({ error: e?.message ?? String(e) }));
           });
         }),
       ),

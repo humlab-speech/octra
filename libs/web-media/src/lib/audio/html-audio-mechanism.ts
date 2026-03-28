@@ -237,6 +237,14 @@ export class HtmlAudioMechanism extends AudioMechanism {
         return;
       }
 
+      // Guard: only the first tier to complete may resolve subj.
+      let decodeSettled = false;
+      const settle = (fn: () => void) => {
+        if (decodeSettled) return;
+        decodeSettled = true;
+        fn();
+      };
+
       this.statistics.decoding.started = Date.now();
       this.initAudioContext();
       this._audioContext!.decodeAudioData(this._resource.arraybuffer?.slice(0)!)
@@ -259,7 +267,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
 
             if (needsResampling(audioBuffer.sampleRate)) {
               // Tier 2: Safari sub-44100 Hz — resample via OfflineAudioContext then re-encode to WAV.
-              await this.applyNativeResampleAndFinalize(audioBuffer, subj);
+              await this.applyNativeResampleAndFinalize(audioBuffer, subj, settle);
             } else {
               // Tier 1: native decode, no resampling needed.
               this._channel = audioBuffer.getChannelData(0);
@@ -272,19 +280,19 @@ export class HtmlAudioMechanism extends AudioMechanism {
               this.statistics.decoding.duration =
                 Date.now() - this.statistics.decoding.started;
               this.changeStatus(PlayBackStatus.INITIALIZED);
-              setTimeout(() => {
+              settle(() => setTimeout(() => {
                 subj.next({ decodeProgress: 1 });
                 subj.complete();
-              }, 0);
+              }, 0));
             }
           } catch (_resampleError) {
             // Tier 2 failed (OfflineAudioContext error) → Tier 3.
-            this.decodeAudioWithLibavDecoder(subj);
+            this.decodeAudioWithLibavDecoder(subj, settle);
           }
         })
         .catch((_e) => {
           // Tier 1 failed (decodeAudioData rejected) → Tier 3.
-          this.decodeAudioWithLibavDecoder(subj);
+          this.decodeAudioWithLibavDecoder(subj, settle);
         });
     } catch (e) {}
   }
@@ -292,6 +300,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
   private async applyNativeResampleAndFinalize(
     audioBuffer: AudioBuffer,
     subj: Subject<{ decodeProgress: number }>,
+    settle: (fn: () => void) => void = (fn) => fn(),
   ): Promise<void> {
     const targetRate = 44100;
     const numChannels = audioBuffer.numberOfChannels;
@@ -335,16 +344,17 @@ export class HtmlAudioMechanism extends AudioMechanism {
       Date.now() - this.statistics.decoding.started;
     this.changeStatus(PlayBackStatus.INITIALIZED);
 
-    setTimeout(() => {
+    settle(() => setTimeout(() => {
       subj.next({ decodeProgress: 1 });
       subj.complete();
-    }, 0);
+    }, 0));
   }
 
   private decodeAudioWithLibavDecoder(
     subj: Subject<{
       decodeProgress: number;
     }>,
+    settle: (fn: () => void) => void = (fn) => fn(),
   ) {
     this.statistics.decoding.started = Date.now();
 
@@ -390,12 +400,12 @@ export class HtmlAudioMechanism extends AudioMechanism {
         Date.now() - this.statistics.decoding.started;
       this.changeStatus(PlayBackStatus.INITIALIZED);
 
-      setTimeout(() => {
+      settle(() => setTimeout(() => {
         subj.next({ decodeProgress: 1 });
         subj.complete();
-      }, 0);
+      }, 0));
     }).catch((e) => {
-      subj.error(e instanceof Error ? e.message : String(e));
+      settle(() => subj.error(e instanceof Error ? e.message : String(e)));
     });
   }
 
@@ -657,5 +667,10 @@ export class HtmlAudioMechanism extends AudioMechanism {
     if (this.decoder) {
       this.decoder.requeststopDecoding();
     }
+  }
+
+  public override async destroy(disconnect = false): Promise<void> {
+    this.removeEventListeners();
+    await super.destroy(disconnect);
   }
 }

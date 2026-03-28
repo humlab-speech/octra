@@ -43,75 +43,77 @@ export async function decodeWithLibAV(buf: ArrayBuffer): Promise<AudioBufferLike
   const filename = 'input.audio';
   await libav.writeFile(filename, new Uint8Array(buf));
 
-  const [fmt_ctx, streams] = await libav.ff_init_demuxer_file(filename);
+  let fmt_ctx: any;
+  let c: any, pkt: any, frame: any;
+  try {
+    const [_fmt_ctx, streams] = await libav.ff_init_demuxer_file(filename);
+    fmt_ctx = _fmt_ctx;
 
-  const audioStream = streams.find((s: any) => s.codec_type === libav.AVMEDIA_TYPE_AUDIO);
-  if (!audioStream) {
-    await libav.avformat_close_input_js(fmt_ctx);
-    await libav.unlink(filename);
-    throw new Error('No audio stream found in file.');
-  }
-
-  // Discard all non-audio streams so ff_read_multi skips video packets entirely,
-  // preventing H.264/video data from being loaded into WASM memory.
-  for (const s of streams) {
-    if (s.codec_type !== libav.AVMEDIA_TYPE_AUDIO) {
-      const streamPtr = await libav.AVFormatContext_streams_a(fmt_ctx, s.index);
-      await libav.AVStream_discard_s(streamPtr, libav.AVDISCARD_ALL);
+    const audioStream = streams.find((s: any) => s.codec_type === libav.AVMEDIA_TYPE_AUDIO);
+    if (!audioStream) {
+      throw new Error('No audio stream found in file.');
     }
-  }
 
-  const [, c, pkt, frame] = await libav.ff_init_decoder(
-    audioStream.codec_id,
-    audioStream.codecpar,
-  );
-
-  const [, allPackets] = await libav.ff_read_multi(fmt_ctx, pkt);
-  const packets = allPackets[audioStream.index] || [];
-
-  const frames = await libav.ff_decode_multi(c, pkt, frame, packets, true);
-
-  if (!frames || frames.length === 0) {
-    await libav.ff_free_decoder(c, pkt, frame);
-    await libav.avformat_close_input_js(fmt_ctx);
-    await libav.unlink(filename);
-    throw new Error('libav.js: no audio frames decoded.');
-  }
-
-  const sampleRate = frames[0].sample_rate;
-  const numChannels = frames[0].channels || frames[0].ch_layout_nb_channels || 1;
-  const sampleFormat = frames[0].format;
-
-  let totalSamples = 0;
-  for (const f of frames) totalSamples += f.nb_samples;
-
-  const channels: Float32Array[] = [];
-  for (let ch = 0; ch < numChannels; ch++) channels.push(new Float32Array(totalSamples));
-
-  let offset = 0;
-  for (const f of frames) {
-    const nb = f.nb_samples;
-    if (isPlanar(sampleFormat)) {
-      for (let ch = 0; ch < numChannels; ch++) {
-        const src = toFloat32(f.data[ch], sampleFormat);
-        channels[ch].set(src, offset);
+    // Discard all non-audio streams so ff_read_multi skips video packets entirely,
+    // preventing H.264/video data from being loaded into WASM memory.
+    for (const s of streams) {
+      if (s.codec_type !== libav.AVMEDIA_TYPE_AUDIO) {
+        const streamPtr = await libav.AVFormatContext_streams_a(fmt_ctx, s.index);
+        await libav.AVStream_discard_s(streamPtr, libav.AVDISCARD_ALL);
       }
-    } else {
-      const src = toFloat32(f.data, sampleFormat);
-      for (let i = 0; i < nb; i++) {
+    }
+
+    const [, _c, _pkt, _frame] = await libav.ff_init_decoder(
+      audioStream.codec_id,
+      audioStream.codecpar,
+    );
+    c = _c; pkt = _pkt; frame = _frame;
+
+    const [, allPackets] = await libav.ff_read_multi(fmt_ctx, pkt);
+    const packets = allPackets[audioStream.index] || [];
+
+    const frames = await libav.ff_decode_multi(c, pkt, frame, packets, true);
+
+    if (!frames || frames.length === 0) {
+      throw new Error('libav.js: no audio frames decoded.');
+    }
+
+    const sampleRate = frames[0].sample_rate;
+    const numChannels = frames[0].channels || frames[0].ch_layout_nb_channels || 1;
+    const sampleFormat = frames[0].format;
+
+    let totalSamples = 0;
+    for (const f of frames) totalSamples += f.nb_samples;
+
+    const channels: Float32Array[] = [];
+    for (let ch = 0; ch < numChannels; ch++) channels.push(new Float32Array(totalSamples));
+
+    let offset = 0;
+    for (const f of frames) {
+      const nb = f.nb_samples;
+      if (isPlanar(sampleFormat)) {
         for (let ch = 0; ch < numChannels; ch++) {
-          channels[ch][offset + i] = src[i * numChannels + ch];
+          const src = toFloat32(f.data[ch], sampleFormat);
+          channels[ch].set(src, offset);
+        }
+      } else {
+        const src = toFloat32(f.data, sampleFormat);
+        for (let i = 0; i < nb; i++) {
+          for (let ch = 0; ch < numChannels; ch++) {
+            channels[ch][offset + i] = src[i * numChannels + ch];
+          }
         }
       }
+      offset += nb;
     }
-    offset += nb;
+
+    return new AudioBufferLikeImpl(channels, sampleRate);
+  } finally {
+    // Always free resources, even on error, to prevent WASM memory leaks.
+    try { if (c !== undefined && pkt !== undefined && frame !== undefined) await libav.ff_free_decoder(c, pkt, frame); } catch (_) {}
+    try { if (fmt_ctx !== undefined) await libav.avformat_close_input_js(fmt_ctx); } catch (_) {}
+    try { await libav.unlink(filename); } catch (_) {}
   }
-
-  await libav.ff_free_decoder(c, pkt, frame);
-  await libav.avformat_close_input_js(fmt_ctx);
-  await libav.unlink(filename);
-
-  return new AudioBufferLikeImpl(channels, sampleRate);
 }
 
 function isPlanar(fmt: number): boolean {

@@ -1,23 +1,13 @@
 import { Routes } from '@angular/router';
 
-import {
-  ALoginGuard,
-  BrowserTestComponent,
-  Error404Component,
-  FeaturesComponent,
-  HelpToolsComponent,
-  InternModule,
-  LoadingComponent,
-  NewsComponent,
-} from './core/pages';
+import { InternModule, LoadingComponent } from './core/pages';
 import { LoginComponent } from './core/pages/login';
 import {
   APP_INITIALIZED_GUARD,
   CONFIG_LOADED_GUARD,
 } from './core/shared/guard/appconfig-load.guard';
 import { IDB_LOADED_GUARD } from './core/shared/guard/idb.activateguard';
-import { StresstestComponent } from './core/tools/stresstest/stresstest.component';
-import { VispTaskComponent } from './core/pages/intern/visp-task/visp-task.component';
+import { ALoginGuard } from './core/pages';
 
 export const APP_ROUTES: Routes = [
   { path: 'load', component: LoadingComponent },
@@ -34,37 +24,55 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'test',
-    component: BrowserTestComponent,
+    loadComponent: () =>
+      import('./core/pages/browser-test/browser-test.component').then(
+        (m) => m.BrowserTestComponent,
+      ),
     canActivate: [CONFIG_LOADED_GUARD, IDB_LOADED_GUARD],
   },
   {
     path: '404',
-    component: Error404Component,
+    loadComponent: () =>
+      import('./core/pages/error404/error404.component').then(
+        (m) => m.Error404Component,
+      ),
     canActivate: [APP_INITIALIZED_GUARD],
   },
   {
     path: 'news',
-    component: NewsComponent,
+    loadComponent: () =>
+      import('./core/pages/news/news.component').then((m) => m.NewsComponent),
     canActivate: [APP_INITIALIZED_GUARD, CONFIG_LOADED_GUARD, IDB_LOADED_GUARD],
   },
   {
     path: 'features',
-    component: FeaturesComponent,
+    loadComponent: () =>
+      import('./core/pages/features/features.component').then(
+        (m) => m.FeaturesComponent,
+      ),
     canActivate: [APP_INITIALIZED_GUARD, CONFIG_LOADED_GUARD, IDB_LOADED_GUARD],
   },
   {
     path: 'help-tools',
-    component: HelpToolsComponent,
+    loadComponent: () =>
+      import('./core/pages/help-tools/help-tools.component').then(
+        (m) => m.HelpToolsComponent,
+      ),
     canActivate: [APP_INITIALIZED_GUARD, CONFIG_LOADED_GUARD],
   },
   {
     path: 'stresstest',
-    component: StresstestComponent,
+    loadComponent: () =>
+      import('./core/tools/stresstest/stresstest.component').then(
+        (m) => m.StresstestComponent,
+      ),
     canActivate: [APP_INITIALIZED_GUARD, CONFIG_LOADED_GUARD],
   },
   {
     path: 'visp-task/project/:projectId/session/:sessionId/bundle/:bundleId',
-    component: VispTaskComponent,
+    loadComponent: () =>
+      import(
+        './core/pages/intern/visp-task/visp-task.component'
+      ).then((m) => m.VispTaskComponent),
   },
-  
 ];

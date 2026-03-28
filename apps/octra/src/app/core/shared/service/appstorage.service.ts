@@ -12,7 +12,7 @@ import {
   waitTillResultRetrieved,
 } from '@octra/utilities';
 import { SessionStorageService } from 'ngx-webstorage';
-import { asapScheduler, Observable, Subject, Subscription } from 'rxjs';
+import { asapScheduler, Observable, shareReplay, Subject, Subscription } from 'rxjs';
 import { SessionFile } from '../../obj/SessionFile';
 import { getModeState, LoginMode, RootState } from '../../store';
 import { ApplicationActions } from '../../store/application/application.actions';
@@ -88,13 +88,9 @@ export class AppStorageService {
     return mode?.currentSession.task;
   }
 
-  public get annotationChanged(): Observable<AnnotationState> {
-    const subject = new Subject<AnnotationState>();
-    this.store.select(fromAnnotation.selectAnnotation).subscribe((state) => {
-      subject.next(state!);
-    });
-    return subject;
-  }
+  // Shared, replay-1 stream — created once, not per-access.
+  public readonly annotationChanged: Observable<AnnotationState> =
+    this.store.select(fromAnnotation.selectAnnotation).pipe(shareReplay(1)) as Observable<AnnotationState>;
 
   get reloaded(): boolean {
     return this._snapshot.application.reloaded;
