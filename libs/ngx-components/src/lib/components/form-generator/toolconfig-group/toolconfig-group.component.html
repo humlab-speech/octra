@@ -2,7 +2,7 @@
   @if (group!.title) {
     <h4>{{ group!.title }}</h4>
   }
-  @for (control of group?.controls; track control) {
+  @for (control of group.controls; track control) {
     @if (control.type === 'switch' && !control.ignore) {
       <div class="row align-items-center mt-2 mb-2">
         <div class="col-auto">

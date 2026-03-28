@@ -111,11 +111,11 @@
             [ngClass]="{
               'bg-success':
                 segment.transcription.text !== '' &&
-                (!annotationStoreService?.breakMarker ||
+                (!annotationStoreService.breakMarker ||
                   segment.transcription.text !==
                     annotationStoreService.breakMarker!.code),
               'bg-info':
-                annotationStoreService?.breakMarker &&
+                annotationStoreService.breakMarker &&
                 segment.transcription.text ===
                   annotationStoreService.breakMarker!.code,
               'bg-danger': segment.transcription.text === '',
@@ -127,11 +127,11 @@
               [ngClass]="{
                 'bg-success':
                   segment.transcription.text !== '' &&
-                  (!annotationStoreService?.breakMarker ||
+                  (!annotationStoreService.breakMarker ||
                     segment.transcription.text !==
                       annotationStoreService.breakMarker!.code),
                 'bg-info':
-                  annotationStoreService?.breakMarker &&
+                  annotationStoreService.breakMarker &&
                   segment.transcription.text ===
                     annotationStoreService.breakMarker!.code,
                 'bg-danger': segment.transcription.text === '',
@@ -155,11 +155,11 @@
               [ngClass]="{
                 'bg-success':
                   segment.transcription.text !== '' &&
-                  (!annotationStoreService?.breakMarker ||
+                  (!annotationStoreService.breakMarker ||
                     segment.transcription.text !==
                       annotationStoreService.breakMarker!.code),
                 'bg-info':
-                  annotationStoreService?.breakMarker &&
+                  annotationStoreService.breakMarker &&
                   segment.transcription.text ===
                     annotationStoreService.breakMarker!.code,
                 'bg-danger': segment.transcription.text === '',
@@ -177,11 +177,11 @@
                 [ngClass]="{
                   'bg-success':
                     segment.transcription.text !== '' &&
-                    (!annotationStoreService?.breakMarker ||
+                    (!annotationStoreService.breakMarker ||
                       segment.transcription.text !==
                         annotationStoreService.breakMarker!.code),
                   'bg-info':
-                    annotationStoreService?.breakMarker &&
+                    annotationStoreService.breakMarker &&
                     segment.transcription.text ===
                       annotationStoreService.breakMarker!.code,
                   'bg-danger': segment.transcription.text === '',
@@ -219,11 +219,11 @@
                 [ngClass]="{
                   'bg-success':
                     segment.transcription.text !== '' &&
-                    (!annotationStoreService?.breakMarker ||
+                    (!annotationStoreService.breakMarker ||
                       segment.transcription.text !==
                         annotationStoreService.breakMarker!.code),
                   'bg-info':
-                    annotationStoreService?.breakMarker &&
+                    annotationStoreService.breakMarker &&
                     segment.transcription.text ===
                       annotationStoreService.breakMarker!.code,
                   'bg-danger': segment.transcription.text === '',
@@ -249,11 +249,11 @@
               [ngClass]="{
                 'bg-success':
                   segment.transcription.text !== '' &&
-                  (!annotationStoreService?.breakMarker ||
+                  (!annotationStoreService.breakMarker ||
                     segment.transcription.text !==
                       annotationStoreService.breakMarker!.code),
                 'bg-info':
-                  annotationStoreService?.breakMarker &&
+                  annotationStoreService.breakMarker &&
                   segment.transcription.text ===
                     annotationStoreService.breakMarker!.code,
                 'bg-danger': segment.transcription.text === '',
@@ -261,7 +261,7 @@
               }"
             >
               <i
-                [class]="playStateSegments[i]?.icon"
+                [class]="playStateSegments[i].icon"
                 (click)="playSelectedSegment(i)"
               ></i>
             </td>
