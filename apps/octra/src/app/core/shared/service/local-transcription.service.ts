@@ -17,9 +17,14 @@ export interface TranscriptionDownloadProgress {
   file: string;
 }
 
-export interface TranscriptionProgress {
-  type: 'transcribe-progress';
-  chunksProcessed: number;
+export interface TranscriptionStart {
+  type: 'transcribe-start';
+  audioDurationS: number;
+}
+
+export interface TranscriptionElapsed {
+  type: 'transcribe-elapsed';
+  elapsedMs: number;
 }
 
 export interface TranscriptionResult {
@@ -34,7 +39,8 @@ export interface TranscriptionError {
 
 export type TranscriptionEvent =
   | TranscriptionDownloadProgress
-  | TranscriptionProgress
+  | TranscriptionStart
+  | TranscriptionElapsed
   | TranscriptionResult
   | TranscriptionError;
 
@@ -74,6 +80,8 @@ export class LocalTranscriptionService implements OnDestroy {
         ? resampleChannels([channel], srcRate, WHISPER_SAMPLE_RATE)[0]
         : channel;
 
+    const audioDurationS = mono.length / WHISPER_SAMPLE_RATE;
+
     const worker = new Worker(
       new URL('../../workers/whisper-transcription.worker', import.meta.url),
       { type: 'module' },
@@ -112,6 +120,7 @@ export class LocalTranscriptionService implements OnDestroy {
       modelId: options.modelId,
       audio: mono,
       useWebGPU: options.useWebGPU,
+      audioDurationS,
     };
     worker.postMessage(message, [mono.buffer]);
 

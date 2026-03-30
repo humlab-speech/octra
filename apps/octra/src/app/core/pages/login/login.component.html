@@ -165,8 +165,16 @@
                     } @else if (transcription.phase === 'transcribing') {
                       <div>
                         <strong>Transcribing audio…</strong>
-                        <span class="ms-2 text-muted small">segment {{ transcription.chunksProcessed }}</span>
-                        <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
+                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <div class="mt-1 text-muted small">
+                          Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
+                          @if (transcription.audioDurationS > 0) {
+                            &nbsp;·&nbsp; Audio: {{ formatDuration(transcription.audioDurationS) }}
+                          }
+                        </div>
+                        <div class="mt-1 text-muted small">
+                          Running locally in your browser — this may take several minutes for longer recordings.
+                        </div>
                       </div>
                     }
 

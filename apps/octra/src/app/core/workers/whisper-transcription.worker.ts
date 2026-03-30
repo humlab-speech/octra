@@ -21,6 +21,7 @@ export interface WorkerTranscribeMessage {
   modelId: string;
   audio: Float32Array;
   useWebGPU: boolean;
+  audioDurationS: number;
 }
 
 export interface WorkerDownloadProgressMessage {
@@ -30,9 +31,14 @@ export interface WorkerDownloadProgressMessage {
   file: string;
 }
 
-export interface WorkerTranscribeProgressMessage {
-  type: 'transcribe-progress';
-  chunksProcessed: number;
+export interface WorkerTranscribeStartMessage {
+  type: 'transcribe-start';
+  audioDurationS: number;
+}
+
+export interface WorkerTranscribeElapsedMessage {
+  type: 'transcribe-elapsed';
+  elapsedMs: number;
 }
 
 export interface WorkerResultMessage {
@@ -47,7 +53,8 @@ export interface WorkerErrorMessage {
 
 export type WorkerOutMessage =
   | WorkerDownloadProgressMessage
-  | WorkerTranscribeProgressMessage
+  | WorkerTranscribeStartMessage
+  | WorkerTranscribeElapsedMessage
   | WorkerResultMessage
   | WorkerErrorMessage;
 
@@ -58,7 +65,7 @@ let loadedModelId: string | null = null;
 addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessage>) => {
   if (data.type !== 'transcribe') return;
 
-  const { modelId, audio, useWebGPU } = data;
+  const { modelId, audio, useWebGPU, audioDurationS } = data;
 
   try {
     if (!(await isCacheAvailable())) {
@@ -100,22 +107,32 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
       loadedModelId = modelId;
     }
 
-    let chunksProcessed = 0;
-    const result = await transcriber(audio, {
-      return_timestamps: true,
-      chunk_length_s: 30,
-      stride_length_s: 5,
-      language: 'sv',
-      task: 'transcribe',
-      callback_function: () => {
-        chunksProcessed++;
-        const msg: WorkerTranscribeProgressMessage = {
-          type: 'transcribe-progress',
-          chunksProcessed,
-        };
-        postMessage(msg);
-      },
-    });
+    // Signal that transcription is about to start (model loaded)
+    const startMsg: WorkerTranscribeStartMessage = { type: 'transcribe-start', audioDurationS };
+    postMessage(startMsg);
+
+    // Push elapsed-time heartbeats so the UI doesn't appear frozen
+    const startTime = Date.now();
+    const elapsedInterval = setInterval(() => {
+      const elapsed: WorkerTranscribeElapsedMessage = {
+        type: 'transcribe-elapsed',
+        elapsedMs: Date.now() - startTime,
+      };
+      postMessage(elapsed);
+    }, 1000);
+
+    let result: any;
+    try {
+      result = await (transcriber as any)(audio, {
+        return_timestamps: true,
+        chunk_length_s: 30,
+        stride_length_s: 5,
+        language: 'sv',
+        task: 'transcribe',
+      });
+    } finally {
+      clearInterval(elapsedInterval);
+    }
 
     const chunks = (result as any).chunks as Array<{ timestamp: [number, number]; text: string }>;
     const msg: WorkerResultMessage = { type: 'result', chunks: chunks ?? [] };

@@ -18,6 +18,12 @@ import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
 import { KB_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
 import { AuthenticationStoreService } from '../../store/authentication';
 import { BrowserTestComponent } from '../browser-test/browser-test.component';
 import { ComponentCanDeactivate } from './login.deactivateguard';
@@ -58,7 +64,8 @@ export class LoginComponent
     downloadTotal: number;
     downloadExpectedBytes: number;
     downloadFile: string;
-    chunksProcessed: number;
+    elapsedMs: number;
+    audioDurationS: number;
     error: string | null;
   } = {
     active: false,
@@ -67,9 +74,12 @@ export class LoginComponent
     downloadTotal: 0,
     downloadExpectedBytes: 0,
     downloadFile: '',
-    chunksProcessed: 0,
+    elapsedMs: 0,
+    audioDurationS: 0,
     error: null,
   };
+
+  readonly formatDuration = formatDuration;
 
   private _transcriptionSub: Subscription | null = null;
   private _pendingRemoveData = false;
@@ -161,7 +171,8 @@ I just want to let you know, that the OCTRA server is currently offline.
         downloadTotal: 0,
         downloadExpectedBytes: (modelMeta?.sizeMb ?? 0) * 1024 * 1024,
         downloadFile: '',
-        chunksProcessed: 0,
+        elapsedMs: 0,
+        audioDurationS: 0,
         error: null,
       };
       this._transcriptionSub = this.localTranscriptionService
@@ -184,9 +195,12 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.transcription.downloadLoaded = event.loaded;
       this.transcription.downloadTotal = event.total;
       this.transcription.downloadFile = event.file;
-    } else if (event.type === 'transcribe-progress') {
+    } else if (event.type === 'transcribe-start') {
       this.transcription.phase = 'transcribing';
-      this.transcription.chunksProcessed = event.chunksProcessed;
+      this.transcription.audioDurationS = event.audioDurationS;
+      this.transcription.elapsedMs = 0;
+    } else if (event.type === 'transcribe-elapsed') {
+      this.transcription.elapsedMs = event.elapsedMs;
     } else if (event.type === 'result') {
       this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
       this.transcription.active = false;
