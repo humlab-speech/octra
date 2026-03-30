@@ -22,9 +22,9 @@ export interface TranscriptionStart {
   audioDurationS: number;
 }
 
-export interface TranscriptionElapsed {
-  type: 'transcribe-elapsed';
-  elapsedMs: number;
+export interface TranscriptionSegmentProgress {
+  type: 'segment-progress';
+  segmentEndS: number;
 }
 
 export interface TranscriptionResult {
@@ -40,7 +40,7 @@ export interface TranscriptionError {
 export type TranscriptionEvent =
   | TranscriptionDownloadProgress
   | TranscriptionStart
-  | TranscriptionElapsed
+  | TranscriptionSegmentProgress
   | TranscriptionResult
   | TranscriptionError;
 

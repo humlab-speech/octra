@@ -166,12 +166,23 @@
                       <div>
                         <strong>Transcribing audio…</strong>
                         <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
-                        <div class="mt-1 text-muted small">
-                          Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
-                          @if (transcription.audioDurationS > 0) {
-                            &nbsp;·&nbsp; Audio: {{ formatDuration(transcription.audioDurationS) }}
-                          }
-                        </div>
+                        @if (transcription.audioDurationS > 0) {
+                          <div class="progress mt-2" style="height: 14px">
+                            <div
+                              class="progress-bar bg-success"
+                              role="progressbar"
+                              [style.width]="(transcription.segmentEndS / transcription.audioDurationS * 100) + '%'"
+                            ></div>
+                          </div>
+                          <small class="text-muted">
+                            {{ formatDuration(transcription.segmentEndS) }} / {{ formatDuration(transcription.audioDurationS) }}
+                            &nbsp;·&nbsp; Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
+                          </small>
+                        } @else {
+                          <div class="mt-1 text-muted small">
+                            Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
+                          </div>
+                        }
                         <div class="mt-1 text-muted small">
                           Running locally in your browser — this may take several minutes for longer recordings.
                         </div>

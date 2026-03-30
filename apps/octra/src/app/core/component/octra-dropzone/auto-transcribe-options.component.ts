@@ -126,6 +126,6 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.optionsChange.emit(null);
       return;
     }
-    this.optionsChange.emit(this.enabled() ? { modelId: this.selectedModelId, useWebGPU: this.hasWebGpu() && KB_WHISPER_MODELS.find((m) => m.modelId === this.selectedModelId)?.requiresWebGpu === true } : null);
+    this.optionsChange.emit(this.enabled() ? { modelId: this.selectedModelId, useWebGPU: this.hasWebGpu() } : null);
   }
 }

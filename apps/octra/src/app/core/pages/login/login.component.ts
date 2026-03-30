@@ -66,6 +66,7 @@ export class LoginComponent
     downloadFile: string;
     elapsedMs: number;
     audioDurationS: number;
+    segmentEndS: number;
     error: string | null;
   } = {
     active: false,
@@ -76,8 +77,12 @@ export class LoginComponent
     downloadFile: '',
     elapsedMs: 0,
     audioDurationS: 0,
+    segmentEndS: 0,
     error: null,
   };
+
+  private _elapsedIntervalId: ReturnType<typeof setInterval> | null = null;
+  private _transcriptionStartTime = 0;
 
   readonly formatDuration = formatDuration;
 
@@ -173,6 +178,7 @@ I just want to let you know, that the OCTRA server is currently offline.
         downloadFile: '',
         elapsedMs: 0,
         audioDurationS: 0,
+        segmentEndS: 0,
         error: null,
       };
       this._transcriptionSub = this.localTranscriptionService
@@ -180,6 +186,7 @@ I just want to let you know, that the OCTRA server is currently offline.
         .subscribe({
           next: (event: TranscriptionEvent) => this.onTranscriptionEvent(event),
           error: (err: Error) => {
+            this._clearElapsedInterval();
             this.transcription.error = err.message;
             this.transcription.active = false;
           },
@@ -199,9 +206,15 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.transcription.phase = 'transcribing';
       this.transcription.audioDurationS = event.audioDurationS;
       this.transcription.elapsedMs = 0;
-    } else if (event.type === 'transcribe-elapsed') {
-      this.transcription.elapsedMs = event.elapsedMs;
+      this.transcription.segmentEndS = 0;
+      this._transcriptionStartTime = Date.now();
+      this._elapsedIntervalId = setInterval(() => {
+        this.transcription.elapsedMs = Date.now() - this._transcriptionStartTime;
+      }, 1000);
+    } else if (event.type === 'segment-progress') {
+      this.transcription.segmentEndS = event.segmentEndS;
     } else if (event.type === 'result') {
+      this._clearElapsedInterval();
       this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
       this.transcription.active = false;
       this._transcriptionSub = null;
@@ -209,7 +222,15 @@ I just want to let you know, that the OCTRA server is currently offline.
     }
   }
 
+  private _clearElapsedInterval(): void {
+    if (this._elapsedIntervalId !== null) {
+      clearInterval(this._elapsedIntervalId);
+      this._elapsedIntervalId = null;
+    }
+  }
+
   cancelTranscription(): void {
+    this._clearElapsedInterval();
     this.localTranscriptionService.cancel();
     this._transcriptionSub?.unsubscribe();
     this._transcriptionSub = null;
@@ -220,6 +241,7 @@ I just want to let you know, that the OCTRA server is currently offline.
     if (this.transcription.active) {
       this.cancelTranscription();
     } else {
+      this._clearElapsedInterval();
       this.transcription.error = null;
     }
   }

@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 
-import { env, pipeline } from '@huggingface/transformers';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import { env, pipeline, WhisperTextStreamer } from '@huggingface/transformers';
 
 // Point ONNX Runtime to the locally served WASM files
 if (env.backends.onnx.wasm) {
@@ -36,9 +37,9 @@ export interface WorkerTranscribeStartMessage {
   audioDurationS: number;
 }
 
-export interface WorkerTranscribeElapsedMessage {
-  type: 'transcribe-elapsed';
-  elapsedMs: number;
+export interface WorkerSegmentProgressMessage {
+  type: 'segment-progress';
+  segmentEndS: number;
 }
 
 export interface WorkerResultMessage {
@@ -54,7 +55,7 @@ export interface WorkerErrorMessage {
 export type WorkerOutMessage =
   | WorkerDownloadProgressMessage
   | WorkerTranscribeStartMessage
-  | WorkerTranscribeElapsedMessage
+  | WorkerSegmentProgressMessage
   | WorkerResultMessage
   | WorkerErrorMessage;
 
@@ -111,28 +112,40 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
     const startMsg: WorkerTranscribeStartMessage = { type: 'transcribe-start', audioDurationS };
     postMessage(startMsg);
 
-    // Push elapsed-time heartbeats so the UI doesn't appear frozen
-    const startTime = Date.now();
-    const elapsedInterval = setInterval(() => {
-      const elapsed: WorkerTranscribeElapsedMessage = {
-        type: 'transcribe-elapsed',
-        elapsedMs: Date.now() - startTime,
-      };
-      postMessage(elapsed);
-    }, 1000);
+    const CHUNK_LENGTH_S = 30;
+    const STRIDE_LENGTH_S = 5;
+    // Effective audio advance per chunk (non-overlapping portion)
+    const CHUNK_ADVANCE_S = CHUNK_LENGTH_S - STRIDE_LENGTH_S;
 
+    // on_chunk_end receives chunk-relative timestamps (0..CHUNK_LENGTH_S).
+    // Detect rollovers to compute absolute position in the full audio file.
+    let chunkCount = 0;
+    let prevEndTimeS = 0;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const streamer = new (WhisperTextStreamer as any)(transcriber.tokenizer, {
+      skip_special_tokens: true,
+      on_chunk_end: (endTimeS: number) => {
+        if (endTimeS < prevEndTimeS) {
+          chunkCount++;
+        }
+        prevEndTimeS = endTimeS;
+        const absoluteEndS = chunkCount * CHUNK_ADVANCE_S + endTimeS;
+        const segMsg: WorkerSegmentProgressMessage = { type: 'segment-progress', segmentEndS: absoluteEndS };
+        postMessage(segMsg);
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any;
-    try {
-      result = await (transcriber as any)(audio, {
-        return_timestamps: true,
-        chunk_length_s: 30,
-        stride_length_s: 5,
-        language: 'sv',
-        task: 'transcribe',
-      });
-    } finally {
-      clearInterval(elapsedInterval);
-    }
+    result = await (transcriber as any)(audio, {
+      return_timestamps: true,
+      chunk_length_s: CHUNK_LENGTH_S,
+      stride_length_s: STRIDE_LENGTH_S,
+      language: 'sv',
+      task: 'transcribe',
+      streamer,
+    });
 
     const chunks = (result as any).chunks as Array<{ timestamp: [number, number]; text: string }>;
     const msg: WorkerResultMessage = { type: 'result', chunks: chunks ?? [] };
