@@ -8,13 +8,21 @@ export interface KbWhisperModel {
   modelId: string;
   sizeMb: number;
   requiresWebGpu: boolean;
+  /** Set when the model cannot be used in a browser regardless of hardware. */
+  unsupportedReason?: string;
 }
 
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   { label: 'Tiny (~150 MB)', modelId: 'KBLab/kb-whisper-tiny', sizeMb: 150, requiresWebGpu: false },
-  { label: 'Small (~450 MB)', modelId: 'KBLab/kb-whisper-small', sizeMb: 450, requiresWebGpu: false },
-  { label: 'Medium (~1.5 GB)', modelId: 'KBLab/kb-whisper-medium', sizeMb: 1500, requiresWebGpu: false },
-  { label: 'Large (~3 GB)', modelId: 'KBLab/kb-whisper-large', sizeMb: 3000, requiresWebGpu: true },
+  { label: 'Small (~950 MB)', modelId: 'KBLab/kb-whisper-small', sizeMb: 950, requiresWebGpu: false },
+  { label: 'Medium (~3 GB)', modelId: 'KBLab/kb-whisper-medium', sizeMb: 3000, requiresWebGpu: true },
+  {
+    label: 'Large',
+    modelId: 'KBLab/kb-whisper-large',
+    sizeMb: 3000,
+    requiresWebGpu: true,
+    unsupportedReason: 'Cannot run in a web browser — the model uses external ONNX data files not supported by the current runtime',
+  },
 ];
 
 @Component({
@@ -52,14 +60,14 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
                   [id]="'model-' + model.modelId"
                   [value]="model.modelId"
                   [(ngModel)]="selectedModelId"
-                  [disabled]="model.requiresWebGpu && !hasWebGpu()"
+                  [disabled]="!!model.unsupportedReason || (model.requiresWebGpu && !hasWebGpu())"
                   (ngModelChange)="emitChange()"
                 />
                 <label
                   class="form-check-label"
-                  [class.text-muted]="model.requiresWebGpu && !hasWebGpu()"
+                  [class.text-muted]="!!model.unsupportedReason || (model.requiresWebGpu && !hasWebGpu())"
                   [for]="'model-' + model.modelId"
-                  [ngbTooltip]="model.requiresWebGpu && !hasWebGpu() ? 'Requires WebGPU — not available in this browser' : null"
+                  [ngbTooltip]="model.unsupportedReason ?? (model.requiresWebGpu && !hasWebGpu() ? 'Requires WebGPU — not available in this browser' : null)"
                 >
                   {{ model.label }}
                 </label>
@@ -69,7 +77,7 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
             @if (!hasWebGpu()) {
               <small class="text-muted">
                 <i class="bi bi-exclamation-triangle"></i>
-                WebGPU not detected — Large model disabled
+                WebGPU not detected — Medium model disabled
               </small>
             }
 
