@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { IFile, OAnnotJSON } from '@octra/annotation';
 import { OAudiofile } from '@octra/media';
 import { AudioManager } from '@octra/web-media';
@@ -50,6 +50,8 @@ export class LocalTranscriptionService implements OnDestroy {
   private worker: Worker | null = null;
   private subject: Subject<TranscriptionEvent> | null = null;
 
+  constructor(private ngZone: NgZone) {}
+
   transcribe(
     audioManager: AudioManager,
     oaudiofile: OAudiofile,
@@ -79,26 +81,30 @@ export class LocalTranscriptionService implements OnDestroy {
     this.worker = worker;
 
     worker.onmessage = ({ data }: MessageEvent<WorkerOutMessage>) => {
-      if (data.type === 'result') {
-        try {
-          const annotJson = this.chunksToAnnotJson(data.chunks, oaudiofile);
-          subject.next({ type: 'result', annotJson });
-          subject.complete();
-        } catch (err: unknown) {
-          subject.error(err);
+      this.ngZone.run(() => {
+        if (data.type === 'result') {
+          try {
+            const annotJson = this.chunksToAnnotJson(data.chunks, oaudiofile);
+            subject.next({ type: 'result', annotJson });
+            subject.complete();
+          } catch (err: unknown) {
+            subject.error(err);
+          }
+          this.cleanup();
+        } else if (data.type === 'error') {
+          subject.error(new Error(data.message));
+          this.cleanup();
+        } else {
+          subject.next(data);
         }
-        this.cleanup();
-      } else if (data.type === 'error') {
-        subject.error(new Error(data.message));
-        this.cleanup();
-      } else {
-        subject.next(data);
-      }
+      });
     };
 
     worker.onerror = (err) => {
-      subject.error(new Error(err.message));
-      this.cleanup();
+      this.ngZone.run(() => {
+        subject.error(new Error(err.message));
+        this.cleanup();
+      });
     };
 
     const message: WorkerTranscribeMessage = {

@@ -16,6 +16,7 @@ import { SessionFile } from '../../obj/SessionFile';
 import { AudioService, SettingsService } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
+import { KB_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
 import { AuthenticationStoreService } from '../../store/authentication';
 import { BrowserTestComponent } from '../browser-test/browser-test.component';
@@ -55,6 +56,7 @@ export class LoginComponent
     phase: 'downloading' | 'transcribing' | 'idle';
     downloadLoaded: number;
     downloadTotal: number;
+    downloadExpectedBytes: number;
     downloadFile: string;
     chunksProcessed: number;
     error: string | null;
@@ -63,6 +65,7 @@ export class LoginComponent
     phase: 'idle',
     downloadLoaded: 0,
     downloadTotal: 0,
+    downloadExpectedBytes: 0,
     downloadFile: '',
     chunksProcessed: 0,
     error: null,
@@ -150,11 +153,13 @@ I just want to let you know, that the OCTRA server is currently offline.
     const opts = this.dropzone?.transcribeOptions;
     if (opts && this.dropzone?.hasAudio && !this.dropzone?.hasAnnotation) {
       this._pendingRemoveData = removeData;
+      const modelMeta = KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
       this.transcription = {
         active: true,
         phase: 'downloading',
         downloadLoaded: 0,
         downloadTotal: 0,
+        downloadExpectedBytes: (modelMeta?.sizeMb ?? 0) * 1024 * 1024,
         downloadFile: '',
         chunksProcessed: 0,
         error: null,

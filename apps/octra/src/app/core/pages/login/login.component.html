@@ -144,19 +144,19 @@
                         @if (transcription.downloadFile) {
                           <div class="text-muted small">{{ transcription.downloadFile }}</div>
                         }
-                        @if (transcription.downloadTotal > 0) {
+                        @if (transcription.downloadLoaded > 0 || transcription.downloadTotal > 0 || transcription.downloadExpectedBytes > 0) {
                           <div class="progress mt-1" style="height: 18px">
                             <div
                               class="progress-bar"
                               role="progressbar"
-                              [style.width]="(transcription.downloadLoaded / transcription.downloadTotal * 100) + '%'"
+                              [style.width]="(transcription.downloadLoaded / (transcription.downloadTotal || transcription.downloadExpectedBytes) * 100) + '%'"
                             >
-                              {{ (transcription.downloadLoaded / transcription.downloadTotal * 100) | number:'1.0-0' }}%
+                              {{ (transcription.downloadLoaded / (transcription.downloadTotal || transcription.downloadExpectedBytes) * 100) | number:'1.0-0' }}%
                             </div>
                           </div>
                           <small class="text-muted">
                             {{ (transcription.downloadLoaded / 1048576) | number:'1.0-0' }} MB
-                            / {{ (transcription.downloadTotal / 1048576) | number:'1.0-0' }} MB
+                            / {{ ((transcription.downloadTotal || transcription.downloadExpectedBytes) / 1048576) | number:'1.0-0' }} MB
                           </small>
                         } @else {
                           <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
