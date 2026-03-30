@@ -149,10 +149,11 @@ export class LocalTranscriptionService implements OnDestroy {
   }
 
   private chunksToAnnotJson(
-    chunks: Array<{ timestamp: [number, number]; text: string }>,
+    chunks: Array<{ timestamp: [number, number | null]; text: string }>,
     oaudiofile: OAudiofile,
   ): OAnnotJSON {
-    const srtText = this.chunksToSrt(chunks);
+    const audioDurationS = oaudiofile.duration / oaudiofile.sampleRate;
+    const srtText = this.chunksToSrt(chunks, audioDurationS);
     const srtConverter = AppInfo.converters.find((c) => c.name === 'SRT');
     if (!srtConverter) {
       throw new Error('SRT converter not found in AppInfo.converters');
@@ -175,14 +176,17 @@ export class LocalTranscriptionService implements OnDestroy {
   }
 
   private chunksToSrt(
-    chunks: Array<{ timestamp: [number, number]; text: string }>,
+    chunks: Array<{ timestamp: [number, number | null]; text: string }>,
+    audioDurationS: number,
   ): string {
-    return chunks
-      .map(
-        (c, i) =>
-          `${i + 1}\n${this.toSrtTime(c.timestamp[0])} --> ${this.toSrtTime(c.timestamp[1])}\n${c.text.trim()}`,
-      )
-      .join('\n\n');
+    return (
+      chunks
+        .map(
+          (c, i) =>
+            `${i + 1}\n${this.toSrtTime(c.timestamp[0])} --> ${this.toSrtTime(c.timestamp[1] ?? audioDurationS)}\n${c.text.trim()}`,
+        )
+        .join('\n\n') + '\n'
+    );
   }
 
   private toSrtTime(seconds: number): string {
