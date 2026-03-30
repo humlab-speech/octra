@@ -202,6 +202,14 @@ I just want to let you know, that the OCTRA server is currently offline.
     this.transcription.active = false;
   }
 
+  dismissTranscriptionError(): void {
+    if (this.transcription.active) {
+      this.cancelTranscription();
+    } else {
+      this.transcription.error = null;
+    }
+  }
+
   private proceedWithLogin(removeData: boolean): void {
     this.audioService.registerAudioManager(this.dropzone!.audioManager!);
     this.authStoreService.loginLocal(

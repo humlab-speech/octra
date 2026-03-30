@@ -7,6 +7,15 @@ if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = '/assets/ort/';
 }
 
+async function isCacheAvailable(): Promise<boolean> {
+  try {
+    await caches.open('__probe__');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export interface WorkerTranscribeMessage {
   type: 'transcribe';
   modelId: string;
@@ -52,6 +61,10 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
   const { modelId, audio, useWebGPU } = data;
 
   try {
+    if (!(await isCacheAvailable())) {
+      env.useBrowserCache = false;
+    }
+
     if (!transcriber || loadedModelId !== modelId) {
       transcriber = null;
       loadedModelId = null;
