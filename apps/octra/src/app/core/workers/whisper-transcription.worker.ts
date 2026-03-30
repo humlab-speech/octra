@@ -23,6 +23,7 @@ export interface WorkerTranscribeMessage {
   audio: Float32Array;
   useWebGPU: boolean;
   audioDurationS: number;
+  dtype?: string;
 }
 
 export interface WorkerDownloadProgressMessage {
@@ -66,7 +67,7 @@ let loadedModelId: string | null = null;
 addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessage>) => {
   if (data.type !== 'transcribe') return;
 
-  const { modelId, audio, useWebGPU, audioDurationS } = data;
+  const { modelId, audio, useWebGPU, audioDurationS, dtype } = data;
 
   try {
     if (!(await isCacheAvailable())) {
@@ -82,6 +83,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
       const fileProgress = new Map<string, { loaded: number; total: number }>();
       transcriber = await pipelineFn('automatic-speech-recognition', modelId, {
         device: useWebGPU ? 'webgpu' : 'wasm',
+        ...(dtype ? { dtype } : {}),
         progress_callback: (progress: any) => {
           if (progress?.status === 'progress' && progress.loaded !== undefined) {
             fileProgress.set(progress.file ?? '', {

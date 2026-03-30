@@ -10,19 +10,17 @@ export interface KbWhisperModel {
   requiresWebGpu: boolean;
   /** Set when the model cannot be used in a browser regardless of hardware. */
   unsupportedReason?: string;
+  /** ONNX dtype to request when running on WASM (e.g. 'q8'). */
+  dtypeWasm?: string;
+  /** ONNX dtype to request when running on WebGPU (e.g. 'q4f16'). */
+  dtypeWebgpu?: string;
 }
 
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
-  { label: 'Tiny (~150 MB)', modelId: 'KBLab/kb-whisper-tiny', sizeMb: 150, requiresWebGpu: false },
-  { label: 'Small (~950 MB)', modelId: 'KBLab/kb-whisper-small', sizeMb: 950, requiresWebGpu: false },
-  { label: 'Medium (~3 GB)', modelId: 'KBLab/kb-whisper-medium', sizeMb: 3000, requiresWebGpu: true },
-  {
-    label: 'Large',
-    modelId: 'KBLab/kb-whisper-large',
-    sizeMb: 3000,
-    requiresWebGpu: true,
-    unsupportedReason: 'Cannot run in a web browser — the model uses external ONNX data files not supported by the current runtime',
-  },
+  { label: 'Tiny (~120 MB)',  modelId: 'onnx-community/kb-whisper-tiny-ONNX',   sizeMb:  120, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Small (~400 MB)', modelId: 'onnx-community/kb-whisper-small-ONNX',  sizeMb:  400, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Medium (~1 GB)',  modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Large (~1.2 GB)', modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: true,  dtypeWebgpu: 'q4' },
 ];
 
 @Component({
@@ -134,6 +132,12 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.optionsChange.emit(null);
       return;
     }
-    this.optionsChange.emit(this.enabled() ? { modelId: this.selectedModelId, useWebGPU: this.hasWebGpu() } : null);
+    if (!this.enabled()) {
+      this.optionsChange.emit(null);
+      return;
+    }
+    const model = KB_WHISPER_MODELS.find((m) => m.modelId === this.selectedModelId);
+    const dtype = this.hasWebGpu() ? model?.dtypeWebgpu : model?.dtypeWasm;
+    this.optionsChange.emit({ modelId: this.selectedModelId, useWebGPU: this.hasWebGpu(), dtype });
   }
 }

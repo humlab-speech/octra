@@ -47,6 +47,7 @@ export type TranscriptionEvent =
 export interface TranscriptionOptions {
   modelId: string;
   useWebGPU: boolean;
+  dtype?: string;
 }
 
 const WHISPER_SAMPLE_RATE = 16000;
@@ -121,6 +122,7 @@ export class LocalTranscriptionService implements OnDestroy {
       audio: mono,
       useWebGPU: options.useWebGPU,
       audioDurationS,
+      ...(options.dtype ? { dtype: options.dtype } : {}),
     };
     worker.postMessage(message, [mono.buffer]);
 
