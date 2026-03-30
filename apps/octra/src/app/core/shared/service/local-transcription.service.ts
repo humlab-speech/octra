@@ -75,7 +75,13 @@ export class LocalTranscriptionService implements OnDestroy {
       return subject.asObservable();
     }
 
-    const srcRate = audioManager.sampleRate;
+    // Use the actual decoded sample rate rather than the file-metadata rate.
+    // AudioContext.decodeAudioData always resamples to its native rate (e.g. 48 kHz),
+    // so a 44.1 kHz FLAC produces channel data at 48 kHz while sampleRate still says
+    // 44.1 kHz.  Using the wrong ratio here produces pitch-shifted audio → gibberish.
+    const srcRate =
+      audioManager.resource.info.audioBufferInfo?.sampleRate ??
+      audioManager.sampleRate;
     const mono: Float32Array =
       srcRate !== WHISPER_SAMPLE_RATE
         ? resampleChannels([channel], srcRate, WHISPER_SAMPLE_RATE)[0]

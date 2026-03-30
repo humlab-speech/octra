@@ -257,13 +257,15 @@ export class HtmlAudioMechanism extends AudioMechanism {
               samples: audioBuffer.getChannelData(0).length,
             };
 
-            if (['.mp3', '.m4a'].includes(info.extension)) {
-              // fix number of samples. web value by web audio api is more exact.
-              info.duration = new SampleUnit(
-                Math.ceil(audioBuffer.duration * info.sampleRate),
-                info.sampleRate,
-              );
-            }
+            // Always correct duration from the decoded AudioBuffer — more accurate than
+            // metadata estimates (music-metadata may return total interleaved samples for
+            // stereo OGG, or off-by-one estimates for FLAC). audioBuffer.duration is the
+            // authoritative decoded length in seconds; express it in the original metadata
+            // sampleRate so all sample positions stay in a consistent unit space.
+            info.duration = new SampleUnit(
+              Math.ceil(audioBuffer.duration * info.sampleRate),
+              info.sampleRate,
+            );
 
             if (needsResampling(audioBuffer.sampleRate)) {
               // Tier 2: Safari sub-44100 Hz — resample via OfflineAudioContext then re-encode to WAV.
