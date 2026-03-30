@@ -19,6 +19,7 @@
           "zone.js"
         ],
         "tsConfig": "apps/octra/tsconfig.app.json",
+        "webWorkerTsConfig": "apps/octra/tsconfig.worker.json",
         "allowedCommonJsDependencies": [
           "jodit-angular",
           "ajv",
@@ -159,6 +160,12 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "headers": {
+          "Cross-Origin-Opener-Policy": "same-origin",
+          "Cross-Origin-Embedder-Policy": "credentialless"
+        }
+      },
       "configurations": {
         "production": {
           "port": 5321,
