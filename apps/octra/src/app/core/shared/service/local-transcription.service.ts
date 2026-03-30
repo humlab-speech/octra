@@ -78,7 +78,7 @@ export class LocalTranscriptionService implements OnDestroy {
     const mono: Float32Array =
       srcRate !== WHISPER_SAMPLE_RATE
         ? resampleChannels([channel], srcRate, WHISPER_SAMPLE_RATE)[0]
-        : channel;
+        : new Float32Array(channel); // copy — never transfer the AudioManager's own buffer
 
     const audioDurationS = mono.length / WHISPER_SAMPLE_RATE;
 

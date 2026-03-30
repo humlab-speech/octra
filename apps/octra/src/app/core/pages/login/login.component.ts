@@ -59,7 +59,7 @@ export class LoginComponent
 
   transcription: {
     active: boolean;
-    phase: 'downloading' | 'transcribing' | 'idle';
+    phase: 'downloading' | 'transcribing' | 'finalizing' | 'idle';
     downloadLoaded: number;
     downloadTotal: number;
     downloadExpectedBytes: number;
@@ -217,8 +217,11 @@ I just want to let you know, that the OCTRA server is currently offline.
       this._clearElapsedInterval();
       this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
       this.transcription.active = false;
+      this.transcription.phase = 'finalizing';
       this._transcriptionSub = null;
-      this.proceedWithLogin(this._pendingRemoveData);
+      // Always pass removeData=false: the annotation parameter already causes the
+      // reducer to replace the transcript, so the DELETE confirmation modal is not needed.
+      this.proceedWithLogin(false);
     }
   }
 
@@ -235,6 +238,7 @@ I just want to let you know, that the OCTRA server is currently offline.
     this._transcriptionSub?.unsubscribe();
     this._transcriptionSub = null;
     this.transcription.active = false;
+    this.transcription.phase = 'idle';
   }
 
   dismissTranscriptionError(): void {

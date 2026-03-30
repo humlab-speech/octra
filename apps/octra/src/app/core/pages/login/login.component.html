@@ -136,7 +136,7 @@
                   ></octra-dropzone>
                 </div>
 
-                @if (transcription.active || transcription.error) {
+                @if (transcription.active || transcription.error || transcription.phase === 'finalizing') {
                   <div class="transcription-progress mt-3 p-3 border rounded bg-light">
                     @if (transcription.phase === 'downloading') {
                       <div>
@@ -161,6 +161,11 @@
                         } @else {
                           <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
                         }
+                      </div>
+                    } @else if (transcription.phase === 'finalizing') {
+                      <div>
+                        <strong>Transcription complete — preparing editor…</strong>
+                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
                       </div>
                     } @else if (transcription.phase === 'transcribing') {
                       <div>

@@ -130,7 +130,10 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
           chunkCount++;
         }
         prevEndTimeS = endTimeS;
-        const absoluteEndS = chunkCount * CHUNK_ADVANCE_S + endTimeS;
+        const absoluteEndS = Math.min(
+          chunkCount * CHUNK_ADVANCE_S + endTimeS,
+          audioDurationS,
+        );
         const segMsg: WorkerSegmentProgressMessage = { type: 'segment-progress', segmentEndS: absoluteEndS };
         postMessage(segMsg);
       },
