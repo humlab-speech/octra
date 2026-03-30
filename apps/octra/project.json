@@ -42,7 +42,17 @@
           "apps/octra/src/LICENSE.txt",
           "apps/octra/src/.htaccess",
           "apps/octra/src/ocb_info.json",
-          "apps/octra/src/manifest.json"
+          "apps/octra/src/manifest.json",
+          {
+            "glob": "ort-wasm-simd-threaded.jsep.wasm",
+            "input": "node_modules/@huggingface/transformers/dist",
+            "output": "assets/ort/"
+          },
+          {
+            "glob": "ort-wasm-simd-threaded.jsep.mjs",
+            "input": "node_modules/@huggingface/transformers/dist",
+            "output": "assets/ort/"
+          }
         ],
         "styles": [
           "node_modules/video.js/dist/video-js.min.css",

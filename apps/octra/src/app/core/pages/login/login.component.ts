@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,7 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
 import { FileSize, getFileSize } from '@octra/utilities';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthenticationComponent } from '../../component/authentication-component/authentication-component.component';
 import { DefaultComponent } from '../../component/default.component';
 import { MaintenanceBannerComponent } from '../../component/maintenance/maintenance-banner/maint-banner.component';
@@ -16,6 +16,7 @@ import { SessionFile } from '../../obj/SessionFile';
 import { AudioService, SettingsService } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
+import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
 import { AuthenticationStoreService } from '../../store/authentication';
 import { BrowserTestComponent } from '../browser-test/browser-test.component';
 import { ComponentCanDeactivate } from './login.deactivateguard';
@@ -32,6 +33,7 @@ import { LoginService } from './login.service';
     OctraDropzoneComponent,
     BrowserTestComponent,
     AsyncPipe,
+    DecimalPipe,
     TranslocoPipe,
     RouterLink,
   ],
@@ -47,6 +49,27 @@ export class LoginComponent
   @ViewChild('onlinemode', { static: true }) onlinemode?: ElementRef;
 
   email_link = '';
+
+  transcription: {
+    active: boolean;
+    phase: 'downloading' | 'transcribing' | 'idle';
+    downloadLoaded: number;
+    downloadTotal: number;
+    downloadFile: string;
+    chunksProcessed: number;
+    error: string | null;
+  } = {
+    active: false,
+    phase: 'idle',
+    downloadLoaded: 0,
+    downloadTotal: 0,
+    downloadFile: '',
+    chunksProcessed: 0,
+    error: null,
+  };
+
+  private _transcriptionSub: Subscription | null = null;
+  private _pendingRemoveData = false;
 
   state: {
     online: {
@@ -96,6 +119,7 @@ export class LoginComponent
     private audioService: AudioService,
     public authStoreService: AuthenticationStoreService,
     protected compatibilityService: CompatibilityService,
+    private localTranscriptionService: LocalTranscriptionService,
   ) {
     super();
     this.compatibilityService.testCompability().then((result) => {
@@ -123,13 +147,64 @@ I just want to let you know, that the OCTRA server is currently offline.
   }
 
   onOfflineSubmit = (removeData: boolean) => {
+    const opts = this.dropzone?.transcribeOptions;
+    if (opts && this.dropzone?.hasAudio && !this.dropzone?.hasAnnotation) {
+      this._pendingRemoveData = removeData;
+      this.transcription = {
+        active: true,
+        phase: 'downloading',
+        downloadLoaded: 0,
+        downloadTotal: 0,
+        downloadFile: '',
+        chunksProcessed: 0,
+        error: null,
+      };
+      this._transcriptionSub = this.localTranscriptionService
+        .transcribe(this.dropzone.audioManager, this.dropzone.oaudiofile, opts)
+        .subscribe({
+          next: (event: TranscriptionEvent) => this.onTranscriptionEvent(event),
+          error: (err: Error) => {
+            this.transcription.error = err.message;
+            this.transcription.active = false;
+          },
+        });
+    } else {
+      this.proceedWithLogin(removeData);
+    }
+  };
+
+  private onTranscriptionEvent(event: TranscriptionEvent): void {
+    if (event.type === 'download-progress') {
+      this.transcription.phase = 'downloading';
+      this.transcription.downloadLoaded = event.loaded;
+      this.transcription.downloadTotal = event.total;
+      this.transcription.downloadFile = event.file;
+    } else if (event.type === 'transcribe-progress') {
+      this.transcription.phase = 'transcribing';
+      this.transcription.chunksProcessed = event.chunksProcessed;
+    } else if (event.type === 'result') {
+      this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
+      this.transcription.active = false;
+      this._transcriptionSub = null;
+      this.proceedWithLogin(this._pendingRemoveData);
+    }
+  }
+
+  cancelTranscription(): void {
+    this.localTranscriptionService.cancel();
+    this._transcriptionSub?.unsubscribe();
+    this._transcriptionSub = null;
+    this.transcription.active = false;
+  }
+
+  private proceedWithLogin(removeData: boolean): void {
     this.audioService.registerAudioManager(this.dropzone!.audioManager!);
     this.authStoreService.loginLocal(
       this.dropzone!.files.map((a) => a.file.file!),
-      this.dropzone!.oannotation,
+      this.dropzone!.hasAnnotation ? this.dropzone!.oannotation : undefined,
       removeData,
     );
-  };
+  }
 
   onOnlineSubmit($event: {
     type: AccountLoginMethod;

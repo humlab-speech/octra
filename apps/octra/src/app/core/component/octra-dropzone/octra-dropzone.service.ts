@@ -35,6 +35,18 @@ export class OctraDropzoneService {
     if (!this._oannotation) throw new Error('oannotation accessed before initialization');
     return this._oannotation;
   }
+
+  get hasAudio(): boolean {
+    return !!this._oaudiofile;
+  }
+
+  get hasAnnotation(): boolean {
+    return !!this._oannotation;
+  }
+
+  setAnnotationFromAnnotJson(annotJson: OAnnotJSON): void {
+    this._oannotation = annotJson;
+  }
   get oldFiles(): {
     name: string;
     type: string;

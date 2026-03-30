@@ -106,3 +106,11 @@
     }}</span>
   }
 </octra-drop-zone>
+
+@if (showAutoTranscribe) {
+  <octra-auto-transcribe-options
+    [audioLoaded]="hasAudio"
+    [annotationAlreadyLoaded]="hasAnnotation"
+    (optionsChange)="onTranscribeOptionsChange($event)"
+  ></octra-auto-transcribe-options>
+}

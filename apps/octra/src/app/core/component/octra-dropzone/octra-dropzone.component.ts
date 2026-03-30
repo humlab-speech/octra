@@ -11,9 +11,11 @@ import { AppInfo } from '../../../app.info';
 import { OctraModalService } from '../../modals/octra-modal.service';
 import { SupportedFilesModalComponent } from '../../modals/supportedfiles-modal/supportedfiles-modal.component';
 import { FileProgress } from '../../obj/objects';
+import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import { DefaultComponent } from '../default.component';
 import { DropZoneComponent } from '../drop-zone';
 import { DropZoneComponent as DropZoneComponent_1 } from '../drop-zone/drop-zone.component';
+import { AutoTranscribeOptionsComponent } from './auto-transcribe-options.component';
 import {
   DropzoneStatistics,
   OctraDropzoneService,
@@ -30,11 +32,31 @@ import {
     NgStyle,
     OctraUtilitiesModule,
     TranslocoPipe,
+    AutoTranscribeOptionsComponent,
   ],
 })
 export class OctraDropzoneComponent extends DefaultComponent {
   @ViewChild('dropzone', { static: true }) dropzone!: DropZoneComponent;
   @Input() height = '250px';
+  @Input() showAutoTranscribe = false;
+  transcribeOptions: TranscriptionOptions | null = null;
+
+  onTranscribeOptionsChange(opts: TranscriptionOptions | null): void {
+    this.transcribeOptions = opts;
+  }
+
+  setAnnotationFromAnnotJson(annotJson: import('@octra/annotation').OAnnotJSON): void {
+    this.octraDropzoneService.setAnnotationFromAnnotJson(annotJson);
+  }
+
+  get hasAudio(): boolean {
+    return this.octraDropzoneService.hasAudio;
+  }
+
+  get hasAnnotation(): boolean {
+    return this.octraDropzoneService.hasAnnotation;
+  }
+
   @Input() set oldFiles(
     value: {
       name: string;
