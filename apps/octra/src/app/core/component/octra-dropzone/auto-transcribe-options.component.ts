@@ -5,6 +5,8 @@ import { TranscriptionOptions } from '../../shared/service/local-transcription.s
 
 export interface KbWhisperModel {
   label: string;
+  /** Label shown when WebGPU is available (includes speed hint relative to Medium). */
+  labelWebgpu?: string;
   modelId: string;
   sizeMb: number;
   requiresWebGpu: boolean;
@@ -17,10 +19,10 @@ export interface KbWhisperModel {
 }
 
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
-  { label: 'Tiny (~120 MB)',  modelId: 'onnx-community/kb-whisper-tiny-ONNX',   sizeMb:  120, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Small (~400 MB)', modelId: 'onnx-community/kb-whisper-small-ONNX',  sizeMb:  400, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Medium (~1 GB)',  modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Large (~1.2 GB)', modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: true,  dtypeWebgpu: 'q4' },
+  { label: 'Tiny (~120 MB)',  labelWebgpu: 'Tiny (~120 MB) — Least accurate, 4× faster than Medium',   modelId: 'onnx-community/kb-whisper-tiny-ONNX',   sizeMb:  120, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Small (~400 MB)', labelWebgpu: 'Small (~650 MB) — More accurate, 2× faster than Medium',  modelId: 'onnx-community/kb-whisper-small-ONNX',  sizeMb:  400, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Medium (~1 GB)',  labelWebgpu: 'Medium (~1 GB) — Our reference model',   modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
+  { label: 'Large (~1.2 GB)', labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',  modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: true,  dtypeWebgpu: 'q4' },
 ];
 
 @Component({
@@ -67,7 +69,7 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
                   [for]="'model-' + model.modelId"
                   [ngbTooltip]="model.unsupportedReason ?? (model.requiresWebGpu && !hasWebGpu() ? 'Requires WebGPU — not available in this browser' : null)"
                 >
-                  {{ model.label }}
+                  {{ (hasWebGpu() && model.labelWebgpu) ? model.labelWebgpu : model.label }}
                 </label>
               </div>
             }
