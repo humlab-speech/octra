@@ -68,6 +68,7 @@ export class LoginComponent
     audioDurationS: number;
     segmentEndS: number;
     error: string | null;
+    usedWebGPU: boolean;
   } = {
     active: false,
     phase: 'idle',
@@ -79,6 +80,7 @@ export class LoginComponent
     audioDurationS: 0,
     segmentEndS: 0,
     error: null,
+    usedWebGPU: false,
   };
 
   private _elapsedIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -180,6 +182,7 @@ I just want to let you know, that the OCTRA server is currently offline.
         audioDurationS: 0,
         segmentEndS: 0,
         error: null,
+        usedWebGPU: opts.useWebGPU,
       };
       this._transcriptionSub = this.localTranscriptionService
         .transcribe(this.dropzone.audioManager, this.dropzone.oaudiofile, opts)

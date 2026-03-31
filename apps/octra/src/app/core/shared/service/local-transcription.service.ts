@@ -107,7 +107,7 @@ export class LocalTranscriptionService implements OnDestroy {
           }
           this.cleanup();
         } else if (data.type === 'error') {
-          subject.error(new Error(data.message));
+          subject.error(new Error(this.friendlyError(data.message, options.useWebGPU)));
           this.cleanup();
         } else {
           subject.next(data);
@@ -117,7 +117,7 @@ export class LocalTranscriptionService implements OnDestroy {
 
     worker.onerror = (err) => {
       this.ngZone.run(() => {
-        subject.error(new Error(err.message));
+        subject.error(new Error(this.friendlyError(err.message ?? '', options.useWebGPU)));
         this.cleanup();
       });
     };
@@ -205,5 +205,23 @@ export class LocalTranscriptionService implements OnDestroy {
 
   private pad2(n: number): string {
     return n.toString().padStart(2, '0');
+  }
+
+  private friendlyError(raw: string, usedWebGPU: boolean): string {
+    const lower = raw.toLowerCase();
+    const isGpuError =
+      lower.includes('device') ||
+      lower.includes('gpu') ||
+      lower.includes('webgpu') ||
+      lower.includes('out of memory') ||
+      lower.includes('oom');
+    if (usedWebGPU && isGpuError) {
+      return (
+        'WebGPU error: the GPU ran out of memory or lost its connection ' +
+        '(common with large models or after the display sleeps). ' +
+        'Try disabling WebGPU in the transcription options and run with WASM instead.'
+      );
+    }
+    return raw;
   }
 }

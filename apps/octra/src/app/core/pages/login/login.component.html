@@ -197,6 +197,11 @@
                     @if (transcription.error) {
                       <div class="alert alert-danger mt-2 py-1 mb-0 small">
                         {{ transcription.error }}
+                        @if (transcription.usedWebGPU) {
+                          <div class="mt-1">
+                            Tip: disable <strong>WebGPU</strong> in the options above and retry with WASM — slower but more stable.
+                          </div>
+                        }
                       </div>
                     }
 
