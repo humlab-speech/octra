@@ -676,5 +676,8 @@ export class HtmlAudioMechanism extends AudioMechanism {
   public override async destroy(disconnect = false): Promise<void> {
     this.removeEventListeners();
     await super.destroy(disconnect);
+    if (this._resource) {
+      this._resource.arraybuffer = undefined;
+    }
   }
 }

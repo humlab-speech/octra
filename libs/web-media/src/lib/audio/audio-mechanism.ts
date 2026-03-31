@@ -145,6 +145,7 @@ export abstract class AudioMechanism {
       await this._audioContext?.close();
     }
     this.subscrManager.destroy();
+    this._channel = undefined;
   }
 
   protected changeStatus(newStatus: PlayBackStatus) {
