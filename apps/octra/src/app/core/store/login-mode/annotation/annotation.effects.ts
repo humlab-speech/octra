@@ -413,6 +413,7 @@ export class AnnotationEffects {
             }
           } else if (state.application.mode === LoginMode.LOCAL) {
             // local mode
+            console.log(`[CHAIN] onAudioLoad$ LOCAL: sessionFile=${!!state.localMode.sessionFile}, audiomanagers=${this.audio.audiomanagers.length}, audioAlreadyLoaded=${state.application.audioAlreadyLoaded}`);
             if (state.localMode.sessionFile !== undefined) {
               if (this.audio.audiomanagers.length > 0) {
                 this.store.dispatch(
@@ -761,6 +762,7 @@ export class AnnotationEffects {
           [LoginMode.DEMO, LoginMode.LOCAL, LoginMode.URL].includes(a.mode)
         ) {
           // mode is not online => load configuration for local environment
+          console.log(`[CHAIN] onLoadOnlineInfo$: starting HTTP for mode=${a.mode}`);
           return forkJoin<
             [
               any,
@@ -776,7 +778,7 @@ export class AnnotationEffects {
           >([
             this.http.get('config/localmode/projectconfig.json', {
               responseType: 'json',
-            }),
+            }).pipe(catchError((err) => { console.error('[onLoadOnlineInfo$] projectconfig.json failed', err); return of({}); })),
             forkJoin(
               state.application.appConfiguration!.octra.languages.map(
                 (b: string) =>
@@ -795,9 +797,10 @@ export class AnnotationEffects {
             ),
             this.http.get('config/localmode/functions.js', {
               responseType: 'text',
-            }),
+            }).pipe(catchError(() => of(''))),
           ]).pipe(
             exhaustMap(([projectConfig, guidelines, functions]) => {
+              console.log(`[CHAIN] onLoadOnlineInfo$: HTTP complete, building task for mode=${a.mode}`);
               const currentProject = createSampleProjectDto('1234');
 
               const observables: Observable<{
@@ -979,44 +982,43 @@ export class AnnotationEffects {
               }
 
               return forkJoin(observables).pipe(
-                map(
-                  ([event]) => {
-                    const task = createSampleTask(
-                      a.taskID ?? '-1',
-                      event.inputs,
-                      [],
-                      projectConfig,
-                      functions,
-                      guidelines,
-                      {
-                        orgtext:
-                          LoginMode.DEMO === state.application.mode!
-                            ? state.application.appConfiguration!.octra
-                                .audioExamples[0].description
-                            : '',
-                      },
-                    );
+                map(([event]) => {
+                  const task = createSampleTask(
+                    a.taskID ?? '-1',
+                    event.inputs,
+                    [],
+                    projectConfig,
+                    functions,
+                    guidelines,
+                    {
+                      orgtext:
+                        LoginMode.DEMO === state.application.mode!
+                          ? state.application.appConfiguration!.octra
+                              .audioExamples[0].description
+                          : '',
+                    },
+                  );
 
-                    return LoginModeActions.loadProjectAndTaskInformation.success(
-                      {
-                        mode: a.mode,
-                        me: createSampleUser(),
-                        currentProject,
-                        task,
-                        startup: a.startup,
-                      },
+                  return LoginModeActions.loadProjectAndTaskInformation.success(
+                    {
+                      mode: a.mode,
+                      me: createSampleUser(),
+                      currentProject,
+                      task,
+                      startup: a.startup,
+                    },
+                  );
+                }),
+                catchError((e) => {
+                  if (e instanceof HttpErrorResponse) {
+                    alert(`Can't load transcript file: ${e.message}`);
+                    return of(
+                      LoginModeActions.loadProjectAndTaskInformation.fail(e),
                     );
-                  },
-                  catchError((e) => {
-                    if (e instanceof HttpErrorResponse) {
-                      alert(`Can't load transcript file: ${e.message}`);
-                      return of(
-                        LoginModeActions.loadProjectAndTaskInformation.fail(e),
-                      );
-                    }
-                    return of();
-                  }),
-                ),
+                  }
+                  console.error('[onLoadOnlineInfo$] forkJoin(observables) failed', e);
+                  return of(LoginModeActions.loadProjectAndTaskInformation.fail(e));
+                }),
               );
             }),
           );
