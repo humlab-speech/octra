@@ -836,6 +836,11 @@ export class IDBEffects {
         const modeState = this.getModeStateFromString(appState, action.mode);
 
         if (modeState) {
+          if (!this.audio.audioManager) {
+            // Audio not yet loaded (e.g. loginLocal.prepare fires before audio is registered).
+            // Skip annotation save — it will be saved once audio loads successfully.
+            return of(IDBActions.saveAnnotation.success());
+          }
           return this.idbService
             .saveAnnotation(
               action.mode,
