@@ -251,9 +251,20 @@ I just want to let you know, that the OCTRA server is currently offline.
   }
 
   private proceedWithLogin(removeData: boolean): void {
-    this.audioService.registerAudioManager(this.dropzone!.audioManager!);
+    const manager = this.dropzone?.audioManager;
+    if (!manager) {
+      console.error('[proceedWithLogin] audioManager is null/undefined — cannot proceed');
+      return;
+    }
+    const files = this.dropzone!.files.map((a) => a.file.file!).filter(Boolean) as File[];
+    if (files.length === 0) {
+      console.error('[proceedWithLogin] no valid File objects in dropzone — cannot proceed');
+      return;
+    }
+    this.audioService.registerAudioManager(manager);
+    console.log('[proceedWithLogin] registered audioManager, audiomanagers.length=', this.audioService.audiomanagers.length, 'files=', files.map((f) => f.name));
     this.authStoreService.loginLocal(
-      this.dropzone!.files.map((a) => a.file.file!),
+      files,
       this.dropzone!.hasAnnotation ? this.dropzone!.oannotation : undefined,
       removeData,
     );

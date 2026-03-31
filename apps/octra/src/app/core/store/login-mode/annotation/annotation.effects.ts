@@ -413,6 +413,7 @@ export class AnnotationEffects {
             }
           } else if (state.application.mode === LoginMode.LOCAL) {
             // local mode
+            console.log('[onAudioLoad$ LOCAL] audiomanagers.length=', this.audio.audiomanagers.length, 'sessionFile=', state.localMode.sessionFile?.name, 'loggedIn=', state.application.loggedIn);
             if (state.localMode.sessionFile !== undefined) {
               if (this.audio.audiomanagers.length > 0) {
                 this.store.dispatch(
@@ -426,6 +427,7 @@ export class AnnotationEffects {
                   }),
                 );
               } else {
+                console.error('[onAudioLoad$ LOCAL] FAIL: audiomanagers empty — sessionFile=', state.localMode.sessionFile?.name, 'freshLogin=', (state.application as any).freshLogin);
                 this.store.dispatch(
                   AnnotationActions.loadAudio.fail({
                     error: 'audio from sessionfile not loaded. Reload needed.',
@@ -433,6 +435,7 @@ export class AnnotationEffects {
                 );
               }
             } else {
+              console.error('[onAudioLoad$ LOCAL] FAIL: sessionFile is undefined — audiomanagers.length=', this.audio.audiomanagers.length);
               this.store.dispatch(
                 AnnotationActions.loadAudio.fail({
                   error: 'sessionfile is undefined',
