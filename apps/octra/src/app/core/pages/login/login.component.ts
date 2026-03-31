@@ -265,7 +265,6 @@ I just want to let you know, that the OCTRA server is currently offline.
       return;
     }
     this.audioService.registerAudioManager(manager);
-    console.log('[proceedWithLogin] registered audioManager, audiomanagers.length=', this.audioService.audiomanagers.length, 'files=', files.map((f) => f.name));
     this.authStoreService.loginLocal(
       files,
       this.dropzone!.hasAnnotation ? this.dropzone!.oannotation : undefined,

@@ -413,7 +413,6 @@ export class AnnotationEffects {
             }
           } else if (state.application.mode === LoginMode.LOCAL) {
             // local mode
-            console.log('[onAudioLoad$ LOCAL] audiomanagers.length=', this.audio.audiomanagers.length, 'sessionFile=', state.localMode.sessionFile?.name, 'audioAlreadyLoaded=', state.application.audioAlreadyLoaded);
             if (state.localMode.sessionFile !== undefined) {
               if (this.audio.audiomanagers.length > 0) {
                 this.store.dispatch(
@@ -437,7 +436,6 @@ export class AnnotationEffects {
                 );
               } else {
                 // Normal page-refresh restore path: audio is not in memory, user must re-upload.
-                console.log('[onAudioLoad$ LOCAL] page-refresh restore — prompting user to reload audio file');
                 this.store.dispatch(
                   AnnotationActions.loadAudio.fail({
                     error: 'audio from sessionfile not loaded. Reload needed.',
