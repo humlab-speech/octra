@@ -155,9 +155,11 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
     const chunks = (result as any).chunks as Array<{ timestamp: [number, number]; text: string }>;
     const msg: WorkerResultMessage = { type: 'result', chunks: chunks ?? [] };
     postMessage(msg);
+    self.close(); // release WASM heap immediately
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     const msg: WorkerErrorMessage = { type: 'error', message };
     postMessage(msg);
+    self.close();
   }
 });
