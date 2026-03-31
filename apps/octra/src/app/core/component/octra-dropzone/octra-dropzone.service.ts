@@ -265,12 +265,9 @@ export class OctraDropzoneService {
             this.decodeArrayBuffer(reading.result!, fileProgress),
           ]).pipe(
             map(([result]) => {
-              // audio decoding completed
-              this._audioManager = result.audioManager;
-
               if (result.audioManager && result.progress === 1) {
-                // finished, get result
-                if (!(this._audioManager === undefined)) {
+                // Destroy previous audio manager if the user replaced the file
+                if (this._audioManager !== undefined) {
                   this._audioManager.destroy();
                   this._audioManager = undefined;
                 }
