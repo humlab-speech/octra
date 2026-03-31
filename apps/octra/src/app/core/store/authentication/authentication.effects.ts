@@ -16,6 +16,7 @@ import { SessionStorageService } from 'ngx-webstorage';
 import {
   catchError,
   exhaustMap,
+  filter,
   from,
   map,
   of,
@@ -262,6 +263,7 @@ export class AuthenticationEffects {
               );
               return this.actions$.pipe(
                 ofType(IDBActions.saveModeOptions.success),
+                filter((s) => s.mode === a.mode),
                 take(1),
                 exhaustMap(() => {
                   return of(
