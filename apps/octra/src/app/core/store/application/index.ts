@@ -51,6 +51,9 @@ export interface ApplicationState {
   mode?: LoginMode;
   shortcutsEnabled: boolean;
   loggedIn: boolean;
+  /** True when the user just logged in with audio already loaded in this session
+   *  (as opposed to a page-refresh restore where audio must be re-uploaded). */
+  audioAlreadyLoaded: boolean;
   loading: {
     status: LoadingStatus;
     progress: number;

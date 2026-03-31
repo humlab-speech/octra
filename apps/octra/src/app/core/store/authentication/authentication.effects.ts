@@ -270,6 +270,7 @@ export class AuthenticationEffects {
                     AuthenticationActions.loginLocal.success({
                       ...a,
                       sessionFile: this.getSessionFile(audiofile!),
+                      audioAlreadyLoaded: true,
                     }),
                   );
                 }),

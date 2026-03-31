@@ -21,6 +21,7 @@ export const initialState: ApplicationState = {
   },
   language: 'en',
   loggedIn: false,
+  audioAlreadyLoaded: false,
   consoleEntries: [],
   options: {
     playOnHover: false,
@@ -183,11 +184,20 @@ export const reducer = createReducer(
     AuthenticationActions.loginOnline.success,
     AuthenticationActions.loginDemo.success,
     AuthenticationActions.loginURL.success,
-    AuthenticationActions.loginLocal.success,
     (state: ApplicationState, { mode }) => ({
       ...state,
       mode,
       loggedIn: true,
+      audioAlreadyLoaded: false,
+    }),
+  ),
+  on(
+    AuthenticationActions.loginLocal.success,
+    (state: ApplicationState, action) => ({
+      ...state,
+      mode: action.mode,
+      loggedIn: true,
+      audioAlreadyLoaded: action.audioAlreadyLoaded ?? false,
     }),
   ),
   on(AuthenticationActions.logout.success, (state: ApplicationState) => {
@@ -196,6 +206,7 @@ export const reducer = createReducer(
       mode: undefined,
       queryParams: undefined,
       loggedIn: false,
+      audioAlreadyLoaded: false,
     };
   }),
   on(

@@ -73,6 +73,9 @@ export class AuthenticationActions {
         annotation?: OAnnotJSON;
         sessionFile: SessionFile;
         removeData: boolean;
+        /** True when loginLocal.success is dispatched immediately after the user
+         *  loaded an audio file in this session (not a page-refresh restore). */
+        audioAlreadyLoaded?: boolean;
       }>(),
       fail: props<Error>(),
     },
