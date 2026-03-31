@@ -132,6 +132,8 @@ export class ApplicationSessionEffects {
         withLatestFrom(this.store),
         tap(([a, state]) => {
           if (state.application.initialized && !(a as any).startup) {
+            const _modeStateForLog = getModeState(state);
+            console.log(`[CHAIN] afterInitApplication$: initialized=${state.application.initialized}, loggedIn=${state.application.loggedIn}, mode=${state.application.mode}, hasProject=${!!_modeStateForLog?.currentSession?.currentProject}, hasTask=${!!_modeStateForLog?.currentSession?.task}`);
             if (!state.application.mode) {
               // no mode active
               if (

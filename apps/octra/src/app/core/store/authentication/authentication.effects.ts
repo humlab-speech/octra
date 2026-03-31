@@ -20,6 +20,7 @@ import {
   from,
   map,
   of,
+  race,
   take,
   tap,
   withLatestFrom,
@@ -261,11 +262,24 @@ export class AuthenticationEffects {
                   sessionFile: this.getSessionFile(audiofile),
                 }),
               );
-              return this.actions$.pipe(
-                ofType(IDBActions.saveModeOptions.success),
-                filter((s) => s.mode === a.mode),
+              console.log('[CHAIN] onLoginLocal$: prepare dispatched, waiting for saveModeOptions.success');
+              return race(
+                this.actions$.pipe(
+                  ofType(IDBActions.saveModeOptions.success),
+                  filter((s) => s.mode === a.mode),
+                  take(1),
+                ),
+                this.actions$.pipe(
+                  ofType(IDBActions.saveModeOptions.fail),
+                  take(1),
+                  tap(() =>
+                    console.warn('[onLoginLocal$] saveModeOptions failed — proceeding without IDB'),
+                  ),
+                ),
+              ).pipe(
                 take(1),
                 exhaustMap(() => {
+                  console.log('[CHAIN] onLoginLocal$: saveModeOptions resolved, dispatching loginLocal.success');
                   return of(
                     AuthenticationActions.loginLocal.success({
                       ...a,
@@ -401,6 +415,7 @@ export class AuthenticationEffects {
             }
           } else if (state.application.mode) {
             // is not online => load local configuration
+            console.log(`[CHAIN] loginSuccess$: mode=${a.mode}, dispatching loadProjectAndTaskInformation.do`);
             this.store.dispatch(
               LoginModeActions.loadProjectAndTaskInformation.do({
                 projectID: '7234892',
