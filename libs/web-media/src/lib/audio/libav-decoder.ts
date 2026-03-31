@@ -37,10 +37,13 @@ async function getLibAV(): Promise<any> {
   return libavInstance;
 }
 
-export async function decodeWithLibAV(buf: ArrayBuffer): Promise<AudioBufferLike> {
+export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.audio'): Promise<AudioBufferLike> {
   const libav = await getLibAV();
 
-  const filename = 'input.audio';
+  // Use the original filename so libav can detect the container format by extension
+  // (e.g. .wma → ASF demuxer) before falling back to content probing.
+  // Strip any path component; keep only the basename.
+  const filename = sourceFilename.replace(/.*[\\/]/, '') || 'input.audio';
   await libav.writeFile(filename, new Uint8Array(buf));
 
   let fmt_ctx: any;

@@ -362,7 +362,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
   ) {
     this.statistics.decoding.started = Date.now();
 
-    decodeWithLibAV(this._resource!.arraybuffer!).then((audioBuffer) => {
+    decodeWithLibAV(this._resource!.arraybuffer!, this._resource!.info.fullname).then((audioBuffer) => {
       // Collect per-channel Float32Arrays
       const channels: Float32Array[] = [];
       for (let ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
