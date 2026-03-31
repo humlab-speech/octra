@@ -137,7 +137,6 @@ export class LocalTranscriptionService implements OnDestroy {
 
   cancel(): void {
     if (this.worker) {
-      this.worker.terminate();
       this.cleanup();
     }
   }
@@ -147,7 +146,9 @@ export class LocalTranscriptionService implements OnDestroy {
   }
 
   private cleanup(): void {
+    const w = this.worker;
     this.worker = null;
+    w?.terminate(); // free WASM heap on every exit path
     if (this.subject && !this.subject.closed) {
       this.subject.complete();
     }
