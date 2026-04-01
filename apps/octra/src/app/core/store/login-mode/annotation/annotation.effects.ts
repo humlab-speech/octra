@@ -312,7 +312,6 @@ export class AnnotationEffects {
             );
           }
 
-          console.log(`[CHAIN] onAnnotationStart$: dispatching initTranscriptionService.do, mode=${a.mode}`);
           this.store.dispatch(
             AnnotationActions.initTranscriptionService.do({ mode: a.mode }),
           );
@@ -414,7 +413,6 @@ export class AnnotationEffects {
             }
           } else if (state.application.mode === LoginMode.LOCAL) {
             // local mode
-            console.log(`[CHAIN] onAudioLoad$ LOCAL: sessionFile=${!!state.localMode.sessionFile}, audiomanagers=${this.audio.audiomanagers.length}, audioAlreadyLoaded=${state.application.audioAlreadyLoaded}`);
             if (state.localMode.sessionFile !== undefined) {
               if (this.audio.audiomanagers.length > 0) {
                 this.store.dispatch(
@@ -630,7 +628,6 @@ export class AnnotationEffects {
         ofType(AnnotationActions.initTranscriptionService.success),
         withLatestFrom(this.store),
         tap(([action, state]) => {
-          console.log(`[CHAIN] loadSegmentsSuccess$: navigating to /intern/transcr, loading.status=${(state as RootState).application.loading.status}`);
           this.routingService.navigate(
             'transcription initialized',
             ['/intern/transcr'],
@@ -764,7 +761,6 @@ export class AnnotationEffects {
           [LoginMode.DEMO, LoginMode.LOCAL, LoginMode.URL].includes(a.mode)
         ) {
           // mode is not online => load configuration for local environment
-          console.log(`[CHAIN] onLoadOnlineInfo$: starting HTTP for mode=${a.mode}`);
           return forkJoin<
             [
               any,
@@ -802,7 +798,6 @@ export class AnnotationEffects {
             }).pipe(catchError(() => of(''))),
           ]).pipe(
             exhaustMap(([projectConfig, guidelines, functions]) => {
-              console.log(`[CHAIN] onLoadOnlineInfo$: HTTP complete, building task for mode=${a.mode}`);
               const currentProject = createSampleProjectDto('1234');
 
               const observables: Observable<{
