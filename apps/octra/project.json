@@ -161,6 +161,7 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
+        "allowedHosts": ["all"],
         "headers": {
           "Cross-Origin-Opener-Policy": "same-origin",
           "Cross-Origin-Embedder-Policy": "credentialless"
