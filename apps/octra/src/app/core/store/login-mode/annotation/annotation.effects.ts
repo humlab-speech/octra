@@ -312,6 +312,7 @@ export class AnnotationEffects {
             );
           }
 
+          console.log(`[CHAIN] onAnnotationStart$: dispatching initTranscriptionService.do, mode=${a.mode}`);
           this.store.dispatch(
             AnnotationActions.initTranscriptionService.do({ mode: a.mode }),
           );
@@ -629,6 +630,7 @@ export class AnnotationEffects {
         ofType(AnnotationActions.initTranscriptionService.success),
         withLatestFrom(this.store),
         tap(([action, state]) => {
+          console.log(`[CHAIN] loadSegmentsSuccess$: navigating to /intern/transcr, loading.status=${(state as RootState).application.loading.status}`);
           this.routingService.navigate(
             'transcription initialized',
             ['/intern/transcr'],

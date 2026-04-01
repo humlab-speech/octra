@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { navigateTo } from '@octra/ngx-utilities';
-import { map, Observable } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { AppInfo } from '../../../app.info';
 import { LoadingStatus, RootState } from '../../store';
 import { ApplicationStoreService } from '../../store/application/application-store.service';
@@ -25,8 +25,11 @@ export class TranscActivateGuard {
     state: RouterStateSnapshot,
   ): Observable<boolean> | boolean {
     return this.store.pipe(
+      take(1),
       map((state) => {
-        if (state.application.loading.status !== LoadingStatus.FINISHED) {
+        const status = state.application.loading.status;
+        console.log(`[CHAIN] TranscActivateGuard: loading.status=${status}`);
+        if (status !== LoadingStatus.FINISHED) {
           console.error(`audio not loaded`);
           const params = AppInfo.queryParamsHandling;
           params.fragment = route.fragment!;
