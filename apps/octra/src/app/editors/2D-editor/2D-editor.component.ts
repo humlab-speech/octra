@@ -570,10 +570,12 @@ export class TwoDEditorComponent
   }
 
   ngAfterViewInit() {
+    console.log('[2D] ngAfterViewInit: subscribing to viewer.onInitialized');
     if (this.appStorage.showMagnifier) {
       this.magnifier.av.zoomY = this.factor;
     }
     const subscr = this.viewer.onInitialized.subscribe(() => {
+      console.log('[2D] onInitialized received — emitting initialized');
       subscr.unsubscribe();
       this.initialized.emit();
     });

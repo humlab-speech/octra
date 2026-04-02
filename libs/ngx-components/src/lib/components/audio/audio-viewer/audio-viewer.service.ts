@@ -28,7 +28,7 @@ import {
   ShortcutManager,
 } from '@octra/web-media';
 import Konva from 'konva';
-import { Subject, timer } from 'rxjs';
+import { ReplaySubject, Subject, timer } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MultiThreadingService } from '../../../multi-threading.service';
 import { Position, Size } from '../../../obj';
@@ -187,7 +187,7 @@ export class AudioViewerService {
   protected mouseClickPos: SampleUnit | undefined;
   protected playcursor: PlayCursor | undefined;
   private _focused = false;
-  public onInitialized = new Subject<void>();
+  public onInitialized = new ReplaySubject<void>(1);
 
   private _boundaryDragging: Subject<{
     status: 'started' | 'stopped' | 'dragging';
@@ -587,6 +587,10 @@ export class AudioViewerService {
   };
 
   public initializeView() {
+    console.log('[AV] initializeView: entry', {
+      hasLevel: !!this.currentLevel, itemsLength: this.currentLevel?.items?.length,
+      hasStage: !!this.stage, sizeHeight: this.size?.height, hasLayers: !!this.layers,
+    });
     if (
       this.currentLevel &&
       this.currentLevel.items.length > 0 &&
@@ -748,9 +752,13 @@ export class AudioViewerService {
       }
 
       this.stage.batchDraw();
+      console.log('[AV] initializeView: SUCCESS — emitting onInitialized');
       this.onInitialized.next();
     } else {
-      console.error(`transcriptionLevel is undefined`);
+      console.error('[AV] initializeView: GUARD FAILED', {
+        hasLevel: !!this.currentLevel, itemsLength: this.currentLevel?.items?.length,
+        hasStage: !!this.stage, sizeHeight: this.size?.height, hasLayers: !!this.layers,
+      });
     }
   }
 

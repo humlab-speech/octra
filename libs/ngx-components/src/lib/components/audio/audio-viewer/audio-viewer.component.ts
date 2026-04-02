@@ -253,6 +253,7 @@ export class AudioViewerComponent
   }
 
   private _avInitialized = false;
+  private _initInProgress = false;
   private resizing = false;
   private lastResize = 0;
   private subscrManager: SubscriptionManager<Subscription>;
@@ -317,6 +318,10 @@ export class AudioViewerComponent
 
   async afterChunkUpdated(audioChunk?: AudioChunk) {
     if (audioChunk) {
+      if (this._initInProgress) {
+        return;
+      }
+      this._initInProgress = true;
       this.subscrManager.removeByTag('audioChunkStatusChange');
       this.subscrManager.removeByTag('audioChunkChannelFinished');
       this.subscrManager.removeByTag('initializeAVAfterChunkChange');
@@ -353,6 +358,13 @@ export class AudioViewerComponent
         // channel data is ready
         await wait(0);
 
+        console.log('[AV] afterChunkUpdated: post-wait check', this.av.name, {
+          width: this.width, height: this.height,
+          hasChunk: !!audioChunk, hasLevel: !!this.av.annotation?.currentLevel,
+          itemsLength: this.av.annotation?.currentLevel?.items?.length,
+          alreadyInit: this._avInitialized,
+        });
+
         if (
           this.width &&
           this.height &&
@@ -368,13 +380,18 @@ export class AudioViewerComponent
           );
 
           await this.av.initializeSettings();
+          console.log('[AV] afterChunkUpdated: initializeSettings OK, calling initializeView', this.av.name);
           this.av.initializeView();
+          console.log('[AV] afterChunkUpdated: initializeView called', this.av.name);
           this._avInitialized = true;
+          this._initInProgress = false;
         } else {
-          // ignore
+          console.warn('[AV] afterChunkUpdated: SKIPPED conditions not met', this.av.name);
+          this._initInProgress = false;
         }
       } catch (e) {
-        console.error(e);
+        console.error('[AV] afterChunkUpdated: EXCEPTION', this.av.name, e);
+        this._initInProgress = false;
       }
     } else {
       console.error(`AudioViewer: chunk is undefined.`);
