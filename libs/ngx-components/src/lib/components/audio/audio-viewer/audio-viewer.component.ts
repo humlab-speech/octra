@@ -254,6 +254,7 @@ export class AudioViewerComponent
 
   private _avInitialized = false;
   private _initInProgress = false;
+  private _pendingRetry = false;
   private resizing = false;
   private lastResize = 0;
   private subscrManager: SubscriptionManager<Subscription>;
@@ -319,8 +320,10 @@ export class AudioViewerComponent
   async afterChunkUpdated(audioChunk?: AudioChunk) {
     if (audioChunk) {
       if (this._initInProgress) {
+        this._pendingRetry = true;
         return;
       }
+      this._pendingRetry = false;
       this._initInProgress = true;
       this.subscrManager.removeByTag('audioChunkStatusChange');
       this.subscrManager.removeByTag('audioChunkChannelFinished');
@@ -385,13 +388,22 @@ export class AudioViewerComponent
           console.log('[AV] afterChunkUpdated: initializeView called', this.av.name);
           this._avInitialized = true;
           this._initInProgress = false;
+          // No retry needed — init succeeded.
         } else {
           console.warn('[AV] afterChunkUpdated: SKIPPED conditions not met', this.av.name);
           this._initInProgress = false;
+          if (this._pendingRetry && !this._avInitialized) {
+            this._pendingRetry = false;
+            this.afterChunkUpdated(this.audioChunk);
+          }
         }
       } catch (e) {
         console.error('[AV] afterChunkUpdated: EXCEPTION', this.av.name, e);
         this._initInProgress = false;
+        if (this._pendingRetry && !this._avInitialized) {
+          this._pendingRetry = false;
+          this.afterChunkUpdated(this.audioChunk);
+        }
       }
     } else {
       console.error(`AudioViewer: chunk is undefined.`);
