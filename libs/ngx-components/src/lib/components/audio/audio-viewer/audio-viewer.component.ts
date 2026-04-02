@@ -252,6 +252,7 @@ export class AudioViewerComponent
     return this.av.onInitialized;
   }
 
+  private _avInitialized = false;
   private resizing = false;
   private lastResize = 0;
   private subscrManager: SubscriptionManager<Subscription>;
@@ -291,6 +292,11 @@ export class AudioViewerComponent
         }
       } else {
         this.afterLevelUpdated(parsedChanges, annotation.previousValue);
+      }
+      // If viewer hasn't initialized yet and audioChunk is available, retry.
+      // Handles the case where audioChunk arrived before annotation.
+      if (!this._avInitialized && this.audioChunk) {
+        this.afterChunkUpdated(this.audioChunk);
       }
     }
 
@@ -363,6 +369,7 @@ export class AudioViewerComponent
 
           await this.av.initializeSettings();
           this.av.initializeView();
+          this._avInitialized = true;
         } else {
           // ignore
         }
@@ -461,7 +468,11 @@ export class AudioViewerComponent
     }
   };
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    if (this.audioChunk && !this._avInitialized) {
+      this.afterChunkUpdated(this.audioChunk);
+    }
+  }
 }
 
 export interface AudioViewerShortcutEvent {
