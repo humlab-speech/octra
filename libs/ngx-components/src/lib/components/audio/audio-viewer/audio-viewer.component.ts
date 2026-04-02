@@ -318,7 +318,6 @@ export class AudioViewerComponent
   }
 
   async afterChunkUpdated(audioChunk?: AudioChunk) {
-    console.warn(`[AV] afterChunkUpdated ENTRY name=${this.av.name} hasChunk=${!!audioChunk} inProgress=${this._initInProgress} avInit=${this._avInitialized}`);
     if (audioChunk) {
       if (this._initInProgress) {
         this._pendingRetry = true;
@@ -343,7 +342,6 @@ export class AudioViewerComponent
       try {
         await new Promise<void>((resolve, reject) => {
           if (audioChunk && !audioChunk.audioManager.channel) {
-            console.warn(`[AV] afterChunkUpdated name=${this.av.name}: channel not ready, waiting for onChannelDataChange`);
             this.subscrManager.add(
               audioChunk.audioManager.onChannelDataChange.subscribe({
                 next: () => {
@@ -368,8 +366,6 @@ export class AudioViewerComponent
         // channel data is ready
         await wait(0);
 
-        console.warn(`[AV] afterChunkUpdated: post-wait check name=${this.av.name} width=${this.width} height=${this.height} hasChunk=${!!audioChunk} hasLevel=${!!this.av.annotation?.currentLevel} itemsLength=${this.av.annotation?.currentLevel?.items?.length} alreadyInit=${this._avInitialized}`);
-
         if (
           this.width &&
           this.height &&
@@ -385,14 +381,10 @@ export class AudioViewerComponent
           );
 
           await this.av.initializeSettings();
-          console.log('[AV] afterChunkUpdated: initializeSettings OK, calling initializeView', this.av.name);
           this.av.initializeView();
-          console.log('[AV] afterChunkUpdated: initializeView called', this.av.name);
           this._avInitialized = true;
           this._initInProgress = false;
-          // No retry needed — init succeeded.
         } else {
-          console.warn(`[AV] afterChunkUpdated: SKIPPED name=${this.av.name} width=${this.width} height=${this.height} hasLevel=${!!this.av.annotation?.currentLevel} itemsLength=${this.av.annotation?.currentLevel?.items?.length}`);
           this._initInProgress = false;
           if (this._pendingRetry && !this._avInitialized) {
             this._pendingRetry = false;
@@ -400,7 +392,7 @@ export class AudioViewerComponent
           }
         }
       } catch (e) {
-        console.error('[AV] afterChunkUpdated: EXCEPTION', this.av.name, e);
+        console.error(e);
         this._initInProgress = false;
         if (this._pendingRetry && !this._avInitialized) {
           this._pendingRetry = false;

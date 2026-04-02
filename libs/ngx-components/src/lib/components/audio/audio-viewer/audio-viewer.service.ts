@@ -587,10 +587,6 @@ export class AudioViewerService {
   };
 
   public initializeView() {
-    console.log('[AV] initializeView: entry', {
-      hasLevel: !!this.currentLevel, itemsLength: this.currentLevel?.items?.length,
-      hasStage: !!this.stage, sizeHeight: this.size?.height, hasLayers: !!this.layers,
-    });
     if (
       this.currentLevel &&
       this.currentLevel.items.length > 0 &&
@@ -752,13 +748,7 @@ export class AudioViewerService {
       }
 
       this.stage.batchDraw();
-      console.log('[AV] initializeView: SUCCESS — emitting onInitialized');
       this.onInitialized.next();
-    } else {
-      console.error('[AV] initializeView: GUARD FAILED', {
-        hasLevel: !!this.currentLevel, itemsLength: this.currentLevel?.items?.length,
-        hasStage: !!this.stage, sizeHeight: this.size?.height, hasLayers: !!this.layers,
-      });
     }
   }
 
