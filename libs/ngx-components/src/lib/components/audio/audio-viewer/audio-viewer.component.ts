@@ -318,6 +318,7 @@ export class AudioViewerComponent
   }
 
   async afterChunkUpdated(audioChunk?: AudioChunk) {
+    console.warn(`[AV] afterChunkUpdated ENTRY name=${this.av.name} hasChunk=${!!audioChunk} inProgress=${this._initInProgress} avInit=${this._avInitialized}`);
     if (audioChunk) {
       if (this._initInProgress) {
         this._pendingRetry = true;
@@ -342,6 +343,7 @@ export class AudioViewerComponent
       try {
         await new Promise<void>((resolve, reject) => {
           if (audioChunk && !audioChunk.audioManager.channel) {
+            console.warn(`[AV] afterChunkUpdated name=${this.av.name}: channel not ready, waiting for onChannelDataChange`);
             this.subscrManager.add(
               audioChunk.audioManager.onChannelDataChange.subscribe({
                 next: () => {
@@ -349,6 +351,11 @@ export class AudioViewerComponent
                 },
                 error: (error: any) => {
                   reject(error);
+                },
+                // Subject fires .complete() after .next() — if we subscribe after
+                // completion we only get this notification, so resolve here too.
+                complete: () => {
+                  resolve();
                 },
               }),
               'audioChunkChannelFinished',
@@ -361,12 +368,7 @@ export class AudioViewerComponent
         // channel data is ready
         await wait(0);
 
-        console.log('[AV] afterChunkUpdated: post-wait check', this.av.name, {
-          width: this.width, height: this.height,
-          hasChunk: !!audioChunk, hasLevel: !!this.av.annotation?.currentLevel,
-          itemsLength: this.av.annotation?.currentLevel?.items?.length,
-          alreadyInit: this._avInitialized,
-        });
+        console.warn(`[AV] afterChunkUpdated: post-wait check name=${this.av.name} width=${this.width} height=${this.height} hasChunk=${!!audioChunk} hasLevel=${!!this.av.annotation?.currentLevel} itemsLength=${this.av.annotation?.currentLevel?.items?.length} alreadyInit=${this._avInitialized}`);
 
         if (
           this.width &&
@@ -390,7 +392,7 @@ export class AudioViewerComponent
           this._initInProgress = false;
           // No retry needed — init succeeded.
         } else {
-          console.warn('[AV] afterChunkUpdated: SKIPPED conditions not met', this.av.name);
+          console.warn(`[AV] afterChunkUpdated: SKIPPED name=${this.av.name} width=${this.width} height=${this.height} hasLevel=${!!this.av.annotation?.currentLevel} itemsLength=${this.av.annotation?.currentLevel?.items?.length}`);
           this._initInProgress = false;
           if (this._pendingRetry && !this._avInitialized) {
             this._pendingRetry = false;
