@@ -34,6 +34,7 @@ export class PartiturConverter extends Converter {
     this._conversion.export = true;
     this._conversion.import = true;
     this._encoding = 'UTF-8';
+    this._category = 'specialist';
     this._notice =
       'While importing a .par file OCTRA combines TRN and ORT lines to one tier. ' +
       'This tier only consists of time aligned segments. For export OCTRA creates ORT and TRN lines from the transcription.';

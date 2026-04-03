@@ -9,7 +9,7 @@ import {
   NgbPopover,
   NgbTooltip,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Converter, ExportResult } from '@octra/annotation';
+import { Converter, ExportCategory, ExportResult } from '@octra/annotation';
 import {
   fadeInExpandOnEnterAnimation,
   fadeOutCollapseOnLeaveAnimation,
@@ -253,7 +253,11 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
           if (this.parentformat.uri !== undefined) {
             window.URL.revokeObjectURL(this.parentformat.uri.toString());
           }
-          const test = new File([result.file.content], result.file.name);
+          const test = new File(
+            [result.file.content as BlobPart],
+            result.file.name,
+            result.file.encoding === 'binary' ? { type: result.file.type } : undefined,
+          );
           this.setParentFormatURI(window.URL.createObjectURL(test));
           this.preparing = {
             name: converter.name,
@@ -325,7 +329,30 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
     }
   }
 
+  readonly categoryLabels: Record<ExportCategory, string> = {
+    general: 'General output formats',
+    linguistic: 'Linguistic formats',
+    specialist: 'Specialist technical formats',
+  };
+
+  readonly categoryOrder: ExportCategory[] = ['general', 'linguistic', 'specialist'];
+
+  get convertersByCategory(): Map<ExportCategory, { converter: Converter; index: number }[]> {
+    const map = new Map<ExportCategory, { converter: Converter; index: number }[]>();
+    for (const cat of this.categoryOrder) map.set(cat, []);
+    this.converters.forEach((c, i) => {
+      if (c.conversion.export && map.has(c.category)) {
+        map.get(c.category)!.push({ converter: c, index: i });
+      }
+    });
+    return map;
+  }
+
   onPlaintextTimestampOptionChanged(converter: Converter) {
+    this.updateParentFormat(converter, this.selectedLevel);
+  }
+
+  onDocxOptionChanged(converter: Converter) {
     this.updateParentFormat(converter, this.selectedLevel);
   }
 }

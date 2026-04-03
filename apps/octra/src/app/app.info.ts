@@ -4,6 +4,7 @@ import {
   BundleJSONConverter,
   Converter,
   CTMConverter,
+  DocxConverter,
   ELANConverter,
   PartiturConverter,
   PraatTableConverter,
@@ -23,17 +24,18 @@ export class AppInfo {
   ];
 
   public static readonly converters: Converter[] = [
+    new DocxConverter(),
+    new SRTConverter(),
+    new TextConverter(),
     new AnnotJSONConverter(),
     new WhisperJSONConverter(),
     new PraatTableConverter(),
     new PraatTextgridConverter(),
-    new CTMConverter(),
-    new PartiturConverter(),
-    new BundleJSONConverter(),
     new ELANConverter(),
-    new SRTConverter(),
+    new BundleJSONConverter(),
     new WebVTTConverter(),
-    new TextConverter(),
+    new PartiturConverter(),
+    new CTMConverter(),
   ];
 
   public static readonly themes: string[] = ['default', 'shortAudioFiles'];

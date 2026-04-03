@@ -21,31 +21,34 @@
         </tr>
       </thead>
       <tbody>
-        @for (converter of converters; track converter; let i = $index) {
-          @if (converter.conversion.export) {
+        @for (cat of categoryOrder; track cat) {
+          <tr class="category-header">
+            <td colspan="4">{{ categoryLabels[cat] }}</td>
+          </tr>
+          @for (item of convertersByCategory.get(cat)!; track item) {
             <tr class="top-tr">
-              <td (click)="onLineClick(converter, i)">
+              <td (click)="onLineClick(item.converter, item.index)">
                 <i
                   class="bi"
                   style="color: gray"
                   [ngClass]="{
-                    'bi-chevron-up': exportStates[i] === 'active',
-                    'bi-chevron-down': exportStates[i] !== 'active',
+                    'bi-chevron-up': exportStates[item.index] === 'active',
+                    'bi-chevron-down': exportStates[item.index] !== 'active',
                   }"
                 ></i>
               </td>
-              <td (click)="onLineClick(converter, i)">
+              <td (click)="onLineClick(item.converter, item.index)">
                 <a>
-                  {{ converter.name }} (
-                  @for (ext of converter.extensions; track ext) {
+                  {{ item.converter.name }} (
+                  @for (ext of item.converter.extensions; track ext) {
                     *{{ ext }}
-                    @if ($index < converter.extensions.length - 1) {
+                    @if ($index < item.converter.extensions.length - 1) {
                       <span>, </span>
                     }
                   }
                   )
                 </a>
-                @if (preparing.name === converter.name && preparing.preparing) {
+                @if (preparing.name === item.converter.name && preparing.preparing) {
                   <div
                     class="spinner-border"
                     style="
@@ -60,8 +63,8 @@
                   </div>
                 }
               </td>
-              <td (click)="onLineClick(converter, i)">
-                @for (app of converter.applications; track app) {
+              <td (click)="onLineClick(item.converter, item.index)">
+                @for (app of item.converter.applications; track app) {
                   @if (app.application.homepage) {
                     <a [href]="app.application.homepage" target="_blank">{{
                       app.application.name
@@ -83,28 +86,26 @@
                       ></i>
                     }
                   }
-                  @if ($index < converter.applications.length - 1) {
+                  @if ($index < item.converter.applications.length - 1) {
                     <span>, </span>
                   }
                 }
               </td>
-              <td (click)="onLineClick(converter, i)">
-                @if (converter.notice !== '') {
+              <td (click)="onLineClick(item.converter, item.index)">
+                @if (item.converter.notice !== '') {
                   <i
                     class="bi bi-info-circle"
-                    [ngbTooltip]="converter.notice"
+                    [ngbTooltip]="item.converter.notice"
                   ></i>
                 }
               </td>
             </tr>
-          }
-          @if (converter.conversion.export) {
-            @if (exportStates[i] === 'active') {
+            @if (exportStates[item.index] === 'active') {
               <tr [@fadeInExpandOnEnter] [@fadeOutCollapseOnLeave]>
                 <td></td>
                 <td colspan="4" style="padding-left: 20px">
                   @if (
-                    !converter.multitiers &&
+                    !item.converter.multitiers &&
                     annotationStoreService.transcript?.levels !== undefined &&
                     annotationStoreService.transcript!.levels.length > 1
                   ) {
@@ -115,7 +116,7 @@
                       <select
                         #val
                         [(ngModel)]="selectedLevel"
-                        (change)="onSelectionChange(converter, val.value)"
+                        (change)="onSelectionChange(item.converter, val.value)"
                         style="padding: 5px 10px"
                       >
                         @for (
@@ -130,12 +131,63 @@
                       </select>
                     </div>
                   }
-                  @if (converter.options !== undefined) {
+                  @if (item.converter.options !== undefined) {
                     <div class="options">
                       <span style="font-weight: bold"
                         >{{ 'g.Options' | transloco }}:</span
                       >
-                      @if (converter.name === 'PlainText') {
+                      @if (item.converter.name === 'DOCX') {
+                        <div class="timestamp-options">
+                          <table>
+                            <tbody>
+                              <tr class="option">
+                                <td>
+                                  <input
+                                    type="radio"
+                                    id="docx-separate-{{item.index}}"
+                                    name="docx-mode-{{item.index}}"
+                                    [value]="'separate'"
+                                    [(ngModel)]="item.converter.options.mode"
+                                    (ngModelChange)="onDocxOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td>
+                                  <label for="docx-separate-{{item.index}}">Each sentence on a separate line</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td>
+                                  <input
+                                    type="radio"
+                                    id="docx-continuous-{{item.index}}"
+                                    name="docx-mode-{{item.index}}"
+                                    [value]="'continuous'"
+                                    [(ngModel)]="item.converter.options.mode"
+                                    (ngModelChange)="onDocxOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td>
+                                  <label for="docx-continuous-{{item.index}}">Continuous text</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
+                                    id="docx-timestamps-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addTimestamps"
+                                    (ngModelChange)="onDocxOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="docx-timestamps-{{item.index}}">Add timestamp at beginning of each sentence</label>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                      @if (item.converter.name === 'PlainText') {
                         <div class="timestamp-options">
                           <table>
                             <tbody>
@@ -147,11 +199,11 @@
                                     name="addNewLineString"
                                     (ngModelChange)="
                                       onPlaintextTimestampOptionChanged(
-                                        converter
+                                        item.converter
                                       )
                                     "
                                     [(ngModel)]="
-                                      converter.options.addNewLineString
+                                      item.converter.options.addNewLineString
                                     "
                                   />
                                 </td>
@@ -171,11 +223,11 @@
                                     name="showTimestampString"
                                     (ngModelChange)="
                                       onPlaintextTimestampOptionChanged(
-                                        converter
+                                        item.converter
                                       )
                                     "
                                     [(ngModel)]="
-                                      converter.options.showTimestampString
+                                      item.converter.options.showTimestampString
                                     "
                                   />
                                 </td>
@@ -199,11 +251,11 @@
                                     id="timestamp-option-samples"
                                     name="showTimestampString"
                                     [(ngModel)]="
-                                      converter.options.showTimestampSamples
+                                      item.converter.options.showTimestampSamples
                                     "
                                     (ngModelChange)="
                                       onPlaintextTimestampOptionChanged(
-                                        converter
+                                        item.converter
                                       )
                                     "
                                   />
@@ -236,14 +288,14 @@
                     </div>
                   }
                   @if (
-                    preparing.name === converter.name && !preparing.preparing
+                    preparing.name === item.converter.name && !preparing.preparing
                   ) {
                     <a
                       style="margin-left: 10px"
                       download="{{ parentformat.download }}"
                       [href]="parentformat.uri"
                       class="link"
-                      (click)="onDownloadClick(i)"
+                      (click)="onDownloadClick(item.index)"
                     >
                       <i class="bi bi-save-fill"></i>
                       Download

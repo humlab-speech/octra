@@ -6,6 +6,7 @@ export type OctraAnnotationFormatType =
   | 'AnnotJSON'
   | 'BundleJSON'
   | 'CTM'
+  | 'DOCX'
   | 'ELAN'
   | 'BASPartitur'
   | 'PraatTextTable'
@@ -14,6 +15,8 @@ export type OctraAnnotationFormatType =
   | 'TextGrid'
   | 'WhisperJSON'
   | 'WebVTT';
+
+export type ExportCategory = 'general' | 'linguistic' | 'specialist';
 
 export interface IFile {
   name: string;
@@ -83,6 +86,11 @@ export abstract class Converter {
 
   protected _multitiers = true;
   public options: any;
+  protected _category: ExportCategory = 'linguistic';
+
+  get category(): ExportCategory {
+    return this._category;
+  }
 
   get multitiers(): boolean {
     return this._multitiers;

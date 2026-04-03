@@ -45,6 +45,7 @@ export class TextConverter extends Converter {
     this._conversion.export = true;
     this._conversion.import = true;
     this._encoding = 'UTF-8';
+    this._category = 'general';
     this._multitiers = false;
   }
 

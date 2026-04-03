@@ -45,6 +45,7 @@ export class WebVTTConverter extends Converter {
     this._conversion.export = true;
     this._conversion.import = true;
     this._encoding = 'UTF-8';
+    this._category = 'specialist';
     this._multitiers = false;
     this._notice =
       'OCTRA reads timestamps and the transcripts. STYLE, NOTICE and other parts of VTT will be ignored. Multi-Line-Transcript will be merged.';
