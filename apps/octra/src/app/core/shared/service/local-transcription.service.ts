@@ -8,7 +8,6 @@ import {
   WorkerOutMessage,
   WorkerTranscribeMessage,
 } from '../../workers/whisper-transcription.worker';
-import { resampleChannels } from '@octra/web-media';
 
 export interface TranscriptionDownloadProgress {
   type: 'download-progress';
@@ -75,17 +74,8 @@ export class LocalTranscriptionService implements OnDestroy {
       return subject.asObservable();
     }
 
-    // Use the actual decoded sample rate rather than the file-metadata rate.
-    // AudioContext.decodeAudioData always resamples to its native rate (e.g. 48 kHz),
-    // so a 44.1 kHz FLAC produces channel data at 48 kHz while sampleRate still says
-    // 44.1 kHz.  Using the wrong ratio here produces pitch-shifted audio → gibberish.
-    const srcRate =
-      audioManager.resource.info.audioBufferInfo?.sampleRate ??
-      audioManager.sampleRate;
-    const mono: Float32Array =
-      srcRate !== WHISPER_SAMPLE_RATE
-        ? resampleChannels([channel], srcRate, WHISPER_SAMPLE_RATE)[0]
-        : new Float32Array(channel); // copy — never transfer the AudioManager's own buffer
+    // channel is already normalized to WHISPER_SAMPLE_RATE mono by HtmlAudioMechanism
+    const mono: Float32Array = new Float32Array(channel); // copy — never transfer the AudioManager's own buffer
 
     const audioDurationS = mono.length / WHISPER_SAMPLE_RATE;
 

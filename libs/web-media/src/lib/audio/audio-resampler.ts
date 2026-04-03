@@ -19,6 +19,19 @@ export function resampleChannels(
   return channels.map((ch) => resampleChannel(ch, srcRate, targetRate, outLength));
 }
 
+export function mixToMono(channels: Float32Array[]): Float32Array {
+  if (channels.length === 1) return channels[0];
+  const length = channels[0].length;
+  const mono = new Float32Array(length);
+  const invN = 1 / channels.length;
+  for (let i = 0; i < length; i++) {
+    let sum = 0;
+    for (const ch of channels) sum += ch[i];
+    mono[i] = sum * invN;
+  }
+  return mono;
+}
+
 function resampleChannel(
   input: Float32Array,
   srcRate: number,

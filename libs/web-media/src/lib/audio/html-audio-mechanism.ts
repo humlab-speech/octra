@@ -10,7 +10,7 @@ import {
   MusicMetadataFormat,
   WavFormat,
 } from '@octra/web-media';
-import { needsResampling, resampleChannels } from './audio-resampler';
+import { mixToMono, resampleChannels } from './audio-resampler';
 import { decodeWithLibAV } from './libav-decoder';
 import { WavWriter } from './binary/wavwriter';
 import { concat, map, Observable, Subject, Subscription, timer } from 'rxjs';
@@ -267,28 +267,21 @@ export class HtmlAudioMechanism extends AudioMechanism {
               info.sampleRate,
             );
 
-            if (needsResampling(audioBuffer.sampleRate)) {
-              // Tier 2: Safari sub-44100 Hz — resample via OfflineAudioContext then re-encode to WAV.
-              await this.applyNativeResampleAndFinalize(audioBuffer, subj, settle);
-            } else {
-              // Tier 1: native decode, no resampling needed.
-              this._channel = audioBuffer.getChannelData(0);
-              this._channelDataFactor =
-                this._resource?.info.sampleRate! /
-                (this._resource?.info.audioBufferInfo!.sampleRate ??
-                  this._resource?.info.sampleRate!);
-              this.onChannelDataChange.next();
-              this.onChannelDataChange.complete();
-              this.statistics.decoding.duration =
-                Date.now() - this.statistics.decoding.started;
-              this.changeStatus(PlayBackStatus.INITIALIZED);
-              settle(() => setTimeout(() => {
-                subj.next({ decodeProgress: 1 });
-                subj.complete();
-              }, 0));
-            }
-          } catch (_resampleError) {
-            // Tier 2 failed (OfflineAudioContext error) → Tier 3.
+            const channels = Array.from(
+              { length: audioBuffer.numberOfChannels },
+              (_, i) => audioBuffer.getChannelData(i),
+            );
+            this.normalizeAudio(channels, audioBuffer.sampleRate);
+            this.onChannelDataChange.next();
+            this.onChannelDataChange.complete();
+            this.statistics.decoding.duration =
+              Date.now() - this.statistics.decoding.started;
+            this.changeStatus(PlayBackStatus.INITIALIZED);
+            settle(() => setTimeout(() => {
+              subj.next({ decodeProgress: 1 });
+              subj.complete();
+            }, 0));
+          } catch (_e) {
             this.decodeAudioWithLibavDecoder(subj, settle);
           }
         })
@@ -301,59 +294,6 @@ export class HtmlAudioMechanism extends AudioMechanism {
     }
   }
 
-  private async applyNativeResampleAndFinalize(
-    audioBuffer: AudioBuffer,
-    subj: Subject<{ decodeProgress: number }>,
-    settle: (fn: () => void) => void = (fn) => fn(),
-  ): Promise<void> {
-    const targetRate = 44100;
-    const numChannels = audioBuffer.numberOfChannels;
-    const targetLength = Math.ceil(
-      (audioBuffer.length * targetRate) / audioBuffer.sampleRate,
-    );
-
-    const offlineCtx = new OfflineAudioContext(numChannels, targetLength, targetRate);
-    const source = offlineCtx.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(offlineCtx.destination);
-    source.start(0);
-    const resampledBuffer = await offlineCtx.startRendering();
-
-    const channels: Float32Array[] = [];
-    for (let ch = 0; ch < numChannels; ch++) {
-      channels.push(resampledBuffer.getChannelData(ch));
-    }
-
-    const wavBytes = new WavWriter().write(channels, targetRate);
-    this._resource!.arraybuffer = wavBytes.buffer;
-
-    const oldInfo = this._resource!.info;
-    const newInfo = new AudioInfo(
-      oldInfo.fullname,
-      'audio/wav',
-      wavBytes.byteLength,
-      targetRate,
-      channels[0].length,
-      numChannels,
-      oldInfo.bitrate,
-      { sampleRate: targetRate, samples: channels[0].length },
-    );
-    this._resource!.info = newInfo;
-
-    this._channel = channels[0];
-    this._channelDataFactor = 1;
-    this.onChannelDataChange.next();
-    this.onChannelDataChange.complete();
-    this.statistics.decoding.duration =
-      Date.now() - this.statistics.decoding.started;
-    this.changeStatus(PlayBackStatus.INITIALIZED);
-
-    settle(() => setTimeout(() => {
-      subj.next({ decodeProgress: 1 });
-      subj.complete();
-    }, 0));
-  }
-
   private decodeAudioWithLibavDecoder(
     subj: Subject<{
       decodeProgress: number;
@@ -363,41 +303,12 @@ export class HtmlAudioMechanism extends AudioMechanism {
     this.statistics.decoding.started = Date.now();
 
     decodeWithLibAV(this._resource!.arraybuffer!, this._resource!.info.fullname).then((audioBuffer) => {
-      // Collect per-channel Float32Arrays
       const channels: Float32Array[] = [];
       for (let ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
         channels.push(audioBuffer.getChannelData(ch));
       }
 
-      // Resample to 44100 Hz on Safari for sub-44100 Hz source material
-      const targetRate = needsResampling(audioBuffer.sampleRate)
-        ? 44100
-        : audioBuffer.sampleRate;
-      const finalChannels =
-        targetRate !== audioBuffer.sampleRate
-          ? resampleChannels(channels, audioBuffer.sampleRate, targetRate)
-          : channels;
-
-      // Re-encode to WAV so the <audio> element can play any input format uniformly
-      const wavBytes = new WavWriter().write(finalChannels, targetRate);
-      this._resource!.arraybuffer = wavBytes.buffer;
-
-      // Replace AudioInfo with accurate values from libav decode result.
-      // AudioInfo.sampleRate is readonly, so we construct a new instance.
-      const oldInfo = this._resource!.info;
-      const newInfo = new AudioInfo(
-        oldInfo.fullname,
-        'audio/wav',
-        wavBytes.byteLength,
-        targetRate,
-        finalChannels[0].length,
-        finalChannels.length,
-        oldInfo.bitrate,
-        { sampleRate: targetRate, samples: finalChannels[0].length },
-      );
-      this._resource!.info = newInfo;
-
-      this._channel = finalChannels[0];
+      this.normalizeAudio(channels, audioBuffer.sampleRate);
       this.onChannelDataChange.next();
       this.onChannelDataChange.complete();
       this.statistics.decoding.duration =
@@ -411,6 +322,37 @@ export class HtmlAudioMechanism extends AudioMechanism {
     }).catch((e) => {
       settle(() => subj.error(e instanceof Error ? e.message : String(e)));
     });
+  }
+
+  private normalizeAudio(channels: Float32Array[], srcRate: number): void {
+    const TARGET_RATE = 16000;
+
+    const mono = mixToMono(channels);
+    const resampled =
+      srcRate !== TARGET_RATE
+        ? resampleChannels([mono], srcRate, TARGET_RATE)[0]
+        : mono;
+
+    const wavBytes = new WavWriter().write([resampled], TARGET_RATE);
+    this._resource!.arraybuffer = wavBytes.buffer;
+
+    // AudioInfo.sampleRate is readonly — construct a new instance with updated values.
+    const oldInfo = this._resource!.info;
+    const newInfo = new AudioInfo(
+      oldInfo.fullname,
+      'audio/wav',
+      wavBytes.byteLength,
+      TARGET_RATE,
+      resampled.length,
+      1,
+      oldInfo.bitrate,
+      { sampleRate: TARGET_RATE, samples: resampled.length },
+    );
+    newInfo.file = oldInfo.file;
+    this._resource!.info = newInfo;
+
+    this._channel = resampled;
+    this._channelDataFactor = 1;
   }
 
   override decodeAudio(resource: AudioResource) {
@@ -428,13 +370,13 @@ export class HtmlAudioMechanism extends AudioMechanism {
       next: (status) => {
         if (status.progress === 1 && status.result !== undefined) {
           this.decoder!.destroy();
-          this._channel = status.result;
-          this._channelDataFactor = this.decoder!.channelDataFactor;
+          const audioSampleRate =
+            this._resource!.info.sampleRate / this.decoder!.channelDataFactor;
           this._resource!.info.audioBufferInfo = {
-            sampleRate:
-              this._resource!.info.sampleRate / this._channelDataFactor,
+            sampleRate: audioSampleRate,
             samples: status.result.length,
           };
+          this.normalizeAudio([status.result], audioSampleRate);
           this.onChannelDataChange.next();
           this.onChannelDataChange.complete();
 
