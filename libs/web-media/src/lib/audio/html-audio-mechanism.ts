@@ -12,7 +12,6 @@ import {
 } from '@octra/web-media';
 import { mixToMono, resampleChannels } from './audio-resampler';
 import { decodeWithLibAV } from './libav-decoder';
-import { WavWriter } from './binary/wavwriter';
 import { concat, map, Observable, Subject, Subscription, timer } from 'rxjs';
 import { SourceType } from '../types';
 import {
@@ -333,15 +332,15 @@ export class HtmlAudioMechanism extends AudioMechanism {
         ? resampleChannels([mono], srcRate, TARGET_RATE)[0]
         : mono;
 
-    const wavBytes = new WavWriter().write([resampled], TARGET_RATE);
-    this._resource!.arraybuffer = wavBytes.buffer;
+    const wavBuf = HtmlAudioMechanism.encodeWav16Mono(resampled, TARGET_RATE);
+    this._resource!.arraybuffer = wavBuf;
 
     // AudioInfo.sampleRate is readonly — construct a new instance with updated values.
     const oldInfo = this._resource!.info;
     const newInfo = new AudioInfo(
       oldInfo.fullname,
       'audio/wav',
-      wavBytes.byteLength,
+      wavBuf.byteLength,
       TARGET_RATE,
       resampled.length,
       1,
@@ -353,6 +352,36 @@ export class HtmlAudioMechanism extends AudioMechanism {
 
     this._channel = resampled;
     this._channelDataFactor = 1;
+  }
+
+  /** Fast O(n) WAV encoder — avoids BinaryByteWriter's O(n²) 1-KB-at-a-time growth. */
+  private static encodeWav16Mono(samples: Float32Array, sampleRate: number): ArrayBuffer {
+    const dataSize = samples.length * 2; // Int16 = 2 bytes/sample
+    const buf = new ArrayBuffer(44 + dataSize);
+    const dv = new DataView(buf);
+    const u8 = new Uint8Array(buf);
+    // RIFF chunk descriptor
+    u8.set([82, 73, 70, 70], 0);             // 'RIFF'
+    dv.setUint32(4, 36 + dataSize, true);
+    u8.set([87, 65, 86, 69], 8);             // 'WAVE'
+    // fmt sub-chunk
+    u8.set([102, 109, 116, 32], 12);         // 'fmt '
+    dv.setUint32(16, 16, true);              // chunk size
+    dv.setUint16(20, 1, true);               // PCM
+    dv.setUint16(22, 1, true);               // mono
+    dv.setUint32(24, sampleRate, true);
+    dv.setUint32(28, sampleRate * 2, true);  // byte rate
+    dv.setUint16(32, 2, true);               // block align
+    dv.setUint16(34, 16, true);              // bits per sample
+    // data sub-chunk
+    u8.set([100, 97, 116, 97], 36);          // 'data'
+    dv.setUint32(40, dataSize, true);
+    // PCM samples — one allocation, no copies
+    const pcm = new Int16Array(buf, 44);
+    for (let i = 0; i < samples.length; i++) {
+      pcm[i] = Math.max(-32768, Math.min(32767, Math.round(samples[i] * 32767)));
+    }
+    return buf;
   }
 
   override decodeAudio(resource: AudioResource) {
@@ -370,13 +399,13 @@ export class HtmlAudioMechanism extends AudioMechanism {
       next: (status) => {
         if (status.progress === 1 && status.result !== undefined) {
           this.decoder!.destroy();
-          const audioSampleRate =
-            this._resource!.info.sampleRate / this.decoder!.channelDataFactor;
+          this._channel = status.result;
+          this._channelDataFactor = this.decoder!.channelDataFactor;
           this._resource!.info.audioBufferInfo = {
-            sampleRate: audioSampleRate,
+            sampleRate:
+              this._resource!.info.sampleRate / this._channelDataFactor,
             samples: status.result.length,
           };
-          this.normalizeAudio([status.result], audioSampleRate);
           this.onChannelDataChange.next();
           this.onChannelDataChange.complete();
 

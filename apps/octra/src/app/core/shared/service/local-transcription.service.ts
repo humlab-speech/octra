@@ -1,7 +1,7 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { IFile, OAnnotJSON } from '@octra/annotation';
 import { OAudiofile } from '@octra/media';
-import { AudioManager } from '@octra/web-media';
+import { AudioManager, resampleChannels } from '@octra/web-media';
 import { Observable, Subject } from 'rxjs';
 import { AppInfo } from '../../../app.info';
 import {
@@ -74,8 +74,14 @@ export class LocalTranscriptionService implements OnDestroy {
       return subject.asObservable();
     }
 
-    // channel is already normalized to WHISPER_SAMPLE_RATE mono by HtmlAudioMechanism
-    const mono: Float32Array = new Float32Array(channel); // copy — never transfer the AudioManager's own buffer
+    // Tiers 1/3 normalize to 16 kHz; Tier 4 (WAV/OCTRA decoder) may not.
+    const srcRate =
+      audioManager.resource.info.audioBufferInfo?.sampleRate ??
+      audioManager.sampleRate;
+    const mono: Float32Array =
+      srcRate !== WHISPER_SAMPLE_RATE
+        ? resampleChannels([channel], srcRate, WHISPER_SAMPLE_RATE)[0]
+        : new Float32Array(channel); // copy — never transfer the AudioManager's own buffer
 
     const audioDurationS = mono.length / WHISPER_SAMPLE_RATE;
 
