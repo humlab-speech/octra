@@ -126,6 +126,15 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
   ) {
     super('ExportFilesModalComponent', activeModal);
     this.converters = AppInfo.converters;
+
+    const map = new Map<ExportCategory, { converter: Converter; index: number }[]>();
+    for (const cat of this.categoryOrder) map.set(cat, []);
+    this.converters.forEach((c, i) => {
+      if (c.conversion.export && map.has(c.category)) {
+        map.get(c.category)!.push({ converter: c, index: i });
+      }
+    });
+    this.convertersByCategory = map;
   }
 
   ngOnInit() {
@@ -337,16 +346,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
 
   readonly categoryOrder: ExportCategory[] = ['general', 'linguistic', 'specialist'];
 
-  get convertersByCategory(): Map<ExportCategory, { converter: Converter; index: number }[]> {
-    const map = new Map<ExportCategory, { converter: Converter; index: number }[]>();
-    for (const cat of this.categoryOrder) map.set(cat, []);
-    this.converters.forEach((c, i) => {
-      if (c.conversion.export && map.has(c.category)) {
-        map.get(c.category)!.push({ converter: c, index: i });
-      }
-    });
-    return map;
-  }
+  readonly convertersByCategory: Map<ExportCategory, { converter: Converter; index: number }[]>;
 
   onPlaintextTimestampOptionChanged(converter: Converter) {
     this.updateParentFormat(converter, this.selectedLevel);

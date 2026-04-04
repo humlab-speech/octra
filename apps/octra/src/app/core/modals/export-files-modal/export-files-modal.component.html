@@ -25,7 +25,7 @@
           <tr class="category-header">
             <td colspan="4">{{ categoryLabels[cat] }}</td>
           </tr>
-          @for (item of convertersByCategory.get(cat)!; track item) {
+          @for (item of convertersByCategory.get(cat)!; track item.index) {
             <tr class="top-tr">
               <td (click)="onLineClick(item.converter, item.index)">
                 <i

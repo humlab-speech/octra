@@ -10,7 +10,7 @@ import {
   MusicMetadataFormat,
   WavFormat,
 } from '@octra/web-media';
-import { mixToMono, resampleChannels } from './audio-resampler';
+import { mixToMono } from './audio-resampler';
 import { decodeWithLibAV } from './libav-decoder';
 import { concat, map, Observable, Subject, Subscription, timer } from 'rxjs';
 import { SourceType } from '../types';
@@ -270,7 +270,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
               { length: audioBuffer.numberOfChannels },
               (_, i) => audioBuffer.getChannelData(i),
             );
-            this.normalizeAudio(channels, audioBuffer.sampleRate);
+            await this.normalizeAudio(channels, audioBuffer.sampleRate);
             this.onChannelDataChange.next();
             this.onChannelDataChange.complete();
             this.statistics.decoding.duration =
@@ -301,13 +301,13 @@ export class HtmlAudioMechanism extends AudioMechanism {
   ) {
     this.statistics.decoding.started = Date.now();
 
-    decodeWithLibAV(this._resource!.arraybuffer!, this._resource!.info.fullname).then((audioBuffer) => {
+    decodeWithLibAV(this._resource!.arraybuffer!, this._resource!.info.fullname).then(async (audioBuffer) => {
       const channels: Float32Array[] = [];
       for (let ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
         channels.push(audioBuffer.getChannelData(ch));
       }
 
-      this.normalizeAudio(channels, audioBuffer.sampleRate);
+      await this.normalizeAudio(channels, audioBuffer.sampleRate);
       this.onChannelDataChange.next();
       this.onChannelDataChange.complete();
       this.statistics.decoding.duration =
@@ -323,14 +323,28 @@ export class HtmlAudioMechanism extends AudioMechanism {
     });
   }
 
-  private normalizeAudio(channels: Float32Array[], srcRate: number): void {
+  private async normalizeAudio(channels: Float32Array[], srcRate: number): Promise<void> {
     const TARGET_RATE = 16000;
 
     const mono = mixToMono(channels);
-    const resampled =
-      srcRate !== TARGET_RATE
-        ? resampleChannels([mono], srcRate, TARGET_RATE)[0]
-        : mono;
+    let resampled: Float32Array;
+    if (srcRate !== TARGET_RATE) {
+      // Use OfflineAudioContext for non-blocking, browser-native resampling.
+      // The old Lanczos path (resampleChannels) runs synchronously on the main
+      // thread and blocks the UI for several seconds on long audio files.
+      const outLength = Math.ceil(mono.length * TARGET_RATE / srcRate);
+      const offlineCtx = new OfflineAudioContext(1, outLength, TARGET_RATE);
+      const inputBuf = offlineCtx.createBuffer(1, mono.length, srcRate);
+      inputBuf.copyToChannel(mono, 0);
+      const src = offlineCtx.createBufferSource();
+      src.buffer = inputBuf;
+      src.connect(offlineCtx.destination);
+      src.start(0);
+      const rendered = await offlineCtx.startRendering();
+      resampled = new Float32Array(rendered.getChannelData(0));
+    } else {
+      resampled = mono;
+    }
 
     const wavBuf = HtmlAudioMechanism.encodeWav16Mono(resampled, TARGET_RATE);
     this._resource!.arraybuffer = wavBuf;
