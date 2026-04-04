@@ -83,3 +83,9 @@ export class WordApplication implements SupportedApplication {
   description = '';
   homepage = 'https://www.microsoft.com/de-de/microsoft-365/word';
 }
+
+export class LibreOfficeApplication implements SupportedApplication {
+  name = 'LibreOffice Writer';
+  description = 'Free open-source office suite';
+  homepage = 'https://www.libreoffice.org/';
+}

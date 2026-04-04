@@ -5,6 +5,7 @@ import {
   Converter,
   CTMConverter,
   DocxConverter,
+  OdtConverter,
   ELANConverter,
   PartiturConverter,
   PraatTableConverter,
@@ -25,6 +26,7 @@ export class AppInfo {
 
   public static readonly converters: Converter[] = [
     new DocxConverter(),
+    new OdtConverter(),
     new SRTConverter(),
     new TextConverter(),
     new AnnotJSONConverter(),

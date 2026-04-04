@@ -14,7 +14,8 @@ export type OctraAnnotationFormatType =
   | 'PlainText'
   | 'TextGrid'
   | 'WhisperJSON'
-  | 'WebVTT';
+  | 'WebVTT'
+  | 'ODT';
 
 export type ExportCategory = 'general' | 'linguistic' | 'specialist';
 

@@ -355,4 +355,8 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
   onDocxOptionChanged(converter: Converter) {
     this.updateParentFormat(converter, this.selectedLevel);
   }
+
+  onOdtOptionChanged(converter: Converter) {
+    this.updateParentFormat(converter, this.selectedLevel);
+  }
 }

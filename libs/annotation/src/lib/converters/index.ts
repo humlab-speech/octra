@@ -1,5 +1,6 @@
 export * from './AnnotJSONConverter';
 export * from './DocxConverter';
+export * from './OdtConverter';
 export * from './BundleJSONConverter';
 export * from './Converter';
 export * from './CTMConverter';

@@ -187,6 +187,57 @@
                           </table>
                         </div>
                       }
+                      @if (item.converter.name === 'ODT') {
+                        <div class="timestamp-options">
+                          <table>
+                            <tbody>
+                              <tr class="option">
+                                <td>
+                                  <input
+                                    type="radio"
+                                    id="odt-separate-{{item.index}}"
+                                    name="odt-mode-{{item.index}}"
+                                    [value]="'separate'"
+                                    [(ngModel)]="item.converter.options.mode"
+                                    (ngModelChange)="onOdtOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td>
+                                  <label for="odt-separate-{{item.index}}">Each sentence on a separate line</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td>
+                                  <input
+                                    type="radio"
+                                    id="odt-continuous-{{item.index}}"
+                                    name="odt-mode-{{item.index}}"
+                                    [value]="'continuous'"
+                                    [(ngModel)]="item.converter.options.mode"
+                                    (ngModelChange)="onOdtOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td>
+                                  <label for="odt-continuous-{{item.index}}">Continuous text</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
+                                    id="odt-timestamps-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addTimestamps"
+                                    (ngModelChange)="onOdtOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="odt-timestamps-{{item.index}}">Add timestamp at beginning of each sentence</label>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      }
                       @if (item.converter.name === 'PlainText') {
                         <div class="timestamp-options">
                           <table>
