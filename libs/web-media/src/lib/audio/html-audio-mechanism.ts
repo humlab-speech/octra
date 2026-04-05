@@ -341,11 +341,9 @@ export class HtmlAudioMechanism extends AudioMechanism {
       src.connect(offlineCtx.destination);
       src.start(0);
       const rendered = await offlineCtx.startRendering();
-      // Direct reference — AudioBuffer (and its channel data) stays alive as long
-      // as `rendered` is reachable, and we assign it to `_channel` below.
-      resampled = rendered.getChannelData(0);
+      resampled = new Float32Array(rendered.getChannelData(0));
     } else {
-      resampled = mono;
+      resampled = new Float32Array(mono);
     }
 
     const wavBuf = HtmlAudioMechanism.encodeWav16Mono(resampled, TARGET_RATE);

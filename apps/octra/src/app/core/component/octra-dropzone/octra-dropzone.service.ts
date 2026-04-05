@@ -77,6 +77,10 @@ export class OctraDropzoneService {
     return this._audioManager;
   }
 
+  releaseAudioManager(): void {
+    this._audioManager = undefined;
+  }
+
   get files(): FileProgress[] {
     return this._files;
   }

@@ -62,7 +62,7 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     for (const s of streams) {
       if (s.codec_type !== libav.AVMEDIA_TYPE_AUDIO) {
         const streamPtr = await libav.AVFormatContext_streams_a(fmt_ctx, s.index);
-        await libav.AVStream_discard_s(streamPtr, libav.AVDISCARD_ALL);
+        await libav.AVStream_discard_s(streamPtr, 48 /* AVDISCARD_ALL */);
       }
     }
 
@@ -72,7 +72,7 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     );
     c = _c; pkt = _pkt; frame = _frame;
 
-    const [, allPackets] = await libav.ff_read_multi(fmt_ctx, pkt);
+    const [, allPackets] = await libav.ff_read_frame_multi(fmt_ctx, pkt, { limit: 64 * 1024 * 1024 });
     const packets = allPackets[audioStream.index] || [];
 
     const frames = await libav.ff_decode_multi(c, pkt, frame, packets, true);
