@@ -27,6 +27,10 @@ class AudioBufferLikeImpl implements AudioBufferLike {
 }
 
 let libavInstance: any = null;
+let libavFatInstance: any = null;
+
+// ASF container (used by .wma/.asf) requires the fat WASM which includes the ASF demuxer.
+const ASF_EXTENSIONS = new Set(['.wma', '.asf']);
 
 async function getLibAV(): Promise<any> {
   if (libavInstance) return libavInstance;
@@ -37,8 +41,18 @@ async function getLibAV(): Promise<any> {
   return libavInstance;
 }
 
+async function getLibAVFat(): Promise<any> {
+  if (libavFatInstance) return libavFatInstance;
+  // Fat variant includes ASF demuxer + WMA codecs (30 MB, loaded lazily).
+  // Uses default export style: m.default.LibAV(...)
+  const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-fat.mjs' as any);
+  libavFatInstance = await m.default.LibAV({ noworker: true });
+  return libavFatInstance;
+}
+
 export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.audio'): Promise<AudioBufferLike> {
-  const libav = await getLibAV();
+  const ext = sourceFilename.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? '';
+  const libav = ASF_EXTENSIONS.has(ext) ? await getLibAVFat() : await getLibAV();
 
   // Use the original filename so libav can detect the container format by extension
   // (e.g. .wma → ASF demuxer) before falling back to content probing.

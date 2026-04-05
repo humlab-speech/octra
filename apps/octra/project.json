@@ -53,6 +53,21 @@
             "glob": "ort-wasm-simd-threaded.jsep.mjs",
             "input": "node_modules/@huggingface/transformers/dist",
             "output": "assets/ort/"
+          },
+          {
+            "glob": "libav-fat.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
           }
         ],
         "styles": [
