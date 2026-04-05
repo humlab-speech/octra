@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppStorageService } from '../../../shared/service/appstorage.service';
 import { OctraAPIService } from '@octra/ngx-octra-api';
@@ -27,7 +28,8 @@ export class VispTaskComponent implements OnInit {
     private router: Router,
     private store: Store<RootState>,
     private authStoreService: AuthenticationStoreService,
-    private appStoreService: ApplicationStoreService
+    private appStoreService: ApplicationStoreService,
+    private destroyRef: DestroyRef,
   ) {}
 
   ngOnInit(): void {
@@ -103,10 +105,12 @@ export class VispTaskComponent implements OnInit {
           this.fetchProjectAndStartAnnotation(projectId);
         });
 
-        // Handle authentication failure
+        // Handle authentication failure — takeUntilDestroyed prevents leak when
+        // authentication succeeds (filter never fires, subscription stays open).
         this.store.select(state => state.authentication.loginErrorMessage).pipe(
           filter(error => !!error),
-          take(1)
+          take(1),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe(error => {
           console.error('Authentication failed:', error);
           // You might want to show an error message or redirect

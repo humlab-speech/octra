@@ -163,8 +163,8 @@ export class WebVTTConverter extends Converter {
       if (headerMatches !== undefined) {
         let body = content;
         const findFirstCueRegex = new RegExp(
-          '([0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}) --> ' +
-            '([0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}).*',
+          '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}) --> ' +
+            '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}).*',
           'g',
         );
 
@@ -176,8 +176,8 @@ export class WebVTTConverter extends Converter {
 
           for (const cue of cues) {
             const regex = new RegExp(
-              '([0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}) -->' +
-                ' ([0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}).*',
+              '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}) -->' +
+                ' ([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}).*',
               'g',
             );
             const matches = regex.exec(cue);
@@ -320,7 +320,7 @@ export class WebVTTConverter extends Converter {
 
   public getSamplesFromTimeString(timeString: string, sampleRate: number) {
     if (sampleRate > 0) {
-      const regex = new RegExp(/([0-9]+):([0-9]+):([0-9]+).([0-9]+)/g);
+      const regex = new RegExp(/([0-9]+):([0-9]+):([0-9]+)\.([0-9]+)/g);
 
       const matches = regex.exec(timeString);
 

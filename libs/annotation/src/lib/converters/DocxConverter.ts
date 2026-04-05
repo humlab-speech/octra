@@ -27,6 +27,9 @@ export class DocxConverter extends Converter {
   }
 
   export(annotation: OAnnotJSON, audiofile: OAudiofile, levelnum = 0): ExportResult {
+    if (!audiofile?.sampleRate) {
+      return { error: 'Invalid audio file' };
+    }
     const level = annotation.levels[levelnum];
     if (!level) {
       return { error: `Level ${levelnum} not found` };
@@ -83,26 +86,6 @@ export class DocxConverter extends Converter {
     return undefined;
   }
 
-  private msToTimeString(ms: number): string {
-    const h = Math.floor(ms / 3600000);
-    const m = Math.floor((ms % 3600000) / 60000);
-    const s = Math.floor((ms % 60000) / 1000);
-    return `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`;
-  }
-
-  private pad(n: number): string {
-    return n.toString().padStart(2, '0');
-  }
-
-  private escapeXml(s: string): string {
-    return s
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-  }
-
   private buildDocx(paragraphs: string[]): Uint8Array {
     const enc = new TextEncoder();
 
@@ -112,6 +95,7 @@ export class DocxConverter extends Converter {
         '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
         '<Default Extension="xml" ContentType="application/xml"/>' +
         '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+        '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>' +
         '</Types>',
     );
 

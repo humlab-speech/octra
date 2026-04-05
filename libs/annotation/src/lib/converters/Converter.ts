@@ -97,6 +97,26 @@ export abstract class Converter {
     return this._multitiers;
   }
 
+  protected msToTimeString(ms: number): string {
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`;
+  }
+
+  protected pad(n: number): string {
+    return n.toString().padStart(2, '0');
+  }
+
+  protected escapeXml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
   /**
    * exports AnnotJSON to another annotation format considering an audio file and a level number (optional).
    * @param annotation the AnnotJSON

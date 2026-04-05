@@ -5,13 +5,12 @@
  **/
 
 export class BinaryByteWriter {
-  static DEFAULT_SIZE_INC = 1024;
+  static DEFAULT_SIZE_INC = 65536;
   buf: ArrayBuffer;
   private _pos: number;
 
   constructor() {
-    const size = BinaryByteWriter.DEFAULT_SIZE_INC;
-    this.buf = new ArrayBuffer(size);
+    this.buf = new ArrayBuffer(BinaryByteWriter.DEFAULT_SIZE_INC);
     this._pos = 0;
   }
 
@@ -20,19 +19,14 @@ export class BinaryByteWriter {
   }
 
   ensureCapacity(numBytes: number) {
-    while (this._pos + numBytes >= this.buf.byteLength) {
-      // buffer increment
-      let inc = BinaryByteWriter.DEFAULT_SIZE_INC;
-      if (inc < numBytes) {
-        inc = numBytes;
-      }
-      const newSize = this.buf.byteLength + inc;
-
-      const arrOld = new Uint8Array(this.buf, 0, this._pos);
-      const arrNew = new Uint8Array(newSize);
-      arrNew.set(arrOld);
-      this.buf = arrNew.buffer;
-    }
+    const needed = this._pos + numBytes;
+    if (needed < this.buf.byteLength) return;
+    // Exponential doubling avoids O(n²) copy cost on many small writes.
+    let newSize = this.buf.byteLength;
+    while (newSize <= needed) newSize *= 2;
+    const arrNew = new Uint8Array(newSize);
+    arrNew.set(new Uint8Array(this.buf, 0, this._pos));
+    this.buf = arrNew.buffer;
   }
 
   writeUint8(val: number): void {
@@ -78,12 +72,8 @@ export class BinaryByteWriter {
   }
 
   finish(): Uint8Array {
-    const finalArr = new Uint8Array(this._pos);
-    const dv = new DataView(this.buf, 0, this._pos);
-    for (let i = 0; i < this._pos; i++) {
-      finalArr[i] = dv.getUint8(i);
-    }
-    return finalArr;
+    // Slice creates a trimmed standalone copy; avoids per-byte DataView overhead.
+    return new Uint8Array(this.buf, 0, this._pos).slice();
   }
 
   writeAscii(text: string): void {

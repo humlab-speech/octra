@@ -295,7 +295,7 @@ export class TextConverter extends Converter {
     let seconds = 0;
     let milliseconds = 0;
 
-    const regex = new RegExp(/([0-9]{2}):([0-9]{2}):([0-9]{2}).([0-9]{1,3})/g);
+    const regex = new RegExp(/([0-9]{2}):([0-9]{2}):([0-9]{2})\.([0-9]{1,3})/g);
     const match = regex.exec(timeString);
 
     if (match !== null && match.length > 4) {

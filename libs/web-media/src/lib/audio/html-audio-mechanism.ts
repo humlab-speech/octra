@@ -21,6 +21,7 @@ import {
 
 export class HtmlAudioMechanism extends AudioMechanism {
   private _audio?: HTMLAudioElement;
+  private _playbackObjectUrl?: string;
   private onEnd = () => {};
   private _playbackEndChecker?: Subscription;
   private _statusRequest: PlayBackStatus = PlayBackStatus.INITIALIZED;
@@ -71,17 +72,16 @@ export class HtmlAudioMechanism extends AudioMechanism {
       this.prepareAudioChannel(options).pipe(
         map(({ decodeProgress }) => {
           if (decodeProgress === 1) {
+            this._playbackObjectUrl = URL.createObjectURL(
+              new File(
+                [this._resource!.arraybuffer!],
+                this._resource!.info.fullname,
+                { type: this._resource!.info.type },
+              ),
+            );
             this.prepareAudioPlayback({
               ...options,
-              url: URL.createObjectURL(
-                new File(
-                  [this._resource!.arraybuffer!],
-                  this._resource!.info.fullname,
-                  {
-                    type: this._resource!.info.type,
-                  },
-                ),
-              ),
+              url: this._playbackObjectUrl,
             });
           }
           return {
@@ -341,7 +341,9 @@ export class HtmlAudioMechanism extends AudioMechanism {
       src.connect(offlineCtx.destination);
       src.start(0);
       const rendered = await offlineCtx.startRendering();
-      resampled = new Float32Array(rendered.getChannelData(0));
+      // Direct reference — AudioBuffer (and its channel data) stays alive as long
+      // as `rendered` is reachable, and we assign it to `_channel` below.
+      resampled = rendered.getChannelData(0);
     } else {
       resampled = mono;
     }
@@ -660,6 +662,10 @@ export class HtmlAudioMechanism extends AudioMechanism {
 
   public override async destroy(disconnect = false): Promise<void> {
     this.removeEventListeners();
+    if (this._playbackObjectUrl) {
+      URL.revokeObjectURL(this._playbackObjectUrl);
+      this._playbackObjectUrl = undefined;
+    }
     await super.destroy(disconnect);
     if (this._resource) {
       this._resource.arraybuffer = undefined;
