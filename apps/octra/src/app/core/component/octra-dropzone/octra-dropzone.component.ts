@@ -84,6 +84,10 @@ export class OctraDropzoneComponent extends DefaultComponent {
     return this.octraDropzoneService.audioManager;
   }
 
+  public releaseAudioManager(): void {
+    this.octraDropzoneService.releaseAudioManager();
+  }
+
   public get statistics(): DropzoneStatistics {
     return this.octraDropzoneService.statistics;
   }
