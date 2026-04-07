@@ -41,18 +41,27 @@ async function getLibAV(): Promise<any> {
   return libavInstance;
 }
 
-async function getLibAVFat(): Promise<any> {
+async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   if (libavFatInstance) return libavFatInstance;
-  // Fat variant includes ASF demuxer + WMA codecs (30 MB, loaded lazily).
-  // Uses default export style: m.default.LibAV(...)
+  // Fat variant includes ASF demuxer + WMA codecs (~30 MB, loaded lazily).
+  // Use noworker mode (same as the default variant) so the factory runs on the
+  // main thread. Worker mode hangs because the fat WASM mjs IIFE uses postMessage
+  // in a way that is incompatible with module worker initialization.
+  // The fat WASM mjs uses `global._scriptDir` (Node.js pattern) — polyfill
+  // `global` before importing so the Emscripten error-recovery path succeeds.
+  onStatus?.('Loading WMA decoder (~30 MB), please wait…');
+  (globalThis as any).global = globalThis;
   const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-fat.mjs' as any);
-  libavFatInstance = await m.default.LibAV({ noworker: true });
+  libavFatInstance = await m.default.LibAV({
+    noworker: true,
+    wasmurl: '/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm',
+  });
   return libavFatInstance;
 }
 
-export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.audio'): Promise<AudioBufferLike> {
+export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.audio', onStatus?: (msg: string) => void): Promise<AudioBufferLike> {
   const ext = sourceFilename.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? '';
-  const libav = ASF_EXTENSIONS.has(ext) ? await getLibAVFat() : await getLibAV();
+  const libav = ASF_EXTENSIONS.has(ext) ? await getLibAVFat(onStatus) : await getLibAV();
 
   // Use the original filename so libav can detect the container format by extension
   // (e.g. .wma → ASF demuxer) before falling back to content probing.
