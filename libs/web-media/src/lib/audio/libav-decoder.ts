@@ -50,12 +50,20 @@ async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   // The fat WASM mjs uses `global._scriptDir` (Node.js pattern) — polyfill
   // `global` before importing so the Emscripten error-recovery path succeeds.
   onStatus?.('Loading WMA decoder (~30 MB), please wait…');
-  (globalThis as any).global = globalThis;
-  const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-fat.mjs' as any);
-  libavFatInstance = await m.default.LibAV({
-    noworker: true,
-    wasmurl: '/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm',
-  });
+  // Emscripten error-recovery path assigns `global._scriptDir` (Node.js pattern).
+  // Polyfill `global` temporarily so that assignment doesn't throw; restore
+  // afterwards so other code (e.g. ONNX Runtime) cannot misdetect Node.js.
+  const hadGlobal = 'global' in globalThis;
+  if (!hadGlobal) (globalThis as any).global = globalThis;
+  try {
+    const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-fat.mjs' as any);
+    libavFatInstance = await m.default.LibAV({
+      noworker: true,
+      wasmurl: '/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm',
+    });
+  } finally {
+    if (!hadGlobal) delete (globalThis as any).global;
+  }
   return libavFatInstance;
 }
 

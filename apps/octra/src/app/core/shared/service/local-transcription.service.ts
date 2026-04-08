@@ -4,7 +4,7 @@ import { OAudiofile } from '@octra/media';
 import { AudioManager, resampleChannels } from '@octra/web-media';
 import { Observable, Subject } from 'rxjs';
 import { AppInfo } from '../../../app.info';
-import {
+import type {
   WorkerOutMessage,
   WorkerTranscribeMessage,
 } from '../../workers/whisper-transcription.worker';
