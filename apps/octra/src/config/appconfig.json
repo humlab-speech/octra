@@ -34,7 +34,7 @@
         "version": ""
       }
     ],
-    "languages": ["en", "de", "nl", "it", "ko", "zh"],
+    "languages": ["en", "de", "nl", "it", "ko", "zh", "sv"],
     "audioExamples": [
       {
         "language": "de",
