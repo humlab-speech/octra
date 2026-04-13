@@ -1,6 +1,14 @@
-import { Component, effect, input, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { isSafariOrWebKit } from '@octra/web-media';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 
 export interface KbWhisperModel {
@@ -19,11 +27,46 @@ export interface KbWhisperModel {
 }
 
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
-  { label: 'Tiny (~120 MB) - Least accurate, 4x faster than Small',  labelWebgpu: 'Tiny (~120 MB) — Least accurate, 4× faster than Medium',   modelId: 'onnx-community/kb-whisper-tiny-ONNX',   sizeMb:  120, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Small (~400 MB) - More accurate, our reference model', labelWebgpu: 'Small (~400 MB) — More accurate, 2× faster than Medium',  modelId: 'onnx-community/kb-whisper-small-ONNX',  sizeMb:  400, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Medium (~1 GB) - Most accurate, 3x slower than Small',  labelWebgpu: 'Medium (~650 MB) — Our reference model',   modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: true, dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
-  { label: 'Large (~1.7 GB)', labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',  modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: true,  dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
+  {
+    label: 'Tiny (~120 MB) - Least accurate, 4x faster than Small',
+    labelWebgpu: 'Tiny (~120 MB) — Least accurate, 4× faster than Medium',
+    modelId: 'onnx-community/kb-whisper-tiny-ONNX',
+    sizeMb: 120,
+    requiresWebGpu: false,
+    dtypeWasm: 'q8',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    label: 'Small (~400 MB) - More accurate, our reference model',
+    labelWebgpu: 'Small (~400 MB) — More accurate, 2× faster than Medium',
+    modelId: 'onnx-community/kb-whisper-small-ONNX',
+    sizeMb: 400,
+    requiresWebGpu: false,
+    dtypeWasm: 'q8',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    label: 'Medium (~1 GB) - Most accurate, 3x slower than Small',
+    labelWebgpu: 'Medium (~650 MB) — Our reference model',
+    modelId: 'onnx-community/kb-whisper-medium-ONNX',
+    sizeMb: 1000,
+    requiresWebGpu: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    label: 'Large (~1.7 GB)',
+    labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',
+    modelId: 'onnx-community/kb-whisper-large-ONNX',
+    sizeMb: 1200,
+    requiresWebGpu: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
 ];
+
+const SAFARI_MESSAGE =
+  'Automatic transcription is not available in Safari. The models that needs to be downloaded are large and that may currently trigger Safari to reload the tab with loss of data as a result.';
 
 @Component({
   selector: 'octra-auto-transcribe-options',
@@ -32,6 +75,12 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   template: `
     @if (audioLoaded() && !annotationAlreadyLoaded()) {
       <div class="auto-transcribe-options mt-2 p-2 border rounded">
+        @if (isSafari()) {
+          <div class="alert alert-warning mb-2">
+            <i class="bi bi-exclamation-triangle"></i>
+            {{ safariMessage }}
+          </div>
+        }
         <div class="form-check mb-1">
           <input
             class="form-check-input"
@@ -39,16 +88,21 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
             id="autoTranscribeCheck"
             [(ngModel)]="enabled"
             (ngModelChange)="emitChange()"
+            [disabled]="isSafari()"
+            [class.safari-disabled]="isSafari()"
           />
           <label class="form-check-label" for="autoTranscribeCheck">
             Auto-transcribe with Whisper
           </label>
         </div>
-        <small class="text-muted d-block mb-2">
-          <i class="bi bi-cloud-download"></i>
-          Requires internet access — the selected model will be downloaded from HuggingFace
-          (150 MB – 3 GB). Downloaded models are cached in the browser.
-        </small>
+        @if (!isSafari()) {
+          <small class="text-muted d-block mb-2">
+            <i class="bi bi-cloud-download"></i>
+            Requires internet access — the selected model will be downloaded
+            from HuggingFace (150 MB – 3 GB). Downloaded models are cached in
+            the browser.
+          </small>
+        }
 
         @if (enabled()) {
           <div class="d-flex flex-column gap-1">
@@ -60,16 +114,31 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
                   [id]="'model-' + model.modelId"
                   [value]="model.modelId"
                   [(ngModel)]="selectedModelId"
-                  [disabled]="!!model.unsupportedReason || (model.requiresWebGpu && !hasWebGpu())"
+                  [disabled]="
+                    !!model.unsupportedReason ||
+                    (model.requiresWebGpu && !hasWebGpu())
+                  "
                   (ngModelChange)="emitChange()"
                 />
                 <label
                   class="form-check-label"
-                  [class.text-muted]="!!model.unsupportedReason || (model.requiresWebGpu && !hasWebGpu())"
+                  [class.text-muted]="
+                    !!model.unsupportedReason ||
+                    (model.requiresWebGpu && !hasWebGpu())
+                  "
                   [for]="'model-' + model.modelId"
-                  [ngbTooltip]="model.unsupportedReason ?? (model.requiresWebGpu && !hasWebGpu() ? 'Requires WebGPU — not available in this browser' : null)"
+                  [ngbTooltip]="
+                    model.unsupportedReason ??
+                    (model.requiresWebGpu && !hasWebGpu()
+                      ? 'Requires WebGPU — not available in this browser'
+                      : null)
+                  "
                 >
-                  {{ (hasWebGpu() && model.labelWebgpu) ? model.labelWebgpu : model.label }}
+                  {{
+                    hasWebGpu() && model.labelWebgpu
+                      ? model.labelWebgpu
+                      : model.label
+                  }}
                 </label>
               </div>
             }
@@ -77,7 +146,8 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
             @if (!hasWebGpu()) {
               <small class="text-muted">
                 <i class="bi bi-exclamation-triangle"></i>
-                WebGPU not detected — Medium and Large models cannot be run reliably and have been disabled
+                WebGPU not detected — Medium and Large models cannot be run
+                reliably and have been disabled
               </small>
             }
 
@@ -90,12 +160,18 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
       </div>
     }
   `,
-  styles: [`
-    .auto-transcribe-options {
-      background-color: #f8f9fa;
-      font-size: 0.9rem;
-    }
-  `],
+  styles: [
+    `
+      .auto-transcribe-options {
+        background-color: #f8f9fa;
+        font-size: 0.9rem;
+      }
+      .form-check-input.safari-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    `,
+  ],
 })
 export class AutoTranscribeOptionsComponent implements OnInit {
   readonly audioLoaded = input<boolean>(false);
@@ -105,6 +181,8 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   readonly enabled = signal(false);
   selectedModelId = KB_WHISPER_MODELS[2].modelId; // default: medium
   readonly hasWebGpu = signal(false);
+  readonly isSafari = signal(false);
+  readonly safariMessage = SAFARI_MESSAGE;
 
   readonly models = KB_WHISPER_MODELS;
 
@@ -118,8 +196,11 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.isSafari.set(isSafariOrWebKit());
     try {
-      const nav = navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> | null } };
+      const nav = navigator as Navigator & {
+        gpu?: { requestAdapter(): Promise<unknown> | null };
+      };
       if (nav.gpu) {
         const adapter = await nav.gpu.requestAdapter();
         this.hasWebGpu.set(!!adapter);
@@ -138,8 +219,14 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.optionsChange.emit(null);
       return;
     }
-    const model = KB_WHISPER_MODELS.find((m) => m.modelId === this.selectedModelId);
+    const model = KB_WHISPER_MODELS.find(
+      (m) => m.modelId === this.selectedModelId,
+    );
     const dtype = this.hasWebGpu() ? model?.dtypeWebgpu : model?.dtypeWasm;
-    this.optionsChange.emit({ modelId: this.selectedModelId, useWebGPU: this.hasWebGpu(), dtype });
+    this.optionsChange.emit({
+      modelId: this.selectedModelId,
+      useWebGPU: this.hasWebGpu(),
+      dtype,
+    });
   }
 }
