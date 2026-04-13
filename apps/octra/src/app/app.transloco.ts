@@ -23,7 +23,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   providers: [
     provideTransloco({
       config: {
-        availableLangs: ['en'],
+        availableLangs: ['en', 'de', 'it', 'ko', 'nl', 'zh', 'sv'],
         defaultLang: 'en',
         fallbackLang: 'en',
         missingHandler: {

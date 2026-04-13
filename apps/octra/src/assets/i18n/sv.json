@@ -1,0 +1,576 @@
+{
+  "translation": {
+    "language name": "Svenska"
+  },
+  "alerts": {
+    "authentication needed": "Autentisera dig för att kunna använda funktioner som ASR eller ordjustering. Efter att du klickat på \"Autentisera\" öppnas ett separat fönster. Om inget fönster öppnas, se till att popup-fönster är aktiverade i din webbläsare.",
+    "combine segments ignore speakerlabel successful": "Segmenten kombinerades framgångsrikt oavsett talaretikett.",
+    "combine segments successful": "Segment med samma talaretikett kombinerades framgångsrikt.",
+    "need playback": "Du måste starta uppspelningen minst en gång innan du skickar in transkriptionen.",
+    "undo deactivated": "Du kan inte använda ångra & gör om för tillfället."
+  },
+  "asr": {
+    "asr language": "ASR-språk",
+    "asr provider": "ASR-leverantör",
+    "asr running": "ASR körs för närvarande. Om du vill stoppa ASR för denna transkriptionsenhet klickar du här.",
+    "click on logo": "Klicka på en tjänstlogotyp för mer information.",
+    "error": "Ett fel uppstod. Vänligen skicka oss en kort återkoppling så vi kan åtgärda felet.",
+    "file too big": "ASR stöder endast ljudsekvenser med maximal varaktighet på 10 minuter. Påverkade transkriptionsenheter hoppades över.",
+    "maus empty text": "Den valda transkriptionsenheten innehåller ingen text eller mindre än två ord.",
+    "maus language": "MAUS-språk",
+    "max duration exceeded": "För att kunna bearbeta transkriptionsenheter med {{asrProvider}} måste längden på varje transkriptionsenhet vara mindre än {{maxDuration}} sekunder. Vänligen göra enheterna mindre eller välj en annan ASR-leverantör.",
+    "max signal size exceeded": "Filstorleken på den valda transkriptionsenheten är för stor. Vänligen göra enheterna mindre eller välj en annan ASR-leverantör.",
+    "no asr selected": "Vänligen välj ASR-inställningar innan du använder genvägen.",
+    "no auth": "Autentisering krävs för vidare transkription.",
+    "no quota": "Ingen kvot kvar. Vänligen använd en annan ASR-leverantör.",
+    "start for all next": "Starta det för denna och alla efterföljande transkriptionsenheter",
+    "start this segment": "Starta det endast för denna transkriptionsenhet",
+    "stop all": "Stoppa det för alla transkriptionsenheter",
+    "stop for all next": "Stoppa det för denna och alla följande transkriptionsenheter",
+    "stop this segment": "Stoppa det endast för denna transkriptionsenhet",
+    "without asr": "Ingen ASR"
+  },
+  "authentication": {
+    "description": "Stäng detta fönster och klicka i OCTRA på knappen \"Jag är autentiserad!\" för att bekräfta autentiseringen. Därefter fortsätter den automatiska bearbetningen.",
+    "password reset success": "Om ett konto med den angivna e-postadressen är registrerat kommer du att få ett e-postmeddelande för lösenordsåterställning. Kontrollera även din spam/skräppostmapp.",
+    "signin": "Vänligen logga in",
+    "signin credentials": "Logga in med uppgifter",
+    "signin university": "Logga in med universitetetskonto",
+    "window closed": "Detta fönster stängs automatiskt om {{seconds}} sekunder.",
+    "you are authenticated": "Du är autentiserad!"
+  },
+  "boundary cannot delete": "Kan inte ta bort gräns eftersom det finns närliggande transkriptionsenheter som redan är transkriberade.",
+  "boundary cannot set": "Kan inte sätta gräns i en transkriptionsenhet som redan är transkriberad.",
+  "browser": {
+    "invalid": "<b>Din webbläsare är inte kompatibel</b>. Vänligen använd någon av dessa webbläsare:"
+  },
+  "bug report": {
+    "add protocol": "Lägg till protokoll (rekommenderat)",
+    "description": "Vänligen berätta vad du tycker om OCTRA. Vad kan vi göra bättre? Hittade du några buggar?",
+    "error": "Tyvärr kunde din återkoppling inte skickas till oss. Vänligen skicka oss ett e-postmeddelande till {{email}}.",
+    "give feedback": "Ge återkoppling",
+    "sending": "Vänta medan OCTRA skickar din återkoppling...",
+    "sent": "Din återkoppling rapporterades framgångsrikt 🙂"
+  },
+  "converters": {
+    "SRT": {
+      "options": {
+        "combineSegmentsWithSameSpeakerThreshold": {
+          "description": "Slår samman en tom enhet mellan två enheter av samma talare om den har en maximal varaktighet (ms). Lämna tom för att inaktivera det.",
+          "title": "Kombinera tomma enheter med maximal varaktighet (ms) mellan enheter av samma talare"
+        },
+        "sortSpeakerSegments": {
+          "description": "Flyttar alla enheter med etikett \"SPEAKER_<NUM>\" till separata nivåer. Enheter utan talare kommer att flyttas till OCTRA_1.",
+          "title": "Flytta enheter med talaretikett till separata nivåer"
+        },
+        "speakerIdentifierPattern": {
+          "description": "Reguljärt uttryck med vilket talaren i en transkriptionsenhet kan kännas igen.",
+          "title": "Reguljärt uttryck för talaridentifikation"
+        }
+      }
+    }
+  },
+  "custom": {
+    "table configurator": {
+      "add column": "Lägg till kolumn",
+      "add header": "Lägg till rubrik till tabellen",
+      "description": "Det här verktyget gör det möjligt för dig att skapa ditt eget tabellformat.",
+      "divider": "Avgränsare",
+      "generate table": "Generera tabell",
+      "include line numbers": "inkludera radnummer",
+      "name": "Tabellkonfigurator",
+      "time format": "tidsformat"
+    }
+  },
+  "dropzone": {
+    "drag&drop here": "Dra och släpp en ljudfil (+ en valfri transkriptfil) här eller klicka här.",
+    "file selected": "{{file_label}} vald"
+  },
+  "export": {
+    "meta data": {
+      "description": "Ladda ned de metadata som loggades under ditt transkriptionsarbete. (Endast tillgängligt när loggning är aktiverad i inställningsmenyn)."
+    },
+    "options": {
+      "add newline": "Lägg till en radbrytning efter varje transkriptionsenhet.",
+      "add samplepoints": "Separera transkriptionsenheter med sampelpunkter (t.ex. 123456)",
+      "add timestamps": "Separera transkriptionsenheter med läsbara tidsstämplar (HH:MM:SS.s)",
+      "timestamp notice": "Om du markerar båda alternativen kommer båda tidsformaten att infogas:"
+    }
+  },
+  "feedback": {
+    "a lot of noises": "mycket bullrig signal",
+    "few noises": "något brus i signalen",
+    "intelligible": "förståelig",
+    "less intelligible": "nästan oförståelig",
+    "no noises": "ren signal",
+    "quality of signal": "Signalkvalitet",
+    "unintelligible": "oförståelig",
+    "very few noises": "lågt brus i signalen",
+    "very good intelligible": "mycket god förståelighet"
+  },
+  "g": {
+    "File extension": "Filnamnstillägg",
+    "Format": "Format",
+    "Language": "Språk",
+    "MAUS language": "MAUS-språk",
+    "OK": "OK",
+    "Options": "Inställningar",
+    "SELECT ACTION": "VÄLJ ÅTGÄRD",
+    "Send feedback": "Skicka återkoppling",
+    "Service Provider": "Tjänsteleverantör",
+    "Speech Recognition": "Taligenkänning",
+    "Type": "Typ",
+    "abort": "Avbryt",
+    "about": "Om",
+    "access code": "Åtkodstkod",
+    "account": "Konto",
+    "action": "Åtgärd",
+    "actions": "Åtgärder",
+    "agreement": "avtal",
+    "agreement read": "Jag har läst avtalet och godkänner dess innehål",
+    "application": "Applikation",
+    "apply": "Tillämpa",
+    "asr options": "ASR-inställningar",
+    "authenticate": "Autentisera",
+    "authors": "Författare",
+    "back": "Tillbaka",
+    "backward": "Tillbaka",
+    "backwardtime": "Tillbaka (i tid)",
+    "bad": "Dåligt",
+    "bitspersecond": "Bitar per sekund",
+    "bug report": "Buggrapport",
+    "close": "Stäng",
+    "continue": "Fortsätt",
+    "continue transcription": "Fortsätt transkription nu",
+    "country": "Land",
+    "custom formats": "Anpassade format",
+    "delete": "Ta bort",
+    "description": "Beskrivning",
+    "dismissed": "avvisad om {{value}}s",
+    "divers": "Diverse",
+    "download": "Ladda ned",
+    "duration": "Varaktighet",
+    "e-mail": "E-post",
+    "error": "Fel",
+    "errors": "Fel",
+    "errors found": "({{errors}}) fel hittade",
+    "example": "Exempel",
+    "export": "Exportera",
+    "export data": "Exportera data",
+    "faq": "Vanliga frågor",
+    "features": "Funktioner",
+    "feedback": "Återkoppling",
+    "female": "Kvinnlig",
+    "filesize": "Filstorlek",
+    "first name": "Förnamn",
+    "free jobs": "Kostnadsfria jobb",
+    "free quota": "Gratis kvot",
+    "free tasks": "Kostnadsfria uppgifter",
+    "gender": "Kön",
+    "good": "Bra",
+    "guidelines": "Riktlinjer",
+    "help": "Hjälp",
+    "id": "ID",
+    "ignore": "Ignorera",
+    "im authenticated": "Jag är autentiserad!",
+    "imprint": "Impressum",
+    "information": "Information",
+    "insert comment": "Infoga kommentar här... (valfritt)",
+    "job number": "Jobbnummer",
+    "last name": "Efternamn",
+    "later": "Senare",
+    "legals": "Juridisk information",
+    "level": "Nivå",
+    "locale": "Språk",
+    "login": "Logga in",
+    "logout": "Logga ut",
+    "logout successful": "Utloggning lyckades",
+    "male": "Manlig",
+    "manual": "Manuell",
+    "meta data": "Metadata",
+    "middle": "Mellan",
+    "name": "Namn",
+    "news": "Nyheter",
+    "no": "Nej",
+    "no errors found": "Inga fel hittade",
+    "no guidelines found": "Inga riktlinjer hittade",
+    "on focus only": "endast vid fokus",
+    "open": "Öppna {{value}}",
+    "or": "eller",
+    "overview": "Översikt",
+    "password": "Lösenord",
+    "pause": "Pausa",
+    "play": "Spela",
+    "please wait": "Vänta",
+    "preview": "Förhandsgranskning",
+    "privacy": "Sekretess",
+    "project": "Projekt",
+    "projects": "Projekt",
+    "prompt": "Instruktion",
+    "protocol": "Protokoll",
+    "quit": "Avsluta",
+    "quit and release": "Avsluta & publicera",
+    "quit continue later": "Avsluta & fortsätt senare",
+    "quit discard": "Avsluta & förkasta anteckningar",
+    "recommended": "rekommenderat",
+    "reload": "ladda om",
+    "reload now": "Ladda om nu",
+    "replay": "Spela igen",
+    "sampleRate": "Samplingsfrekvens",
+    "save": "Spara",
+    "screenshots": "Skärmbilder",
+    "search": "Sök",
+    "segment": "Transkriptionsenhet",
+    "select database": "Välj databas",
+    "select one tier": "Välj en nivå",
+    "send now": "Skicka nu",
+    "settings": "Inställningar",
+    "shortcuts": "Genvägar",
+    "skip silence": "hoppa över tystnad",
+    "speaker": "Talare",
+    "start": "Starta",
+    "statistics": "Statistik",
+    "stop": "Stoppa",
+    "submission success": "framgångsrikt överförda",
+    "supported files": "Stödda filer",
+    "switch to": "Växla till {{editor}}",
+    "terms and conditions": "Villkor",
+    "text file": "Textfil",
+    "time": "Tid",
+    "timespan": "Tidsintervall (s)",
+    "timezone": "Tidszon",
+    "tools": "Verktyg",
+    "transcript": "Transkript",
+    "transcription": "Transkription",
+    "transcription window": "Transkriptionsfönster",
+    "unknown": "okänd",
+    "username": "Användarnamn",
+    "validation": "Validering",
+    "wanted": "Önskad",
+    "website": "Webbplats",
+    "yes": "Ja"
+  },
+  "interfaces": {
+    "2D editor": "2D-Editor",
+    "TRN editor": "TRN-Editor",
+    "linear editor": "Linjär editor",
+    "simple editor": "Diktatorfone-editor"
+  },
+  "login": {
+    "api not available": "Servern är för närvarande otillgänglig. Vänligen försök igen senare. Om det här felmeddelandet fortfarande visas efter 15 minuter, vänligen skicka ett e-postmeddelande till {{email_link}}.",
+    "demo": "Öppna demo",
+    "last used": "nyligen använd",
+    "local and remove": "Ta bort onlinelägesdata & fortsätt",
+    "local mode": "Transkribera samtal lokalt i din webbläsare",
+    "local mode description": "<p>Starta transkription av din ljud- eller videofil genom att ladda den med rutan nedan. Du kan använda en automatisk transkriptionsmodell för att tillhandahålla ett utkast till transkription som du sedan redigerar genom att välja det alternativet nedan i uppladdningsrutan.</p><p>Transkriptionsarbetet av modeller utförs på din dator, och de modeller som är tillgängliga för dig beror därför på din webbläsares stöd för WebGPU-tillägget och grafikkort på din dator. Videofiler konverteras endast till ljud, vilket kan ta ytterligare tid.</p><p>OCTRA sparar din senaste transkriptionssession i din webbläsare men aldrig ljud- eller videofilen, vilket innebär att du måste ladda upp mediefilen igen när du vill fortsätta din tidigare session.</p>",
+    "login and remove": "Ta bort lokala lägesdata & logga in",
+    "offline mode data warning": "Det finns lokala data tillgänglig som skapades i onlineläge. Om du vill fortsätta i lokalt läge kommer denna data att skrivas över.",
+    "old file found": "Det finns data från en tidigare transkription tillgänglig. Om du vill fortsätta ditt arbete drar du helt enkelt och släpper följande fil i den grå rutan:<br/><br/>{{file_label}}",
+    "old version": {
+      "click here": "Klicka här för att gå till den tidigare versionen.",
+      "notice": "Du använder för närvarande den senaste versionen av OCTRA. Vill du gå tillbaka till den tidigare versionen?"
+    },
+    "online mode": "Onlineläge",
+    "online mode continue": "Gamla data hittade! För att fortsätta, se till att ställa in inloggningsdata på: {{member_id}} , {{member_project}}, {{member_jobno}}",
+    "online mode data warning": "Det finns lokala data tillgänglig som skapades i lokalt läge. Om du vill fortsätta i onlineläge kommer denna data att skrivas över.",
+    "online mode description": "I onlineläge får du automatiskt ljudfiler för transkription.",
+    "online mode disabled": "Onlineläge är för närvarande inaktivt. Vänligen använd OCTRA lokalt."
+  },
+  "logout": {
+    "login again": "Logga in igen",
+    "successful text": "Du är framgångsrikt utloggad."
+  },
+  "maintenance": {
+    "banner": "Från <b>{{start}}</b> till <b>{{end}}</b> (förväntat) kommer ett underhåll att köras.<br/>OCTRA är inte tillgänglig under denna tid. Se till att du inte använder OCTRA under denna tid.",
+    "in app": "Från <b>{{start}}</b> till <b>{{end}}</b> (förväntat) kommer ett underhåll att köras. <b>Vänligen avsluta OCTRA 15 minuter innan underhållet börjar.</b>"
+  },
+  "modal": {
+    "about": {
+      "header": "Om OCTRA"
+    },
+    "backup-notice": {
+      "body": "Din framgång kommer att sparas på servern. På grund av ett känt problem rekommenderas det att du även laddar ned en lokal säkerhetskopia. Den här åtgärden är tillfälligt nödvändig. Klicka på \"Ladda ned säkerhetskopia\" för att ladda ned säkerhetskopian och sedan på \"Fortsätt\".<br/><br/>Du kan ta bort säkerhetskopiefilerna efter att uppgiften har slutförts.",
+      "button": "Ladda ned säkerhetskopia",
+      "header": "Meddelande om säkerhetskopia"
+    },
+    "feedback-notice": {
+      "body": "För att ytterligare förbättra Octra eller åtgärda buggar behöver vi din återkoppling. Du kan enkelt och snabbt skicka oss din återkoppling genom att använda återkopplingsfunktionen. Du kan enkelt och snabbt berätta din åsikt genom att klicka på frågetecknet i det övre högra hörnet och fylla i formuläret. <b>Om det är ett tekniskt problem är det mycket viktigt att skicka återkopplingen tillsammans med protokollet till oss så snart som möjligt.</b> Protokollet hjälper oss att snabbt diagnostisera och felsöka problem på ett lämpligt sätt.<br/><br/>Tack.<br/><br/><i>Octra-teamet</i>",
+      "header": "Återkoppling behövs"
+    },
+    "import options": {
+      "introduction": "Den valda konverteraren gör det möjligt för dig att ställa in ytterligare inställningar. Klicka på kryssrutan till vänster om ett alternativ för att aktivera eller inaktivera det. Inställningar som inte är aktiverade är inte inställda.",
+      "title": "Importalternativ"
+    },
+    "inactivity": {
+      "body": "Du var borta i minst {{value}} minuter utan att slutföra OCTRA. Det rekommenderas att avsluta OCTRA om längre frånvaro är förutsägbar. Om du inte vill fortsätta transkriptionen för tillfället kan du avsluta OCTRA nu. Vad vill du göra?",
+      "continue": "Fortsätt transkription",
+      "header": "Längre frånvaro upptäckt",
+      "new": "Starta ny transkription",
+      "quit": "Avsluta OCTRA"
+    },
+    "level remove": "Är du säker på att du vill ta bort nivån \"{{name}}\" permanent?",
+    "login": {
+      "header": "Inloggningen misslyckades",
+      "text": "Vänligen kontrollera ditt användarnamn och lösenord."
+    },
+    "missing permissions": {
+      "description": "OCTRA upptäckte att det inte får behörighet att spela ljud. För att fortsätta måste du ge OCTRA behörighet att spela ljud. Gör följande tre steg och klicka på knappen \"LADDA OM\" längst ned i det här fönstret.",
+      "header": "Saknade behörigheter",
+      "step1": "Klicka på ikonen för genomstruken uppspelning till vänster om adressfältet.",
+      "step2": "Klicka på knappen bredvid \"Autostart\".",
+      "step3": "Klicka på \"Tillåt ljud och video\".",
+      "step4": "Klicka på knappen \"LADDA OM\" nedan."
+    },
+    "overview": {
+      "check transcription": "Byt till TRN-Editor och kontrollera din transkript."
+    },
+    "shortcuts": {
+      "2D-Editor": "Genvägar för 2D-Editor",
+      "2D-Editor audio": "Genvägar för ljuduppspelning på flödeslinjevisningen",
+      "2D-Editor viewer": "Genvägar för flödeslinjevisningen",
+      "TRN-Editor": "Genvägar för TRN-Editor",
+      "TRN-Editor table": "Genvägar för tabellen",
+      "TRN-Editor texteditor": "Genvägar för textredigeraren",
+      "audioplayer": "Genvägar för ljudspelaren",
+      "close_save": "Spara & stäng fönster",
+      "delete boundaries": "Ta bort valda gränser och slå samman transkriptionsenheter",
+      "do asr": "Tillämpa ASR på vald transkriptionsenhet",
+      "do asr maus": "Tillämpa ASR & MAUS-segmentering på den valda transkriptionsenheten",
+      "do maus only": "Tillämpa ordjustering på den valda transkriptionsenheten med MAUS",
+      "editor specific shortcuts": "Editor",
+      "feedback and send 1": "Skicka transkript med en stjärna",
+      "feedback and send 2": "Skicka transkript med två stjärnor",
+      "feedback and send 3": "Skicka transkript med tre stjärnor",
+      "general shortcuts": "Allmänna genvägar",
+      "guidelines": "Öppna fönster om riktlinjer",
+      "jump_last_segment": "Spara & hoppa till tidigare transkriptionsenhet",
+      "jump_next_segment": "Spara & hoppa till nästa transkriptionsenhet",
+      "mini magnifier": "Genvägar för förstoringsglaset",
+      "modal shortcuts": "Modaler",
+      "move cursor left": "Flytta markör till vänster",
+      "move cursor right": "Flytta markör till höger",
+      "overview": "Öppna översiktsfönster",
+      "play audio on hover": "Spela ljud vid hovring",
+      "play pause": "Spela / Pausa",
+      "play selection": "Spela urval",
+      "redo": "Gör om sista åtgärd",
+      "remove selected completely": "Ta bort valda segment helt",
+      "save and next cell": "Spara och gå till nästa cell",
+      "save and previous cell": "Spara och gå till tidigare cell",
+      "save and under cell": "Spara och gå till en cell under den aktuella",
+      "save and upper cell": "Spara och gå till en cell ovanför den aktuella",
+      "save cell": "Spara cell",
+      "select all segments": "Välj alla segment",
+      "set break": "Markera transkriptionsenhet som tystnad",
+      "set segment": "Ställ in transkriptionsenhetgräns",
+      "shortcuts": "Öppna fönster om genvägar",
+      "signaldisplay_down": "Genvägar för signalvisningen längst ned",
+      "signaldisplay_down_audio": "Genvägar för ljuduppspelning på den nedre signalvisningen",
+      "signaldisplay_top": "Genvägar för signalvisningen överst",
+      "signaldisplay_top_audio": "Genvägar för ljuduppspelning på den övre signalvisningen",
+      "step backward": "Hoppa till senaste position",
+      "step backward time": "Hoppa tillbaka i tiden",
+      "stop playback": "Stoppa uppspelning",
+      "switch to": "Växla till {{editor}}",
+      "texteditor": "Textredigerare",
+      "transcribe segment": "Transkriberingsenhet",
+      "transcription": "Transkription",
+      "transcription window": "Transkriptionsfönster",
+      "undo": "Ångra sista åtgärd",
+      "zoom in": "Zooma in",
+      "zoom out": "Zooma ut"
+    },
+    "supported": {
+      "audio files": "Ljudfiler",
+      "file formats for import": "Filformat för import",
+      "header": "Stödda filformat för lokalt läge"
+    },
+    "transcription": {
+      "delete": {
+        "delete old": "Ta bort tidigare transkription",
+        "header": "Skapa en ny transkription?",
+        "text": "Vill du verkligen ta bort den tidigare transkriptionen och skapa en ny?<br><br>Din framgång på den tidigare transkriptionen kommer att tas bort. Den här åtgärden kan inte ångras."
+      },
+      "demoEnd": {
+        "exportText": "Du kan exportera din transkript om du klickar på \"Tillbaka\" och sedan på \"Exportera\":",
+        "header": "Demoläge",
+        "text": "Du använder för närvarande demoläget. <br/><br/>Klicka på...<ul><li>\"Fortsätt\" för att ladda om den aktuella ljudfilen. Din inmatning kommer att tas bort och överföringen av transkriptet kommer att simuleras.</li><li>\"Avsluta\" för att avsluta OCTRA. Din inmatning kommer att tas bort.</li><li>\"Tillbaka\" för att fortsätta transkriptionen.</li></ul>"
+      },
+      "send": {
+        "header": "Skicka transkription",
+        "text": "Om du klickar på \"Skicka nu\" skickas dina data till servern för att spara den. Du kan inte ändra dina data efter detta."
+      },
+      "sending": {
+        "header": "Skicka transkription nu...",
+        "text": "Dina resultat överförs till servern... Vänta på att överföringen slutförts framgångsrikt."
+      },
+      "stop": {
+        "header": "Stoppa transkription",
+        "text": "Vill du verkligen avsluta transkriptionen? Under transkriptionen sparar Octra din framgång i en lokal lagring av denna webbläsare.<br><br>Välja ett av följande alternativ:<ul class='mt-2'><li class='mt-1'><b>Avsluta & publicera</b><br/>Din framgång kommer att förkastas och uppgiften erbjuds andra transkribenter om det är nödvändigt.</li><li class='mt-1'><b>Avsluta & fortsätt senare</b><br/>Din aktuella framgång kommer att överföras till servern. Du kan logga in senare med samma uppgifter och fortsätta transkribera. Viktigt: Ta inte bort din webbläsares data annars förlorar du din framgång.</li><li class='mt-1'><b>Fortsätt transkription:</b><br/>Välj det här alternativet om du vill fortsätta nu.</li></ul>",
+        "url text": "Vill du verkligen slutföra transkriptionen? Du använder nu URL-läget. Din framgång sparas inte i det här läget. <br/><br/><b>Se till att du exporterar din anteckning innan du stänger Octra.</b>"
+      }
+    }
+  },
+  "modals": {
+    "create project request": {
+      "description": "Om du vill hantera ditt projekt med OCTRA-servern och låta det bearbetas av transkribenter i onlineläge här i Octra är du välkommen att skriva ett e-postmeddelande till administratörerna: {{adminEmail}}",
+      "introduction": "OCTRA använder {{octraBackendURL}} för onlineläget. Av säkerhetsskäl kan nya projekt endast skapas av administratörer som granskar motsvarande begäranden i förväg.",
+      "needed data": {
+        "label": "E-postmeddelandet ska innehålla följande data:",
+        "list1": "Projektnamn, förkortning, intern beskrivning, extern beskrivning (valfritt)",
+        "list2": "Ansvariga personer (för- och efternamn, e-postadress, institution om tillämpligt)",
+        "list3": "Vem har behörighet att hantera projektet? (För- och efternamn, e-postadress) Var och en av dessa personer bör redan vara registrerad.",
+        "list4": "Synlighet: offentlig (alla kan delta) eller privat (endast tilldelade användare kan redigera)",
+        "list5": "Körtid: Start- och sluttid för synlighet"
+      },
+      "title": "Begäran om projektöppning"
+    }
+  },
+  "p": {
+    "authenticated": "Jag är autentiserad.",
+    "available until": "Tillgänglig till",
+    "back to login": "Tillbaka till inloggning",
+    "back to projects": "Gå tillbaka till projektlistan",
+    "contribute translations": "Bidra med översättningar",
+    "forgot password": "Glömt lösenord",
+    "language and provider": "Språk och leverantör",
+    "manage account": "Hantera konto",
+    "nothing found": "Ingenting hittades",
+    "repeat password": "Upprepa lösenord",
+    "reset password": "Återställ lösenord",
+    "select country": "Välj land",
+    "select gender": "Välj kön",
+    "select locale": "Välj ett språk",
+    "select timezone": "Välj en tidszon",
+    "selected level": "Vald nivå",
+    "send email": "Skicka e-post",
+    "sign up": "Registrera dig",
+    "username or email": "Användarnamn eller e-post"
+  },
+  "projects-list": {
+    "introduction": "Välj ett projekt som du vill transkribera och klicka på \"STARTA\".",
+    "no remaining tasks": "Det här projektet har ingen fria uppgifter.",
+    "other user logged in": "Det finns vissa data som sparats lokalt av en annan användare (<b>{{username}}</b>) från en tidigare session. Om du startar en ny uppgift kommer data från den tidigare sessionen att tas bort.",
+    "project creation wanted": "Jag vill skapa ett nytt projekt",
+    "resume transcription": "Fortsätt transkription",
+    "same user free task": "Det finns återstående datum från en tidigare oavslutad session (projekt: {{project}}). Klicka på \"{{resumeTranscription}}\" för att återuppta den tidigare transkriptionen eller starta en ny uppgift. <b>Om du startar en ny uppgift tas data från den tidigare sessionen bort</b>"
+  },
+  "reload-file": {
+    "another file selected": "En annan fil är vald. Välj samma fil som tidigare eller starta en ny transkription.\n\nÖnskad: '{{file}}'",
+    "file not supported": "Filtypen är \"{{type}}\" och stöds inte.",
+    "header": "Ladda om ljudfil",
+    "text": "Det här programmet stängdes eller uppdaterades. Välj samma ljudfil igen. Efter det kan du fortsätta med ditt arbete."
+  },
+  "segment invisible": "Den här transkriptionsenheten måste vara synlig för att spela upp ljudet i den",
+  "segments": {
+    "next": "nästa transkriptionsenhet",
+    "not transcribed": "Tomma transkriptionsenheter",
+    "previous": "tidigare transkriptionsenhet",
+    "total": "Totalt transkriptionsenheter",
+    "transcribed": "Transkriberade enheter",
+    "with breaks": "Tysta transkriptionsenheter"
+  },
+  "send error": "Ett fel uppstod. Vänligen ladda om denna sida och försök igen!",
+  "settings": {
+    "easy mode": "Enkelt läge",
+    "follow playcursor": "Följ uppspelningspekare",
+    "logging": "Logga användaråtgärder",
+    "play on hover": "Spela vid hovring",
+    "seconds per line": "Sekunder per rad",
+    "show magnifier": "Visa förstoringsglas"
+  },
+  "signal-gui": {
+    "segment enter text": "Välj en transkriptionsenhet genom att hovra över den och trycka på {{value}}-tangenten.",
+    "selection text": "Välj en del av signalen med musen: Klicka och håll ned vänster musknapp och håll den medan du flyttar markören till slutpositionen."
+  },
+  "signup": {
+    "data correctness": "Ja, de data jag fyllde i formuläret är korrekta.",
+    "data policy": "Ja, jag har läst och godkänner <a href=\"{{dataPolicyURL}}\" target=\"_blank\">datapolicyn</a>.",
+    "success": {
+      "email_verification": "Vi skickar dig ett e-postmeddelande. Vänligen klicka på länken i e-postmeddelandet för att bekräfta din e-postadress.\n  Efter det kan du logga in med dina uppgifter.<br/><br/>\n  Fick du inte något e-postmeddelande? Vänligen kontrollera din spam/skräppostmapp. Om du inte får något e-postmeddelande efter 10 minuter kontaktar du en administratör.",
+      "login": "Din registrering lyckades. Du kan nu logga in med dina uppgifter."
+    },
+    "terms of service": "Ja, jag har läst och godkänner <a href=\"{{termsConditionsURL}}\" target=\"_blank\">användarvillkoren</a>."
+  },
+  "special_markers": {
+    "boundary": {
+      "description": "Efter att uppspelningspositionen ställdes in i ljudspelaren eller signalvisningen med detta kan du infoga ett beskärningsmärke på texturpositionen.",
+      "insert": "Beskärningsmärke"
+    }
+  },
+  "tools": {
+    "alerts": {
+      "done": "Verktyget \"{{value}}\" användes framgångsrikt.",
+      "fail": "Körningsverktyget \"{{value}} misslyckades:<br/>{{error}}\""
+    },
+    "combine phrases": {
+      "description": "Med det här verktyget kombineras fraser mellan tystnad för att minska korta transkriptionsenheter. Transkriptionsenheter som innehåller tystnad som är kortare än en given varaktighet slås samman med deras grannar.",
+      "hide settings": "Dölj inställningar",
+      "maximal words": "Maximalt antal ord",
+      "maximal words desc": "Efter sammanslagningen kommer alla transkriptionsenheter att innehålla ett maximalt antal ord. (Fungerar bara om varje segment innehåller endast ett ord). Ett värde på 0 betyder att det inte finns någon begränsning.",
+      "minimal silence": "Minimal längd på tystnad",
+      "minimal silence desc": "Alla transkriptionsenheter som innehåller tystnad ignoreras om deras varaktighet är längre än detta värde.",
+      "name": "Kombinera transkriptionsenheter",
+      "show settings": "Visa inställningar",
+      "warning": "Ordbegränsningen är bara möjlig om det här verktyget tillämpas på en anteckning med ordsegmentering. Efter körning av det här verktyget kan du ångra ändringarna med snabbknappar \"CMD + Z (MacOS) eller CTRL + Z (PC)\"."
+    },
+    "cut audio": {
+      "add placeholder": "Lägg till platshållare",
+      "append meta files": "Lägg till metafiler",
+      "description": "Det här verktyget erbjuder att skära ljudfilen till sekvenser från transkriptionsenheterna.",
+      "hide configurator": "Dölj konfigurator",
+      "name": "Klipp ljudfil",
+      "show configurator": "Visa konfigurator",
+      "warning wav": "Ljudfilen kommer att konverteras till WAVE PCM 16Bit, mono, {{sampleRate}} Hz under skärning."
+    }
+  },
+  "transcription": {
+    "check": "Kontrollera transkription",
+    "complete": "Fullständig transkription",
+    "finish": "Avsluta transkription",
+    "invalid": "Endast giltiga transkript accepteras. Vänligen korrigera din transkript.",
+    "need audio playback": "Du måste starta ljuduppspelning minst en gång innan du skickar transkriptionen.",
+    "new": "Starta ny transkription",
+    "no prompttext": "Instruktions-texten kan inte visas.",
+    "send": "Skicka transkription",
+    "start": "Fortsätt transkription",
+    "stop": "Stoppa transkription"
+  },
+  "transcription submitted": {
+    "next transcription": "Få nästa transkription",
+    "no jobs left": "Inga tillgängliga jobb kvar",
+    "quit": "Avsluta och logga ut",
+    "transcription sent": "transkription överfördes",
+    "transcription sent successfully": "Din transkription överfördes framgångsrikt.",
+    "want to do": "Vad vill du göra?"
+  },
+  "transcription-submit": {
+    "comment description": "Kort kommentar (Anteckningar om arbetsflöden, väntetider, problem osv.)",
+    "form fill out": "Vänligen fyll i formuläret",
+    "intelligibility of the speaker": "Talares förståelighet",
+    "overview": "Följande tabell visar en översikt över transkriptionsenheterna:"
+  },
+  "trn-editor": {
+    "context menu": {
+      "merge selected lines": "Slå samman valda segment (ignorera talaretikett)",
+      "remove selected lines completely": "Ta bort valda segment helt (ta bort transkript & slå samman)",
+      "remove transcripts of selected lines": "Ta bort transkript för valda segment (behåll gränser)"
+    },
+    "modals": {
+      "permutations replace": {
+        "description": "Var försiktig: Du kan inte ångra den här åtgärden efter att den tillämpats.",
+        "replace permutations": "Ersätt permutationer"
+      }
+    },
+    "speaker-actions": {
+      "merge segments by speaker": "Slå samman segment med samma talaretikett",
+      "permutations replace": "Ersätt permutationer"
+    }
+  },
+  "toasts": {
+    "new update": {
+      "header": "Ny uppdatering tillgänglig",
+      "body": "En ny uppdatering för Octra är tillgänglig. Se till att inga automatiska processer körs (ASR, ordjustering, beskärning osv.). Ladda sedan om Octra för att installera den."
+    }
+  }
+}
