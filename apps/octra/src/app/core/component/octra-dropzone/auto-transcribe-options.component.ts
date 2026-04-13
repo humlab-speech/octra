@@ -21,8 +21,8 @@ export interface KbWhisperModel {
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   { label: 'Tiny (~120 MB) - Least accurate, 4x faster than Small',  labelWebgpu: 'Tiny (~120 MB) — Least accurate, 4× faster than Medium',   modelId: 'onnx-community/kb-whisper-tiny-ONNX',   sizeMb:  120, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
   { label: 'Small (~400 MB) - More accurate, our reference model', labelWebgpu: 'Small (~400 MB) — More accurate, 2× faster than Medium',  modelId: 'onnx-community/kb-whisper-small-ONNX',  sizeMb:  400, requiresWebGpu: false, dtypeWasm: 'q8', dtypeWebgpu: 'q4' },
-  { label: 'Medium (~1 GB) - Most accurate, 3x slower than Small',  labelWebgpu: 'Medium (~650 MB) — Our reference model',   modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: false, dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
-  { label: 'Large (~1.7 GB)', labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',  modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: false,  dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
+  { label: 'Medium (~1 GB) - Most accurate, 3x slower than Small',  labelWebgpu: 'Medium (~650 MB) — Our reference model',   modelId: 'onnx-community/kb-whisper-medium-ONNX', sizeMb: 1000, requiresWebGpu: true, dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
+  { label: 'Large (~1.7 GB)', labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',  modelId: 'onnx-community/kb-whisper-large-ONNX',  sizeMb: 1200, requiresWebGpu: true,  dtypeWasm: 'q4', dtypeWebgpu: 'q4' },
 ];
 
 @Component({
@@ -77,7 +77,7 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
             @if (!hasWebGpu()) {
               <small class="text-muted">
                 <i class="bi bi-exclamation-triangle"></i>
-                WebGPU not detected — Large model requires WebGPU
+                WebGPU not detected — Medium and Large models cannot be run reliably and have been disabled
               </small>
             }
 

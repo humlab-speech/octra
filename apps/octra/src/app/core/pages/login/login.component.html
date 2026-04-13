@@ -1,3 +1,27 @@
+@if (localOnly) {
+  <section class="order-1 order-md-3">
+    <div class="container-md p-2">
+      <hr class="d-none d-md-block" />
+      <div class="text-center mb-3 p-0 p-md-3" style="background-color: #279440">
+        <img
+          src="assets/img/socialmedia/Octra2_thumbnail_github2x.webp"
+          alt="octra logo"
+          class="img-fluid"
+          style="max-height: 200px"
+        />
+      </div>
+      <p style="text-align: justify">
+        OCTRA is a free, open-source web-application for the orthographic
+        transcription of audio files. It supports three different editors for
+        different needs. You can switch between these editors, they share the same
+        transcript. Your proceedings are saved automatically to your browser. If
+        your web browser or computer crashes just reopen your web browser and
+        continue your work.
+      </p>
+    </div>
+  </section>
+}
+
 <div class="section order-2 order-md-1" id="login">
   <div class="row">
     <div class="col-12" style="text-align: center">
@@ -263,6 +287,7 @@
     <octra-browser-test></octra-browser-test>
   }
 </div>
+@if (!localOnly) {
 <div class="section order-3 order-md-2">
   <footer class="footer">
     <div class="row">
@@ -359,3 +384,4 @@
     </ul>
   </div>
 </section>
+}

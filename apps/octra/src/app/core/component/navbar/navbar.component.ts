@@ -1,7 +1,7 @@
 import { AsyncPipe, NgClass, NgStyle, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
   NgbCollapse,
@@ -77,6 +77,7 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
   modalStatistics?: NgbModalRef;
 
   isCollapsed = true;
+  localOnly = false;
 
   public get environment(): any {
     return environment;
@@ -160,8 +161,20 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     public api: OctraAPIService,
     private offcanvasService: NgbOffcanvas,
     protected asrStoreService: AsrStoreService,
+    private router: Router,
   ) {
     super();
+  }
+
+  private getRouteData(key: string): any {
+    let route = this.router.routerState.root;
+    while (route) {
+      if (route.snapshot.data[key]) {
+        return route.snapshot.data[key];
+      }
+      route = route.firstChild as any;
+    }
+    return null;
   }
 
   ngOnInit() {
@@ -183,6 +196,12 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.subscribe(this.navbarServ.openSettings, {
       next: () => {
         this.openEnd();
+      },
+    });
+
+    this.subscribe(this.router.events, {
+      next: () => {
+        this.localOnly = !!this.getRouteData('localOnly');
       },
     });
   }

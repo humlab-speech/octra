@@ -12,11 +12,11 @@
         class="navbar-brand"
         >OCTRA 2
         @if (
-          appStorage.useMode !== undefined && appStorage.useMode !== undefined
+          appStorage.useMode !== undefined && appStorage.useMode !== undefined && !localOnly
         ) {
           ({{ appStorage.useMode }})
         }
-        @if (environment.beta_version || environment.dev_version) {
+        @if ((environment.beta_version || environment.dev_version) && !localOnly) {
           <span
             class="text-outline-white d-inline-block d-md-none text-danger fw-bold"
             style="font-size: 0.85rem"
@@ -71,6 +71,7 @@
       >
         @if (!appStorage.loggedIn) {
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            @if (!localOnly) {
             <li [routerLinkActive]="['active']" class="nav-item active">
               <a
                 [queryParamsHandling]="'merge'"
@@ -80,6 +81,7 @@
                 >{{ 'g.login' | transloco }}</a
               >
             </li>
+            }
             <li [routerLinkActive]="['active']" class="nav-item">
               <a
                 [queryParamsHandling]="'merge'"

@@ -39,6 +39,8 @@ export class AppComponent
     | NavigationComponent
     | undefined;
 
+  localOnly = false;
+
   public get environment(): any {
     return environment;
   }
@@ -84,6 +86,23 @@ export class AppComponent
         }
       },
     });
+
+    this.subscribe(this.router.events, {
+      next: () => {
+        this.localOnly = !!this.getRouteData('localOnly');
+      },
+    });
+  }
+
+  private getRouteData(key: string): any {
+    let route = this.route.firstChild;
+    while (route) {
+      if (route.snapshot.data[key]) {
+        return route.snapshot.data[key];
+      }
+      route = route.firstChild;
+    }
+    return null;
   }
 
   override ngOnDestroy() {
