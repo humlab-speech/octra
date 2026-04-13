@@ -1,5 +1,5 @@
 @if (localOnly) {
-  <section class="order-1 order-md-3">
+  <section class="order-1 order-md-1">
     <div class="container-md p-2">
       <hr class="d-none d-md-block" />
       <div class="text-center mb-3 p-0 p-md-3" style="background-color: #279440">
@@ -22,7 +22,7 @@
   </section>
 }
 
-<div class="section order-2 order-md-1" id="login">
+<div [class]="localOnly ? 'section order-2 order-md-2' : 'section order-2 order-md-1'" id="login">
   <div class="row">
     <div class="col-12" style="text-align: center">
       @if (
