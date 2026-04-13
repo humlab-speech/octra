@@ -18,6 +18,12 @@ export const APP_ROUTES: Routes = [
     canActivate: [APP_INITIALIZED_GUARD, ALoginGuard],
   },
   {
+    path: 'local',
+    component: LoginComponent,
+    canActivate: [APP_INITIALIZED_GUARD, ALoginGuard],
+    data: { localOnly: true },
+  },
+  {
     path: 'intern',
     loadChildren: () =>
       import('./core/pages/intern/intern.module').then((m) => m.InternModule),

@@ -1,7 +1,7 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
@@ -130,6 +130,7 @@ export class LoginComponent
   }
 
   compatibleBrowser?: boolean;
+  localOnly = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -140,8 +141,10 @@ export class LoginComponent
     public authStoreService: AuthenticationStoreService,
     protected compatibilityService: CompatibilityService,
     private localTranscriptionService: LocalTranscriptionService,
+    private route: ActivatedRoute,
   ) {
     super();
+    this.localOnly = !!this.route.snapshot.data['localOnly'];
     this.compatibilityService.testCompability().then((result) => {
       this.compatibleBrowser = result;
       setTimeout(() => {
