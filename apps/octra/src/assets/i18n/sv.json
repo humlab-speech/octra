@@ -3,41 +3,41 @@
     "language name": "Svenska"
   },
   "alerts": {
-    "authentication needed": "Autentisera dig för att kunna använda funktioner som ASR eller ordjustering. Efter att du klickat på \"Autentisera\" öppnas ett separat fönster. Om inget fönster öppnas, se till att popup-fönster är aktiverade i din webbläsare.",
-    "combine segments ignore speakerlabel successful": "Segmenten kombinerades framgångsrikt oavsett talaretikett.",
+    "authentication needed": "Logga in för att kunna använda funktioner som taligenkänning eller ordjustering. Efter att du klickat på \"Autentisera\" öppnas ett separat fönster. Om inget fönster öppnas, se till att popup-fönster är aktiverade i din webbläsare.",
+    "combine segments ignore speakerlabel successful": "Segmenten kombinerades framgångsrikt och ignorerade talaretikett.",
     "combine segments successful": "Segment med samma talaretikett kombinerades framgångsrikt.",
-    "need playback": "Du måste starta uppspelningen minst en gång innan du skickar in transkriptionen.",
-    "undo deactivated": "Du kan inte använda ångra & gör om för tillfället."
+    "need playback": "Du måste starta uppspelningen minst en gång innan du skriver in en transkriptionen.",
+    "undo deactivated": "Du kan inte använda funktionerna Ångra eller Gör om för tillfället."
   },
   "asr": {
-    "asr language": "ASR-språk",
-    "asr provider": "ASR-leverantör",
-    "asr running": "ASR körs för närvarande. Om du vill stoppa ASR för denna transkriptionsenhet klickar du här.",
+    "asr language": "Språk för taligenkänning",
+    "asr provider": "Leverantör av taligenkänning",
+    "asr running": "Taligenkänning körs för närvarande. Om du vill stoppa taligenkänning för denna transkriptionsenhet klickar du här.",
     "click on logo": "Klicka på en tjänstlogotyp för mer information.",
     "error": "Ett fel uppstod. Vänligen skicka oss en kort återkoppling så vi kan åtgärda felet.",
-    "file too big": "ASR stöder endast ljudsekvenser med maximal varaktighet på 10 minuter. Påverkade transkriptionsenheter hoppades över.",
+    "file too big": "Taligenkänning stöder endast ljudsekvenser med maximal varaktighet på 10 minuter. Påverkade transkriptionsenheter hoppades över.",
     "maus empty text": "Den valda transkriptionsenheten innehåller ingen text eller mindre än två ord.",
     "maus language": "MAUS-språk",
-    "max duration exceeded": "För att kunna bearbeta transkriptionsenheter med {{asrProvider}} måste längden på varje transkriptionsenhet vara mindre än {{maxDuration}} sekunder. Vänligen göra enheterna mindre eller välj en annan ASR-leverantör.",
-    "max signal size exceeded": "Filstorleken på den valda transkriptionsenheten är för stor. Vänligen göra enheterna mindre eller välj en annan ASR-leverantör.",
-    "no asr selected": "Vänligen välj ASR-inställningar innan du använder genvägen.",
+    "max duration exceeded": "För att kunna bearbeta transkriptionsenheter med {{asrProvider}} måste varje transkriptionsenhet vara mindre än {{maxDuration}} sekunder långa. Vänligen göra enheterna mindre eller välj en annan taligenkänning-leverantör.",
+    "max signal size exceeded": "Filstorleken på den valda transkriptionsenheten är för stor. Vänligen göra enheterna mindre eller välj en annan taligenkänning-leverantör.",
+    "no asr selected": "Vänligen välj taligenkänning-inställningar innan du använder genvägen.",
     "no auth": "Autentisering krävs för vidare transkription.",
-    "no quota": "Ingen kvot kvar. Vänligen använd en annan ASR-leverantör.",
+    "no quota": "Ingen kvot kvar. Vänligen använd en annan taligenkänning-leverantör.",
     "start for all next": "Starta det för denna och alla efterföljande transkriptionsenheter",
     "start this segment": "Starta det endast för denna transkriptionsenhet",
     "stop all": "Stoppa det för alla transkriptionsenheter",
     "stop for all next": "Stoppa det för denna och alla följande transkriptionsenheter",
     "stop this segment": "Stoppa det endast för denna transkriptionsenhet",
-    "without asr": "Ingen ASR"
+    "without asr": "Ingen taligenkänning"
   },
   "authentication": {
-    "description": "Stäng detta fönster och klicka i OCTRA på knappen \"Jag är autentiserad!\" för att bekräfta autentiseringen. Därefter fortsätter den automatiska bearbetningen.",
+    "description": "Stäng detta fönster och klicka i OCTRA på knappen \"Jag är inloggad!\" för att bekräfta autentiseringen. Därefter fortsätter den automatiska bearbetningen.",
     "password reset success": "Om ett konto med den angivna e-postadressen är registrerat kommer du att få ett e-postmeddelande för lösenordsåterställning. Kontrollera även din spam/skräppostmapp.",
     "signin": "Vänligen logga in",
     "signin credentials": "Logga in med uppgifter",
     "signin university": "Logga in med universitetetskonto",
     "window closed": "Detta fönster stängs automatiskt om {{seconds}} sekunder.",
-    "you are authenticated": "Du är autentiserad!"
+    "you are authenticated": "Du är inloggad!"
   },
   "boundary cannot delete": "Kan inte ta bort gräns eftersom det finns närliggande transkriptionsenheter som redan är transkriberade.",
   "boundary cannot set": "Kan inte sätta gräns i en transkriptionsenhet som redan är transkriberad.",
@@ -56,7 +56,7 @@
     "SRT": {
       "options": {
         "combineSegmentsWithSameSpeakerThreshold": {
-          "description": "Slår samman en tom enhet mellan två enheter av samma talare om den har en maximal varaktighet (ms). Lämna tom för att inaktivera det.",
+          "description": "Slår samman tomma enheter mellan två enheter av samma talare om den har en maximal varaktighet (ms). Lämna tom för att inaktivera det.",
           "title": "Kombinera tomma enheter med maximal varaktighet (ms) mellan enheter av samma talare"
         },
         "sortSpeakerSegments": {
@@ -76,7 +76,7 @@
       "add header": "Lägg till rubrik till tabellen",
       "description": "Det här verktyget gör det möjligt för dig att skapa ditt eget tabellformat.",
       "divider": "Avgränsare",
-      "generate table": "Generera tabell",
+      "generate table": "Skapa tabell",
       "include line numbers": "inkludera radnummer",
       "name": "Tabellkonfigurator",
       "time format": "tidsformat"
@@ -88,7 +88,7 @@
   },
   "export": {
     "meta data": {
-      "description": "Ladda ned de metadata som loggades under ditt transkriptionsarbete. (Endast tillgängligt när loggning är aktiverad i inställningsmenyn)."
+      "description": "Ladda ned metadata som loggades under ditt transkriptionsarbete. (Endast tillgängligt när loggning är aktiverad i inställningsmenyn)."
     },
     "options": {
       "add newline": "Lägg till en radbrytning efter varje transkriptionsenhet.",
@@ -127,11 +127,11 @@
     "action": "Åtgärd",
     "actions": "Åtgärder",
     "agreement": "avtal",
-    "agreement read": "Jag har läst avtalet och godkänner dess innehål",
+    "agreement read": "Jag har läst avtalet och godkänner dess innehåll",
     "application": "Applikation",
     "apply": "Tillämpa",
-    "asr options": "ASR-inställningar",
-    "authenticate": "Autentisera",
+    "asr options": "Inställningar för taligenkänning",
+    "authenticate": "Logga in",
     "authors": "Författare",
     "back": "Tillbaka",
     "backward": "Tillbaka",
@@ -146,7 +146,7 @@
     "custom formats": "Anpassade format",
     "delete": "Ta bort",
     "description": "Beskrivning",
-    "dismissed": "avvisad om {{value}}s",
+    "dismissed": "avvisas om {{value}}s",
     "divers": "Diverse",
     "download": "Ladda ned",
     "duration": "Varaktighet",
@@ -163,7 +163,7 @@
     "female": "Kvinnlig",
     "filesize": "Filstorlek",
     "first name": "Förnamn",
-    "free jobs": "Kostnadsfria jobb",
+    "free jobs": "Kostnadsfria körningar",
     "free quota": "Gratis kvot",
     "free tasks": "Kostnadsfria uppgifter",
     "gender": "Kön",
@@ -172,7 +172,7 @@
     "help": "Hjälp",
     "id": "ID",
     "ignore": "Ignorera",
-    "im authenticated": "Jag är autentiserad!",
+    "im authenticated": "Jag är inloggad!",
     "imprint": "Impressum",
     "information": "Information",
     "insert comment": "Infoga kommentar här... (valfritt)",
@@ -262,9 +262,9 @@
     "last used": "nyligen använd",
     "local and remove": "Ta bort onlinelägesdata & fortsätt",
     "local mode": "Transkribera samtal lokalt i din webbläsare",
-    "local mode description": "<p>Starta transkription av din ljud- eller videofil genom att ladda den med rutan nedan. Du kan använda en automatisk transkriptionsmodell för att tillhandahålla ett utkast till transkription som du sedan redigerar genom att välja det alternativet nedan i uppladdningsrutan.</p><p>Transkriptionsarbetet av modeller utförs på din dator, och de modeller som är tillgängliga för dig beror därför på din webbläsares stöd för WebGPU-tillägget och grafikkort på din dator. Videofiler konverteras endast till ljud, vilket kan ta ytterligare tid.</p><p>OCTRA sparar din senaste transkriptionssession i din webbläsare men aldrig ljud- eller videofilen, vilket innebär att du måste ladda upp mediefilen igen när du vill fortsätta din tidigare session.</p>",
-    "login and remove": "Ta bort lokala lägesdata & logga in",
-    "offline mode data warning": "Det finns lokala data tillgänglig som skapades i onlineläge. Om du vill fortsätta i lokalt läge kommer denna data att skrivas över.",
+    "local mode description": "<p>Starta transkription av din ljud- eller videofil genom att ladda den med rutan nedan. Du kan använda en automatisk transkriptionsmodell för att tillhandahålla ett utkast till transkription som du sedan redigerar genom att välja det alternativet nedan i uppladdningsrutan.</p><p>Transkriptionsarbetet av modeller utförs på din dator, och de modeller som är tillgängliga för dig beror därför på din webbläsares stöd för WebGPU-tillägget och på grafikkortet i din dator. Videofiler konverteras först till enbart ljud, vilket kan ta ytterligare tid.</p><p>OCTRA sparar din senaste transkriptionssession i din webbläsare men aldrig ljud- eller videofilen, vilket innebär att du måste ladda upp mediefilen igen om du vill fortsätta en tidigare session.</p>",
+    "login and remove": "Ta bort lokala arbetskopior & logga in",
+    "offline mode data warning": "Det finns en lokal arbetskopia tillgänglig som skapades i onlineläge. Om du vill fortsätta i lokalt läge kommer denna att skrivas över.",
     "old file found": "Det finns data från en tidigare transkription tillgänglig. Om du vill fortsätta ditt arbete drar du helt enkelt och släpper följande fil i den grå rutan:<br/><br/>{{file_label}}",
     "old version": {
       "click here": "Klicka här för att gå till den tidigare versionen.",
@@ -272,7 +272,7 @@
     },
     "online mode": "Onlineläge",
     "online mode continue": "Gamla data hittade! För att fortsätta, se till att ställa in inloggningsdata på: {{member_id}} , {{member_project}}, {{member_jobno}}",
-    "online mode data warning": "Det finns lokala data tillgänglig som skapades i lokalt läge. Om du vill fortsätta i onlineläge kommer denna data att skrivas över.",
+    "online mode data warning": "Det finns en lokal arbetskopia tillgänglig som skapades i lokalt läge. Om du vill fortsätta i onlineläge kommer denna att skrivas över.",
     "online mode description": "I onlineläge får du automatiskt ljudfiler för transkription.",
     "online mode disabled": "Onlineläge är för närvarande inaktivt. Vänligen använd OCTRA lokalt."
   },
@@ -334,8 +334,8 @@
       "audioplayer": "Genvägar för ljudspelaren",
       "close_save": "Spara & stäng fönster",
       "delete boundaries": "Ta bort valda gränser och slå samman transkriptionsenheter",
-      "do asr": "Tillämpa ASR på vald transkriptionsenhet",
-      "do asr maus": "Tillämpa ASR & MAUS-segmentering på den valda transkriptionsenheten",
+      "do asr": "Tillämpa taligenkänning på vald transkriptionsenhet",
+      "do asr maus": "Tillämpa taligenkänning & MAUS-segmentering på den valda transkriptionsenheten",
       "do maus only": "Tillämpa ordjustering på den valda transkriptionsenheten med MAUS",
       "editor specific shortcuts": "Editor",
       "feedback and send 1": "Skicka transkript med en stjärna",
@@ -570,7 +570,7 @@
   "toasts": {
     "new update": {
       "header": "Ny uppdatering tillgänglig",
-      "body": "En ny uppdatering för Octra är tillgänglig. Se till att inga automatiska processer körs (ASR, ordjustering, beskärning osv.). Ladda sedan om Octra för att installera den."
+      "body": "En ny uppdatering för Octra är tillgänglig. Se till att inga automatiska processer körs (taligenkänning, ordjustering, beskärning osv.). Ladda sedan om Octra för att installera den."
     }
   }
 }
