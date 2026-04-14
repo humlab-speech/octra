@@ -66,7 +66,8 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
 ];
 
 const SAFARI_MESSAGE =
-  'Automatic transcription is not available in Safari. The models that needs to be downloaded are large and that may currently trigger Safari to reload the tab with loss of data as a result.';
+  'Automatic transcription is not available for the Safari web browser. The models we need to download to your computer are large and currently trigger a tab reload in Safari, with loss of data as a result. Please try a different browser if you wanted to use the automatic transcription feature. ';
+
 
 @Component({
   selector: 'octra-auto-transcribe-options',
