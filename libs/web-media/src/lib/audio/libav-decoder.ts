@@ -35,8 +35,9 @@ const ASF_EXTENSIONS = new Set(['.wma', '.asf']);
 async function getLibAV(): Promise<any> {
   if (libavInstance) return libavInstance;
   // Dynamic import of the libav ES module from deployed assets.
-  // webpackIgnore keeps Angular's bundler from trying to resolve this path at build time.
-  const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-default.mjs' as any);
+  // Using a variable to prevent esbuild from resolving the path at build time.
+  const libavPath = new URL('/assets/libav/libav-default.mjs', window.location.origin).href;
+  const m = await import(libavPath as any);
   libavInstance = await m.LibAV({ noworker: true });
   return libavInstance;
 }
@@ -56,10 +57,12 @@ async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   const hadGlobal = 'global' in globalThis;
   if (!hadGlobal) (globalThis as any).global = globalThis;
   try {
-    const m = await import(/* webpackIgnore: true */ '/assets/libav/libav-fat.mjs' as any);
+    const libavPath = new URL('/assets/libav/libav-fat.mjs', window.location.origin).href;
+    const wasmUrl = new URL('/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm', window.location.origin).href;
+    const m = await import(libavPath as any);
     libavFatInstance = await m.default.LibAV({
       noworker: true,
-      wasmurl: '/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm',
+      wasmurl: wasmUrl,
     });
   } finally {
     if (!hadGlobal) delete (globalThis as any).global;

@@ -47,7 +47,7 @@ export default defineConfig({
         inlineDynamicImports: true,
       },
       // External packages that should not be bundled into your library.
-      external: ['@octra/utilities', '@octra/media'],
+      external: ['@octra/utilities', '@octra/media', '/assets/libav/libav-default.mjs', '/assets/libav/libav-fat.mjs'],
     },
   },
 });
