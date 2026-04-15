@@ -13,7 +13,7 @@ import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { provideTransloco, TranslocoModule } from '@jsverse/transloco';
 import {
   NgbCollapseModule,
   NgbDropdownModule,
@@ -39,7 +39,7 @@ import {
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
 import { SHARED_PROVIDERS } from './app/app.shared.providers';
-import { TranslocoRootModule } from './app/app.transloco';
+import { TranslocoHttpLoader, TranslocoRootModule } from './app/app.transloco';
 import { NavbarService } from './app/core/component/navbar/navbar.service';
 import { MODALS_PROVIDERS } from './app/core/modals/modals.providers';
 import { OctraModalService } from './app/core/modals/octra-modal.service';
@@ -126,8 +126,17 @@ bootstrapApplication(AppComponent, {
     ...MODALS_PROVIDERS,
 
     // i18n & UI Modules (standalone or root)
-    importProvidersFrom(TranslocoRootModule),
-    TranslocoModule,
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'de', 'it', 'ko', 'nl', 'zh', 'sv'],
+        defaultLang: 'en',
+        fallbackLang: 'en',
+        missingHandler: { useFallbackTranslation: true },
+        prodMode: !isDevMode(),
+        reRenderOnLangChange: true,
+      },
+      loader: TranslocoHttpLoader,
+    }),
     NgbDropdownModule,
     NgbNavModule,
     NgbModalModule,
