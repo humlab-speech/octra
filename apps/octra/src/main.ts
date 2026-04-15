@@ -126,6 +126,7 @@ bootstrapApplication(AppComponent, {
     ...MODALS_PROVIDERS,
 
     // i18n & UI Modules (standalone or root)
+    TranslocoModule,
     provideTransloco({
       config: {
         availableLangs: ['en', 'de', 'it', 'ko', 'nl', 'zh', 'sv'],
