@@ -33,7 +33,7 @@ import { ProjectSettings } from '../../../obj/Settings';
 
 import { LoadeditorDirective } from '../../../shared/directive/loadeditor.directive';
 
-import { AsyncPipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AnnotJSONConverter, Converter } from '@octra/annotation';
@@ -73,7 +73,6 @@ import { AnnotationStoreService } from '../../../store/login-mode/annotation/ann
     FastbarComponent,
     LoadeditorDirective,
     FormsModule,
-    AsyncPipe,
     TranslocoPipe,
   ],
 })

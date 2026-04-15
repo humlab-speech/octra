@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -29,7 +28,7 @@ import { ProjectRequestModalComponent } from './project-request-modal/project-re
   selector: 'octra-projects-list',
   templateUrl: './projects-list.component.html',
   styleUrls: ['./projects-list.component.scss'],
-  imports: [AsyncPipe, TranslocoPipe, LuxonShortDateTimePipe, NgbPagination],
+  imports: [TranslocoPipe, LuxonShortDateTimePipe, NgbPagination],
 })
 export class ProjectsListComponent extends DefaultComponent implements OnInit {
   projects?: ProjectListDto;
@@ -42,8 +41,14 @@ export class ProjectsListComponent extends DefaultComponent implements OnInit {
     collectionSize: number;
   };
 
-  projectRoles: AccountProjectRoleDto[] = [];
-  istProjectAdmin = false;
+  get projectRoles(): AccountProjectRoleDto[] {
+    return this.authStoreService.me()?.projectRoles ?? [];
+  }
+
+  get istProjectAdmin(): boolean {
+    return this.projectRoles.find((a) => a.role === 'project_admin') !==
+      undefined;
+  }
 
   constructor(
     private api: OctraAPIService,
@@ -68,14 +73,6 @@ export class ProjectsListComponent extends DefaultComponent implements OnInit {
         },
       },
     );
-    this.subscribe(authStoreService.me$, {
-      next: (me) => {
-        this.projectRoles = me?.projectRoles ?? [];
-        this.istProjectAdmin =
-          this.projectRoles.find((a) => a.role === 'project_admin') !==
-          undefined;
-      },
-    });
   }
 
   async ngOnInit() {

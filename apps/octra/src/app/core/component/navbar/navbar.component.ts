@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgStyle, UpperCasePipe } from '@angular/common';
+import { NgClass, NgStyle, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -64,7 +64,6 @@ import { NavbarService } from './navbar.service';
     NgStyle,
     NgbDropdownToggle,
     NgbDropdownMenu,
-    AsyncPipe,
     UpperCasePipe,
     TranslocoPipe,
     TimespanPipe,

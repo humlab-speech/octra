@@ -1,26 +1,26 @@
 <div class="card container my-0 my-lg-3">
   <div class="card-body flex h-100">
-    @if (authStoreService.otherUserLoggedIn$ | async) {
+    @if (authStoreService.otherUserLoggedIn()) {
       <div
         class="alert alert-warning text-center"
         [innerHTML]="
           'projects-list.other user logged in'
             | transloco
               : {
-                  username: (authStoreService.otherUserLoggedIn$ | async)
+                  username: authStoreService.otherUserLoggedIn()
                     ?.username,
                 }
         "
       ></div>
     } @else {
-      @if (authStoreService.sameUserWithOpenTask$ | async) {
+      @if (authStoreService.sameUserWithOpenTask()) {
         <div class="alert alert-warning text-center">
           <span
             [innerHTML]="
               'projects-list.same user free task'
                 | transloco
                   : {
-                      project: (authStoreService.sameUserWithOpenTask$ | async)
+                      project: authStoreService.sameUserWithOpenTask()
                         ?.currentProject?.name,
                       resumeTranscription:
                         'projects-list.resume transcription' | transloco,
@@ -72,7 +72,7 @@
                   class="row g-1 align-items-center justify-items-center justify-content-center"
                 >
                   @if (
-                    (authStoreService.me$ | async)?.systemRole?.label ===
+                    authStoreService.me()?.systemRole?.label ===
                       'administrator' || istProjectAdmin
                   ) {
                     <div class="col-auto project-name">
@@ -118,7 +118,7 @@
                           project.enddate
                             | luxonShortDateTime
                               : {
-                                  locale: (authStoreService.me$ | async)?.locale,
+                                  locale: authStoreService.me()?.locale,
                                 }
                         }}
                       </span>
