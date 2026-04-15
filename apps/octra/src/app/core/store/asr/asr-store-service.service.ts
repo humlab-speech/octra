@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { SubscriptionManager } from '@octra/utilities';
 import { map } from 'rxjs';
 import { RootState } from '../index';
 import { ASRActions } from './asr.actions';
@@ -19,19 +18,13 @@ import { ASRQueueItemType, ASRStateSettings, ASRTimeInterval } from './index';
   providedIn: 'root',
 })
 export class AsrStoreService {
-  asrOptions$ = this.store.select(selectASRSettings);
-  private _asrOptions?: ASRStateSettings;
-  private subscrManager = new SubscriptionManager();
+  asrOptions = this.store.selectSignal(selectASRSettings);
 
-  get asrOptions(): ASRStateSettings | undefined {
-    return this._asrOptions;
-  }
-
-  queue$ = this.store.select(selectASRQueue);
-  languageSettings$ = this.store.select(selectASRLanguageSettings);
-  mausLanguages$ = this.store.select(selectMausLanguages);
-  asrLanguages$ = this.store.select(selectASRLanguages);
-  asrEnabled$ = this.store.select(selectASREnabled);
+  queue = this.store.selectSignal(selectASRQueue);
+  languageSettings = this.store.selectSignal(selectASRLanguageSettings);
+  mausLanguages = this.store.selectSignal(selectMausLanguages);
+  asrLanguages = this.store.selectSignal(selectASRLanguages);
+  asrEnabled = this.store.selectSignal(selectASREnabled);
   itemChange$ = this.actions$.pipe(
     ofType(
       ASRActions.processQueueItem.success,
@@ -39,6 +32,11 @@ export class AsrStoreService {
     ),
     map((action) => action.item),
   );
+
+  constructor(
+    private store: Store<RootState>,
+    private actions$: Actions,
+  ) {}
 
   startProcessing() {
     this.store.dispatch(ASRActions.startProcessing.do());
@@ -74,18 +72,5 @@ export class AsrStoreService {
 
   setASRSettings(settings: ASRStateSettings) {
     this.store.dispatch(ASRActions.setASRSettings.do({ settings }));
-  }
-
-  constructor(
-    private store: Store<RootState>,
-    private actions$: Actions,
-  ) {
-    this.subscrManager.add(
-      this.asrOptions$.subscribe({
-        next: (asrOptions) => {
-          this._asrOptions = asrOptions;
-        },
-      }),
-    );
   }
 }
