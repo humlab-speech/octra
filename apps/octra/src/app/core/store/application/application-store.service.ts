@@ -29,13 +29,13 @@ export class ApplicationStoreService {
 
   constructor(private store: Store<RootState>) {}
 
-  loading$ = this.store.select(selectLoading);
-  appconfig$ = this.store.select(selectAppConfiguration);
-  idb$ = this.store.select(selectIdb);
-  loggedIn$ = this.store.select(selectLoggedIn);
-  appInitialized = this.store.select(selectInitialized);
-  shortcutsEnabled$ = this.store.select(selectShortcutsEnabled);
-  options$ = this.store.select(selectOptions);
+  loading = this.store.selectSignal(selectLoading);
+  appconfig = this.store.selectSignal(selectAppConfiguration);
+  idb = this.store.selectSignal(selectIdb);
+  loggedIn = this.store.selectSignal(selectLoggedIn);
+  appInitialized = this.store.selectSignal(selectInitialized);
+  shortcutsEnabled = this.store.selectSignal(selectShortcutsEnabled);
+  options = this.store.selectSignal(selectOptions);
 
   public initApplication() {
     this.store.dispatch(ApplicationActions.initApplication.do());
