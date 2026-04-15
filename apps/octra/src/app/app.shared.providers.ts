@@ -1,6 +1,6 @@
+import { Provider } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -27,44 +27,41 @@ import { TranscrOverviewComponent } from './core/component/transcr-overview';
 import { TranscriptionFeedbackComponent } from './core/component/transcription-feedback/transcription-feedback.component';
 import { ClipTextPipe } from './core/shared/clip-text.pipe';
 
-/**
- * @deprecated Use SHARED_PROVIDERS from app.shared.providers.ts instead
- */
-@NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    DragDropModule,
-    NgbDropdownModule,
-    NgbPopoverModule,
-    OctraComponentsModule,
-    OctraUtilitiesModule,
-    TranslocoModule,
-    NgbToast,
-    NgxJoditComponent,
-    TranscriptionFeedbackComponent,
-    ClipTextPipe,
-    OctraDropzoneComponent,
-    DropZoneComponent,
-    AlertComponent,
-    SignupComponent,
-    TranscrOverviewComponent,
-    TranscrEditorComponent,
-    ValidationPopoverComponent,
-    AsrOptionsComponent,
-  ],
-  exports: [
-    TranscriptionFeedbackComponent,
-    ClipTextPipe,
-    OctraDropzoneComponent,
-    DropZoneComponent,
-    AlertComponent,
-    SignupComponent,
-    TranscrOverviewComponent,
-    TranscrEditorComponent,
-    ValidationPopoverComponent,
-    AsrOptionsComponent,
-  ],
-})
-export class AppSharedModule {}
+export const SHARED_PROVIDERS: Provider[] = [
+  // Angular core modules
+  CommonModule,
+  FormsModule,
+  RouterModule,
+
+  // CDK modules
+  DragDropModule,
+
+  // ng-bootstrap modules and components
+  NgbDropdownModule,
+  NgbPopoverModule,
+  NgbToast,
+
+  // OCTRA libraries
+  OctraComponentsModule,
+  OctraUtilitiesModule,
+
+  // i18n
+  TranslocoModule,
+
+  // Editor
+  NgxJoditComponent,
+
+  // Standalone components
+  TranscriptionFeedbackComponent,
+  OctraDropzoneComponent,
+  DropZoneComponent,
+  AlertComponent,
+  SignupComponent,
+  TranscrOverviewComponent,
+  TranscrEditorComponent,
+  ValidationPopoverComponent,
+  AsrOptionsComponent,
+
+  // Standalone pipes
+  ClipTextPipe,
+];

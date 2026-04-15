@@ -38,7 +38,7 @@ import {
 } from 'ngx-webstorage';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { AppSharedModule } from './app/app.shared.module';
+import { SHARED_PROVIDERS } from './app/app.shared.providers';
 import { TranslocoRootModule } from './app/app.transloco';
 import { NavbarService } from './app/core/component/navbar/navbar.service';
 import { ModalsModule } from './app/core/modals/modals.module';
@@ -72,8 +72,8 @@ import { provideServiceWorker } from '@angular/service-worker';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    ...SHARED_PROVIDERS,
     importProvidersFrom(
-      AppSharedModule,
       FormsModule,
       ReactiveFormsModule,
       PagesModule,
