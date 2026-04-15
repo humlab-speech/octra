@@ -13,7 +13,6 @@ import {
   Renderer2,
   SimpleChanges,
   ViewChild,
-  ViewEncapsulation,
 } from '@angular/core';
 import {
   AnnotationAnySegment,
@@ -48,7 +47,6 @@ export interface CurrentLevelChangeEvent {
   templateUrl: './audio-viewer.component.html',
   styleUrls: ['./audio-viewer.component.css'],
   providers: [AudioViewerService],
-  encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioViewerComponent
