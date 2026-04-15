@@ -18,7 +18,7 @@
     "build:extern": "node runner.js build:extern",
     "build:json-sets": "node runner.js build:json-sets",
     "build:assets": "node runner.js build:assets",
-    "build:web-components": "nx build ngx-components && nx build web-components --outputHashing none && node prepare_web-components.js",
+    "build:web-components": "nx build ngx-components && nx build web-components --outputHashing none && node prepare_web-components.js && node scripts/optimize-web-components.js",
     "build:watch:deploy": "nx build octra --configuration=public-development --base-href=/apps/octra/octra-dev/ --outputPath ./deploy --watch",
     "build:dev:update:beta": "node runner.js build:dev:update:beta",
     "build:prod:update:beta": "node runner.js build:prod:update:beta",
