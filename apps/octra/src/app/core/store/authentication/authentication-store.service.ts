@@ -11,32 +11,32 @@ import { AuthenticationActions } from './authentication.actions';
 export class AuthenticationStoreService {
   constructor(private store: Store<RootState>) {}
 
-  me$ = this.store.select((store: RootState) => store.authentication.me);
-  serverOnline$ = this.store.select(
+  me = this.store.selectSignal((store: RootState) => store.authentication.me);
+  serverOnline = this.store.selectSignal(
     (store: RootState) => store.authentication.serverOnline,
   );
 
-  authenticated$ = this.store.select(
+  authenticated = this.store.selectSignal(
     (store: RootState) => store.authentication.authenticated,
   );
-  authType$ = this.store.select(
+  authType = this.store.selectSignal(
     (store: RootState) => store.authentication.type,
   );
-  logoutMessage$ = this.store.select(
+  logoutMessage = this.store.selectSignal(
     (store: RootState) => store.authentication.logoutMessage,
   );
-  logoutMessageType$ = this.store.select(
+  logoutMessageType = this.store.selectSignal(
     (store: RootState) => store.authentication.logoutMessageType,
   );
-  loginErrorMessage$ = this.store.select(
+  loginErrorMessage = this.store.selectSignal(
     (store: RootState) => store.authentication.loginErrorMessage,
   );
 
-  otherUserLoggedIn$ = this.store.select((store: RootState) => {
+  otherUserLoggedIn = this.store.selectSignal((store: RootState) => {
     return this.getDifferentUserData(store);
   });
 
-  sameUserWithOpenTask$ = this.store.select((store: RootState) => {
+  sameUserWithOpenTask = this.store.selectSignal((store: RootState) => {
     const differentUserData = this.getDifferentUserData(store);
     if (
       !differentUserData &&
