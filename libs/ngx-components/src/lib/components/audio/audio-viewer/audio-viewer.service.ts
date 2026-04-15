@@ -27,7 +27,18 @@ import {
   ShortcutGroup,
   ShortcutManager,
 } from '@octra/web-media';
-import Konva from 'konva';
+import { Stage } from 'konva/lib/Stage';
+import { Layer } from 'konva/lib/Layer';
+import { Group } from 'konva/lib/Group';
+import { Shape } from 'konva/lib/Shape';
+import { Rect } from 'konva/lib/shapes/Rect';
+import { Line } from 'konva/lib/shapes/Line';
+import { Circle } from 'konva/lib/shapes/Circle';
+import { Animation } from 'konva/lib/Animation';
+import { Context } from 'konva/lib/Context';
+import { Util } from 'konva/lib/Util';
+import type { Vector2d } from 'konva/lib/types';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { ReplaySubject, Subject, timer } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MultiThreadingService } from '../../../multi-threading.service';
@@ -35,11 +46,6 @@ import { Position, Size } from '../../../obj';
 import { PlayCursor } from '../../../obj/play-cursor';
 import { AudioViewerShortcutEvent } from './audio-viewer.component';
 import { AudioviewerConfig } from './audio-viewer.config';
-import Vector2d = Konva.Vector2d;
-import Group = Konva.Group;
-import Layer = Konva.Layer;
-import Shape = Konva.Shape;
-import Context = Konva.Context;
 
 @Injectable()
 export class AudioViewerService {
@@ -118,7 +124,7 @@ export class AudioViewerService {
     width: number;
     height: number;
   };
-  private stage: Konva.Stage | undefined;
+  private stage: Stage | undefined;
   private konvaContainer?: HTMLDivElement;
   public renderer?: Renderer2;
   public shortcut = new EventEmitter<AudioViewerShortcutEvent>();
@@ -126,20 +132,20 @@ export class AudioViewerService {
 
   private layers:
     | {
-        background: Konva.Layer;
-        playhead: Konva.Layer;
-        boundaries: Konva.Layer;
-        overlay: Konva.Layer;
-        scrollBars: Konva.Layer;
+        background: Layer;
+        playhead: Layer;
+        boundaries: Layer;
+        overlay: Layer;
+        scrollBars: Layer;
       }
     | undefined;
 
   private canvasElements: {
-    playHead: Konva.Group | undefined;
-    mouseCaret: Konva.Group | undefined;
-    scrollBar: Konva.Group | undefined;
-    scrollbarSelector: Konva.Rect | undefined;
-    lastLine: Konva.Group | undefined;
+    playHead: Group | undefined;
+    mouseCaret: Group | undefined;
+    scrollBar: Group | undefined;
+    scrollbarSelector: Rect | undefined;
+    lastLine: Group | undefined;
   } = {
     playHead: undefined,
     mouseCaret: undefined,
@@ -212,7 +218,7 @@ export class AudioViewerService {
       }
     | undefined;
   private animation: {
-    playHead: Konva.Animation | undefined;
+    playHead: Animation | undefined;
   } = {
     playHead: undefined,
   };
@@ -408,7 +414,7 @@ export class AudioViewerService {
       }
 
       if (!this.stage) {
-        this.stage = new Konva.Stage({
+        this.stage = new Stage({
           container, // id of container <div>,
           width: this.size!.width,
           height: this.size!.height,
@@ -686,7 +692,7 @@ export class AudioViewerService {
       const numOfLines = Math.ceil(this.AudioPxWidth / lineWidth);
 
       let drawnWidth = 0;
-      const selectionGroup = new Konva.Group({
+      const selectionGroup = new Group({
         name: 'line-selections',
       });
 
@@ -837,7 +843,7 @@ export class AudioViewerService {
   }
 
   private createCropContainer(id?: string): Group {
-    return new Konva.Group({
+    return new Group({
       id,
       clipFunc: (ctx) => {
         if (this.croppingData !== undefined) {
@@ -880,8 +886,8 @@ export class AudioViewerService {
     this.layers?.playhead.draw();
   }
 
-  private createLineBackground(line: Konva.Group, size: Size) {
-    const container = new Konva.Rect({
+  private createLineBackground(line: Group, size: Size) {
+    const container = new Rect({
       fill: this.settings.backgroundcolor,
       width: size.width,
       height: size.height,
@@ -890,8 +896,8 @@ export class AudioViewerService {
     line.add(container);
   }
 
-  private createLineBorder(line: Konva.Group, size: Size) {
-    const frame = new Konva.Rect({
+  private createLineBorder(line: Group, size: Size) {
+    const frame = new Rect({
       stroke: this.settings.frame.color,
       strokeWidth: 1,
       width: size.width,
@@ -901,8 +907,8 @@ export class AudioViewerService {
     line.add(frame);
   }
 
-  private createLineSelection(line: Konva.Group, size: Size) {
-    const frame = new Konva.Rect({
+  private createLineSelection(line: Group, size: Size) {
+    const frame = new Rect({
       name: 'selection',
       opacity: 0.2,
       fill: this.settings.selection.color,
@@ -913,8 +919,8 @@ export class AudioViewerService {
     line.add(frame);
   }
 
-  private createLineGrid(line: Konva.Group, size: Size) {
-    const frame = new Konva.Shape({
+  private createLineGrid(line: Group, size: Size) {
+    const frame = new Shape({
       opacity: 0.2,
       stroke: this.settings.grid.color,
       strokeWidth: 1,
@@ -927,7 +933,7 @@ export class AudioViewerService {
     line.add(frame);
   }
 
-  private sceneFuncGrid = (context: Konva.Context, shape: Konva.Shape) => {
+  private sceneFuncGrid = (context: Context, shape: Shape) => {
     if (
       this.layers !== undefined &&
       this.stage !== undefined &&
@@ -997,14 +1003,14 @@ export class AudioViewerService {
   };
 
   private createLinePlayCursor() {
-    const group = new Konva.Group({
+    const group = new Group({
       name: 'playhead',
       x: this.settings.margin.left - this.settings.playcursor.width / 2,
       y: 0,
       transformsEnabled: 'position',
     });
 
-    const frame = new Konva.Rect({
+    const frame = new Rect({
       fill: this.settings.playcursor.color,
       width: this.settings.playcursor.width,
       height: this.settings.lineheight,
@@ -1012,7 +1018,7 @@ export class AudioViewerService {
       transformsEnabled: 'position',
     });
 
-    const caret = new Konva.Line({
+    const caret = new Line({
       points: [
         this.settings.playcursor.width / 2,
         0,
@@ -1028,7 +1034,7 @@ export class AudioViewerService {
     group.add(caret);
 
     if (this.layers !== undefined) {
-      this.animation.playHead = new Konva.Animation(
+      this.animation.playHead = new Animation(
         this.doPlayHeadAnimation,
         this.layers.playhead,
       );
@@ -1041,8 +1047,8 @@ export class AudioViewerService {
     size: Size,
     position: Position,
     lineNum: number,
-  ): Konva.Group {
-    const result = new Konva.Group({
+  ): Group {
+    const result = new Group({
       name: 'line',
       x: position.x,
       y: position.y,
@@ -1067,7 +1073,7 @@ export class AudioViewerService {
       this.settings.cropping === 'circle' &&
       this.croppingData !== undefined
     ) {
-      const shadowCircle = new Konva.Circle({
+      const shadowCircle = new Circle({
         stroke: '#555555',
         strokeWidth: 1,
         x: this.croppingData.x,
@@ -1081,7 +1087,7 @@ export class AudioViewerService {
       });
       result.add(shadowCircle);
       result.add(lineGroup);
-      const borderedCircle = new Konva.Circle({
+      const borderedCircle = new Circle({
         stroke: '#555555',
         strokeWidth: 1,
         x: this.croppingData.x,
@@ -1098,8 +1104,8 @@ export class AudioViewerService {
     size: Size,
     position: Position,
     lineNum: number,
-  ): Konva.Group {
-    const result = new Konva.Group({
+  ): Group {
+    const result = new Group({
       name: 'line-selection',
       x: position.x,
       y: position.y,
@@ -1120,7 +1126,7 @@ export class AudioViewerService {
       this.settings.cropping === 'circle' &&
       this.croppingData !== undefined
     ) {
-      const shadowCircle = new Konva.Circle({
+      const shadowCircle = new Circle({
         stroke: '#555555',
         strokeWidth: 1,
         x: this.croppingData.x,
@@ -1134,7 +1140,7 @@ export class AudioViewerService {
       });
       result.add(shadowCircle);
       result.add(lineGroup);
-      const borderedCircle = new Konva.Circle({
+      const borderedCircle = new Circle({
         stroke: '#555555',
         strokeWidth: 1,
         x: this.croppingData.x,
@@ -1147,8 +1153,8 @@ export class AudioViewerService {
     return result;
   }
 
-  private createLineSignal(line: Konva.Group, size: Size, lineNum: number) {
-    const frame = new Konva.Shape({
+  private createLineSignal(line: Group, size: Size, lineNum: number) {
+    const frame = new Shape({
       stroke: this.settings.data.color,
       strokeWidth: 1,
       width: size.width,
@@ -1162,8 +1168,8 @@ export class AudioViewerService {
   }
 
   private sceneFuncSignal = (
-    context: Konva.Context,
-    shape: Konva.Shape,
+    context: Context,
+    shape: Shape,
     lineNum: number,
   ) => {
     if (
@@ -1303,10 +1309,10 @@ export class AudioViewerService {
         this._innerWidth &&
         this.size
       ) {
-        let root: Konva.Group | Konva.Layer = this.layers.overlay;
+        let root: Group | Layer = this.layers.overlay;
 
         if (this.settings.cropping === 'circle' && !this.settings.multiLine) {
-          const cropGroup = new Konva.Group({
+          const cropGroup = new Group({
             clipFunc: (ctx) => {
               if (this.croppingData !== undefined) {
                 ctx.arc(
@@ -1427,7 +1433,7 @@ export class AudioViewerService {
             if (foundText !== undefined) {
               foundText.remove();
             }
-            const timeStampLabels = new Konva.Shape({
+            const timeStampLabels = new Shape({
               id: 'timeStamps',
               width: this.innerWidth,
               height: this.size.height,
@@ -1445,7 +1451,7 @@ export class AudioViewerService {
 
           this.drawAllBoundaries();
 
-          const segmentsGroup = new Konva.Group({
+          const segmentsGroup = new Group({
             name: 'segments',
           });
           segmentsGroup.add(...newShapes);
@@ -1561,7 +1567,7 @@ export class AudioViewerService {
           foundBoundary.remove();
         }
 
-        const boundaryObj = new Konva.Line({
+        const boundaryObj = new Line({
           id: `boundary_${boundary.id}`,
           strokeWidth: this.settings.boundaries.width,
           stroke: this.settings.boundaries.color,
@@ -1602,7 +1608,7 @@ export class AudioViewerService {
     },
   ):
     | {
-        overlayGroup: Konva.Group;
+        overlayGroup: Group;
       }
     | undefined {
     const { segment, index } = segmentData;
@@ -1644,7 +1650,7 @@ export class AudioViewerService {
           const segmentEnd = segment.time.clone();
           const audioChunkStart = this.audioChunk.time.start.clone();
           const audioChunkEnd = this.audioChunk.time.end.clone();
-          let overlayGroup: Konva.Group | undefined = undefined;
+          let overlayGroup: Group | undefined = undefined;
 
           if (
             // segment start is in chunk
@@ -1663,11 +1669,11 @@ export class AudioViewerService {
               (lineNum2 - lineNum1 + 1) *
               (this.settings.lineheight + this.settings.margin.top);
 
-            overlayGroup = new Konva.Group({
+            overlayGroup = new Group({
               id: `segment_${segment.id}`,
             });
 
-            const overlaySegment = new Konva.Shape({
+            const overlaySegment = new Shape({
               x: this.settings.margin.left,
               y:
                 lineNum1 *
@@ -1696,7 +1702,7 @@ export class AudioViewerService {
             overlayGroup.add(overlaySegment);
 
             if (this.settings.showTranscripts) {
-              const textBackground = new Konva.Shape({
+              const textBackground = new Shape({
                 opacity: 0.75,
                 x: this.settings.margin.left,
                 y: 0,
@@ -1704,7 +1710,7 @@ export class AudioViewerService {
                 listening: false,
                 height: segmentHeight,
                 transformsEnabled: 'position',
-                sceneFunc: (context: Konva.Context, shape: Konva.Shape) => {
+                sceneFunc: (context: Context, shape: Shape) => {
                   this.sceneFuncTranscripts(
                     context,
                     shape,
@@ -1720,7 +1726,7 @@ export class AudioViewerService {
               });
 
               overlayGroup.add(textBackground);
-              const segmentText = new Konva.Shape({
+              const segmentText = new Shape({
                 fill: 'black',
                 fontFamily: 'Arial',
                 fontSize: 11,
@@ -1802,8 +1808,8 @@ export class AudioViewerService {
   }
 
   private sceneFuncTranscripts = (
-    context: Konva.Context,
-    shape: Konva.Shape,
+    context: Context,
+    shape: Shape,
     segmentInterval: {
       start: number;
       end: number;
@@ -1838,8 +1844,8 @@ export class AudioViewerService {
   };
 
   private sceneFuncOverlay = (
-    context: Konva.Context,
-    shape: Konva.Shape,
+    context: Context,
+    shape: Shape,
     segment: OctraAnnotationSegment,
     numOfLines: number,
     segmentInterval: {
@@ -2280,7 +2286,7 @@ export class AudioViewerService {
         },
       };
 
-      return Konva.Util.haveIntersection(
+      return Util.haveIntersection(
         {
           x,
           y,
@@ -3687,7 +3693,7 @@ export class AudioViewerService {
           this.audioChunk.time.start,
           this.audioChunk.time.end,
         );
-        const root: Konva.Group | Konva.Layer = this.layers.overlay;
+        const root: Group | Layer = this.layers.overlay;
 
         const boundariesToDraw: {
           x: number;
@@ -3739,8 +3745,8 @@ export class AudioViewerService {
   private timeLabelSceneFunction = (
     y: number,
     numOfLines: number,
-    context: Konva.Context,
-    shape: Konva.Shape,
+    context: Context,
+    shape: Shape,
   ) => {
     if (
       this.canvasElements?.lastLine !== undefined &&
@@ -4250,7 +4256,7 @@ export class AudioViewerService {
     isLastSegment: boolean,
     beginTime: SampleUnit,
     numOfLines: number,
-    context: Konva.Context,
+    context: Context,
     shape: Shape,
   ) => {
     if (
@@ -4500,7 +4506,7 @@ export class AudioViewerService {
       this.innerWidth !== undefined &&
       this.size
     ) {
-      const group = new Konva.Group({
+      const group = new Group({
         id: 'scrollBar',
         x: this.innerWidth + this.settings.margin.left,
         y: 0,
@@ -4508,7 +4514,7 @@ export class AudioViewerService {
         height: this.size.height,
       });
 
-      const background = new Konva.Rect({
+      const background = new Rect({
         stroke: this.settings.scrollbar.background.stroke,
         strokeWidth: this.settings.scrollbar.background.strokeWidth,
         fill: this.settings.scrollbar.background.color,
@@ -4519,7 +4525,7 @@ export class AudioViewerService {
 
       const rest =
         this.settings.scrollbar.width - this.settings.scrollbar.selector.width;
-      const selector = new Konva.Rect({
+      const selector = new Rect({
         stroke: this.settings.scrollbar.selector.stroke,
         strokeWidth: this.settings.scrollbar.selector.strokeWidth,
         fill: this.settings.scrollbar.selector.color,
@@ -4758,7 +4764,7 @@ export class AudioViewerService {
   }
 
   private createLineMouseCaret() {
-    const group = new Konva.Group({
+    const group = new Group({
       name: 'mouseCaret',
       x: this.settings.margin.left,
       y: 0,
@@ -4766,7 +4772,7 @@ export class AudioViewerService {
       height: this.settings.lineheight,
     });
 
-    const caret = new Konva.Line({
+    const caret = new Line({
       points: [0, 0, 0, this.settings.lineheight],
       stroke: 'red',
       strokeWidth: 2,
@@ -4808,7 +4814,7 @@ export class AudioViewerService {
   }
 
   private drawTextLabel(
-    context: Konva.Context,
+    context: Context,
     text: string,
     lineNum1: number,
     lineNum2: number,
@@ -5047,22 +5053,22 @@ export class AudioViewerService {
   private initializeLayers() {
     if (this.stage) {
       this.layers = {
-        background: new Konva.Layer({
+        background: new Layer({
           id: 'backgroundLayer',
           listening: false,
         }),
-        overlay: new Konva.Layer({
+        overlay: new Layer({
           id: 'overlayLayer',
           listening: false,
         }),
-        boundaries: new Konva.Layer({
+        boundaries: new Layer({
           id: 'boundariesLayer',
         }),
-        playhead: new Konva.Layer({
+        playhead: new Layer({
           id: 'playheadLayer',
           listening: false,
         }),
-        scrollBars: new Konva.Layer({
+        scrollBars: new Layer({
           id: 'scrollBars',
         }),
       };
@@ -5071,7 +5077,7 @@ export class AudioViewerService {
     }
   }
 
-  private onWheel = (event: Konva.KonvaEventObject<any>) => {
+  private onWheel = (event: KonvaEventObject<any>) => {
     if (
       this.canvasElements?.scrollBar !== undefined &&
       this.canvasElements?.scrollbarSelector !== undefined &&
