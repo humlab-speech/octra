@@ -127,7 +127,7 @@ bootstrapApplication(AppComponent, {
 
     // i18n & UI Modules (standalone or root)
     TranslocoModule,
-    TranslocoRootModule,
+    importProvidersFrom(TranslocoRootModule),
     NgbDropdownModule,
     NgbNavModule,
     NgbModalModule,
