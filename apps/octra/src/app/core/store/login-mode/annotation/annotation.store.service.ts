@@ -213,6 +213,10 @@ export class AnnotationStoreService {
     return this._guidelines;
   }
 
+  get feedback(): any {
+    return this._feedback;
+  }
+
   private currentSessionForFeedback = this.store.selectSignal(selectCurrentSession);
   private guidelinesForBreakMarker = this.store.selectSignal(selectGuidelines);
 

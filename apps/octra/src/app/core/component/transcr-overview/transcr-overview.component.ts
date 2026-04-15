@@ -142,19 +142,19 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
 
   public get transcrSegments(): number {
     return this.currentLevel?.items
-      ? this.annotationStoreService.statistics.transcribed
+      ? this.annotationStoreService.statistics()?.transcribed
       : 0;
   }
 
   public get pauseSegments(): number {
     return this.currentLevel?.items
-      ? this.annotationStoreService.statistics.pause
+      ? this.annotationStoreService.statistics()?.pause
       : 0;
   }
 
   public get emptySegments(): number {
     return this.currentLevel?.items
-      ? this.annotationStoreService.statistics.empty
+      ? this.annotationStoreService.statistics()?.empty
       : 0;
   }
 
