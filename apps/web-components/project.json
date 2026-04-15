@@ -14,7 +14,7 @@
         "outputPath": "tmp/web-components",
         "index": "apps/web-components/src/index.html",
         "browser": "apps/web-components/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [],
         "tsConfig": "apps/web-components/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
