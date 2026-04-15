@@ -1,5 +1,4 @@
 import {
-  ComponentFactoryResolver,
   Directive,
   EventEmitter,
   Input,
@@ -12,7 +11,10 @@ import {
 import { SubscriptionManager } from '@octra/utilities';
 import { Subscription } from 'rxjs';
 
-@Directive({ selector: '[octraDynComponent]' })
+@Directive({
+  selector: '[octraDynComponent]',
+  standalone: true,
+})
 export class DynComponentDirective implements OnInit, OnDestroy {
   @Input() component!: {
     id: number;
@@ -25,21 +27,13 @@ export class DynComponentDirective implements OnInit, OnDestroy {
 
   private subscrManager = new SubscriptionManager<Subscription>();
 
-  constructor(
-    public viewContainerRef: ViewContainerRef,
-    private _componentFactoryResolver: ComponentFactoryResolver,
-  ) {}
+  constructor(public viewContainerRef: ViewContainerRef) {}
 
   ngOnInit(): void {
-    const componentFactory =
-      this._componentFactoryResolver.resolveComponentFactory(
-        this.component!.class,
-      );
-
     const viewContainerRef = this.viewContainerRef;
     viewContainerRef.clear();
 
-    const comp = viewContainerRef.createComponent(componentFactory);
+    const comp = viewContainerRef.createComponent(this.component!.class);
 
     if (
       comp !== undefined &&
