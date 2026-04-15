@@ -41,7 +41,7 @@ import { APP_ROUTES } from './app/app.routes';
 import { SHARED_PROVIDERS } from './app/app.shared.providers';
 import { TranslocoRootModule } from './app/app.transloco';
 import { NavbarService } from './app/core/component/navbar/navbar.service';
-import { ModalsModule } from './app/core/modals/modals.module';
+import { MODALS_PROVIDERS } from './app/core/modals/modals.providers';
 import { OctraModalService } from './app/core/modals/octra-modal.service';
 import { ReloadFileGuard } from './app/core/pages/intern/reload-file/reload-file.activateguard';
 import { PagesModule } from './app/core/pages/pages.module';
@@ -118,13 +118,13 @@ bootstrapApplication(AppComponent, {
       NgbPopoverModule,
       NgbTooltipModule,
       NgbCollapseModule,
-      ModalsModule,
       TranslocoRootModule,
       NgxOctraApiModule,
       OctraComponentsModule,
       OctraUtilitiesModule,
       NgbOffcanvasModule,
     ),
+    ...MODALS_PROVIDERS,
     ALoginGuard,
     AudioService,
     DeALoginGuard,

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MODALS_PROVIDERS } from '../../modals/modals.providers';
 import { TranscActivateGuard } from '../../shared/guard/transcr.activateguard';
 import { AuthComponent } from './auth';
 import { AuthSuccessPageComponent } from './auth-success/auth-success.page.component';
@@ -36,7 +37,7 @@ const MEMBER_ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(MEMBER_ROUTES)],
+  imports: [RouterModule.forChild(MEMBER_ROUTES), MODALS_PROVIDERS],
   exports: [RouterModule],
 })
 export class InternRoutingModule {}

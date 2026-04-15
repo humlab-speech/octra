@@ -1,13 +1,7 @@
+import { Provider } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Injectable, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  Translation,
-  TranslocoLoader,
-  TranslocoModule,
-} from '@jsverse/transloco';
 import {
   NgbAccordionCollapse,
   NgbCollapseModule,
@@ -22,6 +16,7 @@ import {
   OctraFormGeneratorModule,
 } from '@octra/ngx-components';
 import { OctraUtilitiesModule } from '@octra/ngx-utilities';
+import { TranslocoModule } from '@jsverse/transloco';
 import { NgxJoditComponent } from 'ngx-jodit';
 import { AppSharedModule } from '../../app.shared.module';
 import { AuthenticationComponent } from '../component/authentication-component/authentication-component.component';
@@ -55,92 +50,55 @@ import { TranscriptionStopModalComponent } from './transcription-stop-modal/tran
 import { WaitingModalComponent } from './waiting-modal/waiting-modal.component';
 import { YesNoModalComponent } from './yes-no-modal/yes-no-modal.component';
 
-@Injectable({ providedIn: 'root' })
-export class TranslocoHttpLoader implements TranslocoLoader {
-  constructor(private http: HttpClient) {}
-
-  getTranslation(lang: string) {
-    return this.http.get<Translation>(`./assets/i18n/${lang}.json`);
-  }
-}
-
 /**
- * @deprecated Use MODALS_PROVIDERS from modals.providers.ts instead
+ * Providers array for modal components and their dependencies.
+ * Replaces ModalsModule for standalone component usage.
  */
-@NgModule({
-  imports: [
-    CommonModule,
-    AppSharedModule,
-    TranslocoModule,
-    OctraComponentsModule,
-    FormsModule,
-    NgbCollapseModule,
-    NgbTooltipModule,
-    DragDropModule,
-    NgbDropdownModule,
-    NamingDragAndDropComponent,
-    NgbModalModule,
-    OctraUtilitiesModule,
-    NgbAccordionCollapse,
-    NgxJoditComponent,
-    OctraFormGeneratorModule,
-    BugreportModalComponent,
-    NgbPopover,
-    ErrorModalComponent,
-    ExportFilesModalComponent,
-    HelpModalComponent,
-    InactivityModalComponent,
-    LoginInvalidModalComponent,
-    MissingPermissionsModalComponent,
-    OctraModalComponent,
-    OverviewModalComponent,
-    PromptModalComponent,
-    ShortcutsModalComponent,
-    StatisticsModalComponent,
-    SupportedFilesModalComponent,
-    ToolsModalComponent,
-    TranscriptionDeleteModalComponent,
-    TranscriptionDemoEndModalComponent,
-    TranscriptionGuidelinesModalComponent,
-    TranscriptionSendingModalComponent,
-    TranscriptionStopModalComponent,
-    YesNoModalComponent,
-    ProtectedModalComponent,
-    ShortcutComponent,
-    TableConfiguratorComponent,
-    ReAuthenticationModalComponent,
-    AuthenticationComponent,
-    AboutModalComponent,
-    FeedbackNoticeModalComponent,
-    TranscriptionBackupEndModalComponent,
-    ImportOptionsModalComponent,
-    WaitingModalComponent,
-  ],
-  exports: [
-    ErrorModalComponent,
-    ExportFilesModalComponent,
-    HelpModalComponent,
-    InactivityModalComponent,
-    LoginInvalidModalComponent,
-    MissingPermissionsModalComponent,
-    OctraModalComponent,
-    OverviewModalComponent,
-    PromptModalComponent,
-    ShortcutsModalComponent,
-    StatisticsModalComponent,
-    SupportedFilesModalComponent,
-    ToolsModalComponent,
-    TranscriptionDeleteModalComponent,
-    TranscriptionDemoEndModalComponent,
-    TranscriptionGuidelinesModalComponent,
-    TranscriptionSendingModalComponent,
-    TranscriptionStopModalComponent,
-    YesNoModalComponent,
-    ProtectedModalComponent,
-    AuthenticationComponent,
-    AboutModalComponent,
-    ImportOptionsModalComponent,
-    TranscriptionBackupEndModalComponent,
-  ],
-})
-export class ModalsModule {}
+export const MODALS_PROVIDERS: Provider[] = [
+  CommonModule,
+  AppSharedModule,
+  TranslocoModule,
+  OctraComponentsModule,
+  FormsModule,
+  NgbCollapseModule,
+  NgbTooltipModule,
+  DragDropModule,
+  NgbDropdownModule,
+  NamingDragAndDropComponent,
+  NgbModalModule,
+  OctraUtilitiesModule,
+  NgbAccordionCollapse,
+  NgxJoditComponent,
+  OctraFormGeneratorModule,
+  BugreportModalComponent,
+  NgbPopover,
+  ErrorModalComponent,
+  ExportFilesModalComponent,
+  HelpModalComponent,
+  InactivityModalComponent,
+  LoginInvalidModalComponent,
+  MissingPermissionsModalComponent,
+  OctraModalComponent,
+  OverviewModalComponent,
+  PromptModalComponent,
+  ShortcutsModalComponent,
+  StatisticsModalComponent,
+  SupportedFilesModalComponent,
+  ToolsModalComponent,
+  TranscriptionDeleteModalComponent,
+  TranscriptionDemoEndModalComponent,
+  TranscriptionGuidelinesModalComponent,
+  TranscriptionSendingModalComponent,
+  TranscriptionStopModalComponent,
+  YesNoModalComponent,
+  ProtectedModalComponent,
+  ShortcutComponent,
+  TableConfiguratorComponent,
+  ReAuthenticationModalComponent,
+  AuthenticationComponent,
+  AboutModalComponent,
+  FeedbackNoticeModalComponent,
+  TranscriptionBackupEndModalComponent,
+  ImportOptionsModalComponent,
+  WaitingModalComponent,
+];

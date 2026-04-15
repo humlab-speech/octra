@@ -13,7 +13,7 @@ import { LoginComponent } from './login';
 import { NewsComponent } from './news';
 
 import { RouterModule } from '@angular/router';
-import { ModalsModule } from '../modals/modals.module';
+import { MODALS_PROVIDERS } from '../modals/modals.providers';
 import { BrowserTestComponent } from './browser-test';
 
 @NgModule({
@@ -25,7 +25,7 @@ import { BrowserTestComponent } from './browser-test';
     AppSharedModule,
     RouterModule,
     TranslocoModule,
-    ModalsModule,
+    MODALS_PROVIDERS,
     Error404Component,
     FeaturesComponent,
     HelpToolsComponent,
