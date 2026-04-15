@@ -115,6 +115,132 @@
         "spa": true
       }
     },
+    "build-viewer": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
+      "options": {
+        "extractLicenses": true,
+        "outputPath": "dist/apps/web-components/viewer",
+        "index": "apps/web-components/src/index.html",
+        "browser": "apps/web-components/src/viewer.ts",
+        "polyfills": [],
+        "tsConfig": "apps/web-components/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "optimization": {
+          "scripts": true,
+          "styles": {
+            "minify": true,
+            "inlineCritical": false
+          },
+          "fonts": false
+        },
+        "outputHashing": "all",
+        "sourceMap": false,
+        "aot": true,
+        "assets": [
+          {
+            "glob": "libav-default.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-fat.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          }
+        ],
+        "styles": ["apps/web-components/src/styles.scss"],
+        "scripts": [],
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "400kb",
+            "maximumError": "500kb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "2kb",
+            "maximumError": "4kb"
+          }
+        ]
+      }
+    },
+    "build-player": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
+      "options": {
+        "extractLicenses": true,
+        "outputPath": "dist/apps/web-components/player",
+        "index": "apps/web-components/src/index.html",
+        "browser": "apps/web-components/src/player.ts",
+        "polyfills": [],
+        "tsConfig": "apps/web-components/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "optimization": {
+          "scripts": true,
+          "styles": {
+            "minify": true,
+            "inlineCritical": false
+          },
+          "fonts": false
+        },
+        "outputHashing": "all",
+        "sourceMap": false,
+        "aot": true,
+        "assets": [
+          {
+            "glob": "libav-default.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-fat.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.mjs",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          },
+          {
+            "glob": "libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm",
+            "input": "apps/octra/src/assets/libav",
+            "output": "assets/libav/"
+          }
+        ],
+        "styles": ["apps/web-components/src/styles.scss"],
+        "scripts": [],
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "350kb",
+            "maximumError": "450kb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "2kb",
+            "maximumError": "4kb"
+          }
+        ]
+      }
+    },
     "version": {
       "executor": "@jscutlery/semver:version",
       "options": {
