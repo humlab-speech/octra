@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { effect, EventEmitter, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   AnnotationAnySegment,
@@ -77,7 +77,7 @@ export class AnnotationStoreService {
     empty: number;
     pause: number;
   }> {
-    return this.currentLevel$.pipe(
+    return this.store.select(selectAnnotationCurrentLevel).pipe(
       map((level) => {
         const result = {
           transcribed: 0,
@@ -146,7 +146,7 @@ export class AnnotationStoreService {
     return this._transcriptValid;
   }
 
-  task$ = this.store.select(selectCurrentTask);
+  task = this.store.selectSignal(selectCurrentTask);
 
   textInput$ = this.store.select(selectCurrentSession).pipe(
     map((session) => {
@@ -162,7 +162,7 @@ export class AnnotationStoreService {
     }),
   );
 
-  currentLevel$ = this.store.select(selectAnnotationCurrentLevel);
+  currentLevel = this.store.selectSignal(selectAnnotationCurrentLevel);
   private _currentLevel?: OctraAnnotationAnyLevel<OctraAnnotationSegment>;
 
   get currentLevel():
@@ -171,21 +171,21 @@ export class AnnotationStoreService {
     return this._currentLevel;
   }
 
-  currentLevelIndex$ = this.store.select(selectAnnotationCurrentLevelIndex);
+  currentLevelIndex = this.store.selectSignal(selectAnnotationCurrentLevelIndex);
   private _currentLevelIndex = 0;
 
   get currentLevelIndex(): number {
     return this._currentLevelIndex;
   }
 
-  transcript$ = this.store.select(selectAnnotationTranscript);
+  transcript = this.store.selectSignal(selectAnnotationTranscript);
   status$ = this.store.select(selectCurrentSession).pipe(
     map((s) => s?.status),
   );
   private _transcript?: OctraAnnotation<ASRContext, OctraAnnotationSegment>;
   private _task?: TaskDto;
 
-  transcriptString$ = this.transcript$.pipe(
+  transcriptString$ = this.store.select(selectAnnotationTranscript).pipe(
     map((transcript) => {
       if (transcript) {
         const annotation = transcript.serialize(
@@ -206,7 +206,7 @@ export class AnnotationStoreService {
     }),
   );
 
-  guidelines$ = this.store.select(selectGuidelines);
+  guidelines = this.store.selectSignal(selectGuidelines);
   private _guidelines?: OctraGuidelines;
 
   get guidelines(): OctraGuidelines | undefined {
@@ -242,41 +242,21 @@ export class AnnotationStoreService {
     private appStorage: AppStorageService,
     private multiThreading: MultiThreadingService,
   ) {
-    this.subscrManager.add(
-      this.transcript$.subscribe({
-        next: (transcript) => {
-          this._transcript = transcript;
-        },
-      }),
-    );
-    this.subscrManager.add(
-      this.task$.subscribe({
-        next: (task) => {
-          this._task = task;
-        },
-      }),
-    );
-    this.subscrManager.add(
-      this.guidelines$.subscribe({
-        next: (guidelines) => {
-          this._guidelines = guidelines?.selected?.json;
-        },
-      }),
-    );
-    this.subscrManager.add(
-      this.currentLevel$.subscribe({
-        next: (currentLevel) => {
-          this._currentLevel = currentLevel;
-        },
-      }),
-    );
-    this.subscrManager.add(
-      this.currentLevelIndex$.subscribe({
-        next: (currentLevel) => {
-          this._currentLevelIndex = currentLevel;
-        },
-      }),
-    );
+    effect(() => {
+      this._transcript = this.transcript();
+    });
+    effect(() => {
+      this._task = this.task();
+    });
+    effect(() => {
+      this._guidelines = this.guidelines()?.selected?.json;
+    });
+    effect(() => {
+      this._currentLevel = this.currentLevel();
+    });
+    effect(() => {
+      this._currentLevelIndex = this.currentLevelIndex();
+    });
     this.subscrManager.add(
       this.feedback$.subscribe({
         next: (value) => {
