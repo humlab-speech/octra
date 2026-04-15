@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { OAnnotJSON } from '@octra/annotation';
 import { AccountLoginMethod } from '@octra/api-types';
 import { LoginMode, RootState } from '../index';
@@ -9,7 +10,14 @@ import { AuthenticationActions } from './authentication.actions';
   providedIn: 'root',
 })
 export class AuthenticationStoreService {
-  constructor(private store: Store<RootState>) {}
+  // Observable compatibility
+  serverOnline$: Observable<boolean | undefined>;
+
+  constructor(private store: Store<RootState>) {
+    this.serverOnline$ = this.store.select(
+      (store: RootState) => store.authentication.serverOnline,
+    );
+  }
 
   me = this.store.selectSignal((store: RootState) => store.authentication.me);
   serverOnline = this.store.selectSignal(

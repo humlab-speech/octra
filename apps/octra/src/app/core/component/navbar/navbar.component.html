@@ -659,17 +659,17 @@
                     60
                   </button>
                 </div>
-                @if (asrStoreService.asrEnabled()) {
+                @if (asrStoreService.asrEnabled) {
                   <br /><br />
                   <hr />
                   <label style="font-size: 1rem" class="mb-2">{{
                     'g.asr options' | transloco
                   }}</label>
                   <octra-asr-options
-                    [options]="asrStoreService.asrOptions() ?? undefined"
+                    [options]="asrStoreService.asrOptions ?? undefined"
                     (optionsChange)="asrStoreService.setASRSettings($event)"
                     [languageSettings]="
-                      asrStoreService.languageSettings() ?? undefined
+                      asrStoreService.languageSettings ?? undefined
                     "
                     [manualURL]="api.appProperties?.support?.manual_url ?? ''"
                     [mausLanguages]="asrStoreService.mausLanguages() ?? undefined"

@@ -371,7 +371,7 @@ export class TranscrWindowComponent
       next: (queue) => {
         const item = this.audiochunk
           ? queue?.items.find(
-              (a) =>
+              (a: any) =>
                 a.time.sampleStart === this.audiochunk.time.start.samples &&
                 a.time.sampleLength === this.audiochunk.time.duration.samples,
             )
@@ -466,7 +466,7 @@ export class TranscrWindowComponent
       next: (guidelines) => {
         this.guidelines = guidelines!.selected!.json;
         this.breakMarkerCode = guidelines?.selected?.json.markers.find(
-          (a) => a.type === 'break',
+          (a: any) => a.type === 'break',
         )?.code;
       },
     });

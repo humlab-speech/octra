@@ -50,13 +50,13 @@ export const APP_INITIALIZED_GUARD: CanActivateFn = (
 
   console.log('APP_INITIALIZED_GUARD: Activated for route:', route.url.join('/'));
 
-  appStoreService.appInitialized.pipe(take(1)).subscribe(currentState => {
+  appStoreService.appInitialized$.pipe(take(1)).subscribe(currentState => {
     console.log('APP_INITIALIZED_GUARD: Current appInitialized state:', currentState);
   });
 
-  return appStoreService.appInitialized.pipe(
+  return appStoreService.appInitialized$.pipe(
     take(1),
-    map((a) => {
+    map((a: any) => {
       console.log('APP_INITIALIZED_GUARD: appInitialized emitted:', a);
       if (!a) {
         console.log('APP_INITIALIZED_GUARD: appInitialized is false, navigating to /load');

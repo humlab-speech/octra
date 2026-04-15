@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppStorageService } from '../../../shared/service/appstorage.service';
 import { OctraAPIService } from '@octra/ngx-octra-api';
@@ -11,7 +11,7 @@ import { AccountLoginMethod } from '@octra/api-types';
 import { AuthenticationStoreService } from '../../../store/authentication';
 import { RootState, LoginMode } from '../../../store';
 import { ApplicationStoreService } from '../../../store/application/application-store.service';
-import { combineLatest, filter, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 
 @Component({
   selector: 'octra-visp-task',
@@ -46,25 +46,21 @@ export class VispTaskComponent implements OnInit {
     }
 
     // Check current authentication and application state
-    combineLatest([
-      this.authStoreService.authenticated$,
-      this.store.select(state => state.application.mode),
-      this.store.select(state => state.application.loggedIn)
-    ]).pipe(
-      take(1)
-    ).subscribe(([authenticated, appMode, loggedIn]) => {
-      console.log('Current state:', { authenticated, appMode, loggedIn });
+    const authenticated = this.authStoreService.authenticated();
+    const appMode = this.appStoreService.useMode;
+    const loggedIn = this.appStoreService.loggedIn();
 
-      if (authenticated && appMode === LoginMode.ONLINE && loggedIn) {
-        // User is already authenticated and in online mode
-        console.log('User already authenticated, starting annotation directly');
-        this.fetchProjectAndStartAnnotation(projectId);
-      } else {
-        // User needs to be authenticated first
-        console.log('User not authenticated or not in online mode, logging in first');
-        this.authenticateAndStartAnnotation(projectId);
-      }
-    });
+    console.log('Current state:', { authenticated, appMode, loggedIn });
+
+    if (authenticated && appMode === LoginMode.ONLINE && loggedIn) {
+      // User is already authenticated and in online mode
+      console.log('User already authenticated, starting annotation directly');
+      this.fetchProjectAndStartAnnotation(projectId);
+    } else {
+      // User needs to be authenticated first
+      console.log('User not authenticated or not in online mode, logging in first');
+      this.authenticateAndStartAnnotation(projectId);
+    }
   }
 
   private authenticateAndStartAnnotation(projectId: string) {
@@ -96,10 +92,12 @@ export class VispTaskComponent implements OnInit {
           undefined // No password for local method
         );
 
-        // Wait for successful authentication
-        this.authStoreService.authenticated$.pipe(
+        // Wait for successful authentication - use toObservable to convert signal to observable
+        const authenticatedSignal = this.authStoreService.authenticated;
+        toObservable(authenticatedSignal).pipe(
           filter(authenticated => authenticated === true),
-          take(1)
+          take(1),
+          takeUntilDestroyed(this.destroyRef)
         ).subscribe(() => {
           console.log('Authentication successful, fetching project...');
           this.fetchProjectAndStartAnnotation(projectId);

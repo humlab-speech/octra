@@ -13,7 +13,7 @@ export const IDB_LOADED_GUARD: CanActivateFn = (
 ) => {
   const appStorage = inject(ApplicationStoreService);
   return appStorage.idb$.pipe(
-    map((a) => {
+    map((a: any) => {
       return a.loaded;
     }),
   );

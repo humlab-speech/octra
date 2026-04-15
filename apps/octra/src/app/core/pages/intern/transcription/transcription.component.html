@@ -14,9 +14,9 @@
         style="text-align: left; padding-left: 20px"
       >
         {{ audio.audioManager.resource.info!.fullname }}:
-        <i>{{ annotationStoreService.task()?.orgtext }}</i>
+        <i>{{ annotationStoreService.task?.orgtext }}</i>
       </div>
-      @if (annotationStoreService.textInput() !== undefined) {
+      @if (annotationStoreService.textInput !== undefined) {
         <div
           class="col-12 col-sm-3"
           style="text-align: right; padding-right: 20px"

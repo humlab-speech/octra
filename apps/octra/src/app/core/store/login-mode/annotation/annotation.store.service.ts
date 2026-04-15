@@ -1,5 +1,6 @@
 import { computed, effect, EventEmitter, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable, map } from 'rxjs';
 import {
   AnnotationAnySegment,
   AnnotationLevelType,
@@ -22,7 +23,7 @@ import {
   SubscriptionManager,
   TsWorkerJob,
 } from '@octra/utilities';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { OLog, OLogging } from '../../../obj/Settings/logging';
 import { KeyStatisticElem } from '../../../obj/statistics/KeyStatisticElem';
 import { MouseStatisticElem } from '../../../obj/statistics/MouseStatisticElem';
@@ -51,25 +52,12 @@ import {
 export class AnnotationStoreService {
   public segmentrequested = new EventEmitter<number>();
 
-  get feedback(): any {
-    return this._feedback;
-  }
-
   get silencePlaceholder(): string | undefined {
-    if (this.guidelines?.markers) {
-      return this.guidelines.markers.find((a) => a.type === 'break')?.code;
+    const g = this.guidelinesValue;
+    if (g?.markers) {
+      return g.markers.find((a) => a.type === 'break')?.code;
     }
     return undefined;
-  }
-
-  get transcript():
-    | OctraAnnotation<ASRContext, OctraAnnotationSegment>
-    | undefined {
-    return this._transcript;
-  }
-
-  get task() {
-    return this._task;
   }
 
   private currentLevelForStats = this.store.selectSignal(selectAnnotationCurrentLevel);
@@ -111,7 +99,8 @@ export class AnnotationStoreService {
   });
 
   get breakMarker() {
-    return this.guidelines?.markers.find((a) => a.type === 'break');
+    const g = this.guidelinesValue;
+    return g?.markers?.find((a) => a.type === 'break');
   }
 
   private _validationArray: {
@@ -134,8 +123,6 @@ export class AnnotationStoreService {
     return this._transcriptValid;
   }
 
-  task = this.store.selectSignal(selectCurrentTask);
-
   private currentSessionForInput = this.store.selectSignal(selectCurrentSession);
 
   textInput = computed(() => {
@@ -151,27 +138,8 @@ export class AnnotationStoreService {
     return getTranscriptFromIO(session.task?.inputs ?? []) as TaskInputOutputDto;
   });
 
-  currentLevel = this.store.selectSignal(selectAnnotationCurrentLevel);
-  private _currentLevel?: OctraAnnotationAnyLevel<OctraAnnotationSegment>;
-
-  get currentLevel():
-    | OctraAnnotationAnyLevel<OctraAnnotationSegment>
-    | undefined {
-    return this._currentLevel;
-  }
-
-  currentLevelIndex = this.store.selectSignal(selectAnnotationCurrentLevelIndex);
-  private _currentLevelIndex = 0;
-
-  get currentLevelIndex(): number {
-    return this._currentLevelIndex;
-  }
-
-  transcript = this.store.selectSignal(selectAnnotationTranscript);
   private currentSessionForStatus = this.store.selectSignal(selectCurrentSession);
   status = computed(() => this.currentSessionForStatus()?.status);
-  private _transcript?: OctraAnnotation<ASRContext, OctraAnnotationSegment>;
-  private _task?: TaskDto;
 
   private transcriptForString = this.store.selectSignal(selectAnnotationTranscript);
 
@@ -195,21 +163,58 @@ export class AnnotationStoreService {
     return '';
   });
 
-  guidelines = this.store.selectSignal(selectGuidelines);
+  private _currentLevel?: OctraAnnotationAnyLevel<OctraAnnotationSegment>;
+  private _currentLevelIndex = 0;
+  private _transcript?: OctraAnnotation<ASRContext, OctraAnnotationSegment>;
+  private _task?: TaskDto;
   private _guidelines?: OctraGuidelines;
+  private _feedback: any;
+  private _statistics = { transcribed: 0, empty: 0, pause: 0 };
+
+  // Signals
+  transcriptSignal = this.store.selectSignal(selectAnnotationTranscript);
+  currentLevelSignal = this.store.selectSignal(selectAnnotationCurrentLevel);
+  currentLevelIndexSignal = this.store.selectSignal(selectAnnotationCurrentLevelIndex);
+  taskSignal = this.store.selectSignal(selectCurrentTask);
+  guidelinesSignal = this.store.selectSignal(selectGuidelines);
+
+  // Observable compatibility for components using subscribe()
+  transcript$: Observable<OctraAnnotation<ASRContext, OctraAnnotationSegment> | undefined>;
+  currentLevel$: Observable<OctraAnnotationAnyLevel<OctraAnnotationSegment> | undefined>;
+  currentLevelIndex$: Observable<number>;
+  task$: Observable<TaskDto | undefined>;
+  guidelines$: Observable<any>;
+  feedback$: Observable<any>;
+  textInput$: Observable<any>;
+  transcriptString$: Observable<string>;
+
+  // Value properties for backward compatibility with components
+  get transcript(): OctraAnnotation<ASRContext, OctraAnnotationSegment> | undefined {
+    return this._transcript;
+  }
+
+  get currentLevel(): OctraAnnotationAnyLevel<OctraAnnotationSegment> | undefined {
+    return this._currentLevel;
+  }
+
+  get currentLevelIndex(): number {
+    return this._currentLevelIndex;
+  }
+
+  get task(): TaskDto | undefined {
+    return this._task;
+  }
 
   get guidelines(): OctraGuidelines | undefined {
+    return this.guidelinesValue;
+  }
+
+  get guidelinesValue(): OctraGuidelines | undefined {
     return this._guidelines;
   }
 
   private currentSessionForFeedback = this.store.selectSignal(selectCurrentSession);
-  feedback = computed(() => this.currentSessionForFeedback()?.assessment);
-  private _feedback: any; // TODO check feedback
-
   private guidelinesForBreakMarker = this.store.selectSignal(selectGuidelines);
-  breakMarker = computed(() =>
-    this.guidelinesForBreakMarker()?.selected?.json?.markers?.find((a) => a.type === 'break')
-  );
 
   importOptions$ = new BehaviorSubject<Record<string, any> | undefined>(
     undefined,
@@ -231,23 +236,62 @@ export class AnnotationStoreService {
     private appStorage: AppStorageService,
     private multiThreading: MultiThreadingService,
   ) {
+    // Initialize observables for backward compatibility
+    this.transcript$ = this.store.select(selectAnnotationTranscript);
+    this.currentLevel$ = this.store.select(selectAnnotationCurrentLevel);
+    this.currentLevelIndex$ = this.store.select(selectAnnotationCurrentLevelIndex);
+    this.task$ = this.store.select(selectCurrentTask);
+    this.guidelines$ = this.store.select(selectGuidelines);
+    this.feedback$ = this.store.select(selectCurrentSession).pipe(
+      map((session: any) => session?.assessment)
+    );
+    this.textInput$ = this.store.select(selectCurrentSession).pipe(
+      map((session: any) => {
+        if (!session) return undefined;
+        if (this.appStoreService.useMode === undefined ||
+            this.appStoreService.useMode === LoginMode.LOCAL ||
+            this.appStoreService.useMode === LoginMode.URL) {
+          return undefined;
+        }
+        return getTranscriptFromIO(session.task?.inputs ?? []) as TaskInputOutputDto;
+      })
+    );
+    this.transcriptString$ = this.store.select(selectAnnotationTranscript).pipe(
+      map((transcript: any) => {
+        if (transcript) {
+          const annotation = transcript.serialize(
+            this.audio.audioManager.resource.name,
+            this.audio.audioManager.resource.info.sampleRate,
+            this.audio.audioManager.resource.info.duration.clone(),
+          );
+          const result = new TextConverter().export(
+            annotation,
+            this.audio.audioManager.resource.getOAudioFile(),
+            transcript.selectedLevelIndex!,
+          )!.file!;
+          return result.content;
+        }
+        return '';
+      })
+    );
+
     effect(() => {
-      this._transcript = this.transcript();
+      this._transcript = this.transcriptSignal();
     });
     effect(() => {
-      this._task = this.task();
+      this._task = this.taskSignal();
     });
     effect(() => {
-      this._guidelines = this.guidelines()?.selected?.json;
+      this._guidelines = this.guidelinesSignal()?.selected?.json;
     });
     effect(() => {
-      this._currentLevel = this.currentLevel();
+      this._currentLevel = this.currentLevelSignal();
     });
     effect(() => {
-      this._currentLevelIndex = this.currentLevelIndex();
+      this._currentLevelIndex = this.currentLevelIndexSignal();
     });
     effect(() => {
-      this._feedback = this.feedback();
+      this._feedback = this.currentSessionForFeedback()?.assessment;
     });
     effect(() => {
       const stats = this.statistics();
@@ -346,10 +390,10 @@ export class AnnotationStoreService {
   }
 
   public validate(rawText: string): any[] {
-    if (!this.guidelines) {
+    if (!this.guidelinesValue) {
       return [];
     }
-    const results = validateAnnotation(rawText, this.guidelines);
+    const results = validateAnnotation(rawText, this.guidelinesValue);
 
     // check if selection is in the raw text
     const sPos = rawText.indexOf('✉✉✉sel-start/📩📩📩');
@@ -701,8 +745,8 @@ export class AnnotationStoreService {
   }
 
   public async getErrorDetails(code: string) {
-    if (this.guidelines?.instructions !== undefined) {
-      const instructions = this.guidelines.instructions;
+    if (this.guidelinesValue?.instructions !== undefined) {
+      const instructions = this.guidelinesValue.instructions;
 
       for (const instruction of instructions) {
         if (
@@ -743,32 +787,35 @@ export class AnnotationStoreService {
         projectSettings?.octra?.validationEnabled === true)
     ) {
       let invalid = false;
-      for (const level of this.transcript!.levels) {
-        for (let i = 0; i < level!.items.length; i++) {
-          const segment = level!.items[i];
+      const transcript = this._transcript;
+      if (transcript) {
+        for (const level of transcript.levels) {
+          for (let i = 0; i < level!.items.length; i++) {
+            const segment = level!.items[i];
 
-          let segmentValidation = [];
-          const labelIndex = segment.labels.findIndex(
-            (a) => a.name !== 'Speaker',
-          );
-          if (labelIndex > -1 && segment.labels[labelIndex].value.length > 0) {
-            segmentValidation = this.validate(segment.labels[labelIndex].value);
-          }
+            let segmentValidation = [];
+            const labelIndex = segment.labels.findIndex(
+              (a: any) => a.name !== 'Speaker',
+            );
+            if (labelIndex > -1 && segment.labels[labelIndex].value.length > 0) {
+              segmentValidation = this.validate(segment.labels[labelIndex].value);
+            }
 
-          this._validationArray.push({
-            level: level.id,
-            segment: i,
-            validation: segmentValidation,
-          });
+            this._validationArray.push({
+              level: level.id,
+              segment: i,
+              validation: segmentValidation,
+            });
 
-          if (segmentValidation.length > 0) {
-            invalid = true;
+            if (segmentValidation.length > 0) {
+              invalid = true;
+            }
           }
         }
+        this._transcriptValid = !invalid;
+      } else {
+        this._transcriptValid = true;
       }
-      this._transcriptValid = !invalid;
-    } else {
-      this._transcriptValid = true;
     }
   }
 
@@ -825,8 +872,8 @@ export class AnnotationStoreService {
     };
 
     if (this.currentLevel instanceof OctraAnnotationSegmentLevel) {
-      for (let i = 0; i < this.currentLevel!.items.length; i++) {
-        const segment = this.currentLevel!.items[i];
+      for (let i = 0; i < this._currentLevel!.items.length; i++) {
+        const segment = this._currentLevel!.items[i];
         const valueLabel = segment.getFirstLabelWithoutName('Speaker');
 
         if (segment.getFirstLabelWithoutName('Speaker')?.value !== '') {

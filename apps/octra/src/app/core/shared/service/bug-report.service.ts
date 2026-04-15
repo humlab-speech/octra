@@ -190,12 +190,12 @@ export class BugReportService {
         protocol.tool.audiofile_type =
           this.audio.audioManager.resource.extension;
       }
-      protocol.tool.levels =
-        this.annotationStoreService.transcript.levels.length;
-      protocol.tool.currentlevel =
-        this.annotationStoreService.transcript.selectedLevelIndex;
-      protocol.tool.segments =
-        this.annotationStoreService.transcript.currentLevel?.items.length;
+      const transcript = this.annotationStoreService.transcriptSignal();
+      if (transcript) {
+        protocol.tool.levels = transcript.levels.length;
+        protocol.tool.currentlevel = transcript.selectedLevelIndex;
+        protocol.tool.segments = transcript.currentLevel?.items.length;
+      }
     }
 
     this.pkgText = JSON.stringify(

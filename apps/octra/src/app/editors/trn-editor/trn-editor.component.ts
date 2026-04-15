@@ -378,7 +378,7 @@ export class TrnEditorComponent
       next: (guidelines) => {
         this.guidelines = guidelines!.selected!.json;
         this.breakMarkerCode = guidelines?.selected?.json.markers.find(
-          (a) => a.type === 'break',
+          (a: any) => a.type === 'break',
         )?.code;
       },
     });
