@@ -26,7 +26,9 @@ export const APP_ROUTES: Routes = [
   {
     path: 'intern',
     loadChildren: () =>
-      import('./core/pages/intern/intern.module').then((m) => m.InternModule),
+      import('./core/pages/intern/intern-routing.module').then(
+        (m) => m.InternRoutingModule,
+      ),
     canActivate: [APP_INITIALIZED_GUARD],
   },
   {
