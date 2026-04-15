@@ -13,7 +13,12 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  moduleNameMapper: {
+    '^canvas$': '<rootDir>/__mocks__/canvas.js',
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!.*\\.mjs$|jodit|ngx-jodit|konva)',
+  ],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',
