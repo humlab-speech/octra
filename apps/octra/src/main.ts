@@ -72,12 +72,15 @@ import { provideServiceWorker } from '@angular/service-worker';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    ...SHARED_PROVIDERS,
+    // Routing
+    provideRouter(APP_ROUTES, withEnabledBlockingInitialNavigation()),
+
+    // Forms
+    FormsModule,
+    ReactiveFormsModule,
+
+    // NgRx (requires importProvidersFrom because they return ModuleWithProviders)
     importProvidersFrom(
-      FormsModule,
-      ReactiveFormsModule,
-      PagesModule,
-      TranslocoModule,
       StoreModule.forRoot(
         {
           application: fromApplication.reducer,
@@ -93,14 +96,18 @@ bootstrapApplication(AppComponent, {
           },
         },
       ),
+    ),
+    ...(
       !environment.production
-        ? StoreDevtoolsModule.instrument({
+        ? [importProvidersFrom(StoreDevtoolsModule.instrument({
             trace: !environment.production,
             maxAge: 200,
             logOnly: !environment.production,
             connectInZone: true,
-          })
-        : [],
+          }))]
+        : []
+    ),
+    importProvidersFrom(
       EffectsModule.forRoot([
         IDBEffects,
         ApplicationInitEffects,
@@ -112,22 +119,33 @@ bootstrapApplication(AppComponent, {
         AuthenticationEffects,
       ]),
       EffectsModule.forFeature([]),
-      NgbDropdownModule,
-      NgbNavModule,
-      NgbModalModule,
-      NgbPopoverModule,
-      NgbTooltipModule,
-      NgbCollapseModule,
-      TranslocoRootModule,
-      NgxOctraApiModule,
-      OctraComponentsModule,
-      OctraUtilitiesModule,
-      NgbOffcanvasModule,
     ),
+
+    // Shared & Modals
+    ...SHARED_PROVIDERS,
     ...MODALS_PROVIDERS,
+
+    // i18n & UI Modules (standalone or root)
+    TranslocoModule,
+    TranslocoRootModule,
+    NgbDropdownModule,
+    NgbNavModule,
+    NgbModalModule,
+    NgbPopoverModule,
+    NgbTooltipModule,
+    NgbCollapseModule,
+    NgbOffcanvasModule,
+
+    // Feature Modules
+    PagesModule,
+    NgxOctraApiModule,
+    OctraComponentsModule,
+    OctraUtilitiesModule,
+
+    // Guards & Services
     ALoginGuard,
-    AudioService,
     DeALoginGuard,
+    AudioService,
     OctraModalService,
     NavbarService,
     ReloadFileGuard,
@@ -138,7 +156,12 @@ bootstrapApplication(AppComponent, {
     BugReportService,
     CompatibilityService,
     MultiThreadingService,
+
+    // HTTP & Animation
     provideHttpClient(withInterceptorsFromDi()),
+    provideAnimations(),
+
+    // Storage & Service Worker
     provideNgxWebstorage(
       withNgxWebstorageConfig({
         separator: '.',
@@ -147,8 +170,6 @@ bootstrapApplication(AppComponent, {
       withLocalStorage(),
       withSessionStorage(),
     ),
-    provideAnimations(),
-    provideRouter(APP_ROUTES, withEnabledBlockingInitialNavigation()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: false,
     }),
