@@ -19,7 +19,7 @@ export class ReloadFileGuard {
       params.queryParams = route.queryParams;
 
       this.routingService
-        .navigate('ReloadFileGuard route back to login', ['/login'], params)
+        .navigate('ReloadFileGuard route back to login', ['/local'], params)
         .catch((error) => {
           console.error(error);
         });

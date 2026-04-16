@@ -423,7 +423,7 @@ export class AuthenticationEffects {
           } else {
             // mode is undefined
             this.routingService.navigate('redirect because mode is undefined', [
-              '/login',
+              '/local',
             ]);
           }
         }),

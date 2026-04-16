@@ -21,7 +21,7 @@ export const AUTHENTICATED_GUARD: CanActivateFn = (
     params.fragment = route.fragment!;
     params.queryParams = route.queryParams;
 
-    navigateTo(router, ['/login'], params).catch((error) => {
+    navigateTo(router, ['/local'], params).catch((error) => {
       console.error(error);
     });
     return false;

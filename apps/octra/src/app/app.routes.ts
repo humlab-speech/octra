@@ -11,7 +11,7 @@ import { ALoginGuard } from './core/pages';
 
 export const APP_ROUTES: Routes = [
   { path: 'load', component: LoadingComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/local', pathMatch: 'full' },
   {
     path: 'login',
     component: LoginComponent,

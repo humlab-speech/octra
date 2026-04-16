@@ -266,10 +266,10 @@ export class ApplicationSessionEffects {
                   queryParams,
                 });
               } else {
-                this.routerService.navigate('no last page', ['/login']);
+                this.routerService.navigate('no last page', ['/local']);
               }
             } else {
-              this.routerService.navigate('no last page', ['/login']);
+              this.routerService.navigate('no last page', ['/local']);
             }
           }
         }),
@@ -369,7 +369,7 @@ export class ApplicationSessionEffects {
         this.routerService
           .navigate(
             'after logout success',
-            ['/login'],
+            ['/local'],
             {
               queryParams: {},
             },
