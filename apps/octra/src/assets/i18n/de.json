@@ -287,7 +287,7 @@
       "model cached": "Das Modell wird für zukünftige Sitzungen gecacht.",
       "safari warning": "Automatische Transkription ist für den Safari-Browser nicht verfügbar. Die Modelle, die wir auf Ihren Computer herunterladen müssen, sind groß und verursachen derzeit in Safari ein Neuladen des Tabs mit Datenverlust. Bitte verwenden Sie einen anderen Browser, wenn Sie die automatische Transkriptionsfunktion nutzen möchten.",
       "auto-transcribe label": "Automatisch transkribieren mit Whisper",
-      "requires internet": "Internetzugang erforderlich — das ausgewählte Modell wird von HuggingFace heruntergeladen (150 MB – 3 GB). Heruntergeladene Modelle werden im Browser gecacht.",
+      "requires internet": "Internetzugang erforderlich — das ausgewählte Modell wird von einem externen Server heruntergeladen (150 MB – 3 GB). Heruntergeladene Modelle werden im Browser gecacht.",
       "requires webgpu": "Erfordert WebGPU — in diesem Browser nicht verfügbar",
       "no webgpu": "WebGPU nicht erkannt — Mittlere und große Modelle können nicht zuverlässig ausgeführt werden und wurden deaktiviert",
       "model cached after download": "Modell wird nach dem ersten Download gecacht",

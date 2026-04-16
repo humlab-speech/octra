@@ -206,7 +206,7 @@
       "model cached": "模型将为未来会话缓存。",
       "safari warning": "Safari 浏览器不支持自动转录。我们需要下载到您计算机的模型较大，目前会在 Safari 中触发标签页重新加载并导致数据丢失。如果要使用自动转录功能，请尝试其他浏览器。",
       "auto-transcribe label": "使用 Whisper 自动转录",
-      "requires internet": "需要互联网访问 — 所选模型将从 HuggingFace 下载（150 MB – 3 GB）。下载的模型将缓存在浏览器中。",
+      "requires internet": "需要互联网访问 — 所选模型将从外部服务器下载（150 MB – 3 GB）。下载的模型将缓存在浏览器中。",
       "requires webgpu": "需要 WebGPU — 此浏览器不支持",
       "no webgpu": "未检测到 WebGPU — 中型和大型模型无法可靠运行，已被禁用",
       "model cached after download": "首次下载后模型将被缓存",

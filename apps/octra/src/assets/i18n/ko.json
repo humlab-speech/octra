@@ -206,7 +206,7 @@
       "model cached": "모델은 향후 세션을 위해 캐시됩니다.",
       "safari warning": "Safari 웹 브라우저에서는 자동 전사를 사용할 수 없습니다. 컴퓨터에 다운로드해야 하는 모델이 크며 현재 Safari에서 탭이 다시 로드되어 데이터가 손실됩니다. 자동 전사 기능을 사용하려면 다른 브라우저를 사용해 주세요.",
       "auto-transcribe label": "Whisper로 자동 전사",
-      "requires internet": "인터넷 접속 필요 — 선택된 모델이 HuggingFace에서 다운로드됩니다 (150 MB – 3 GB). 다운로드된 모델은 브라우저에 캐시됩니다.",
+      "requires internet": "인터넷 접속 필요 — 선택된 모델이 외부 서버에서 다운로드됩니다 (150 MB – 3 GB). 다운로드된 모델은 브라우저에 캐시됩니다.",
       "requires webgpu": "WebGPU 필요 — 이 브라우저에서 사용 불가",
       "no webgpu": "WebGPU가 감지되지 않았습니다 — 중형 및 대형 모델은 안정적으로 실행할 수 없어 비활성화되었습니다",
       "model cached after download": "모델은 첫 번째 다운로드 후 캐시됩니다",
