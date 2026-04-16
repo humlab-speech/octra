@@ -193,7 +193,42 @@
     "online mode continue": "Oude gegevens gevonden! Om door te gaan, moet u de inloggegevens instellen op: {{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "Er zijn lokale gegevens beschikbaar die in de lokale modus zijn gemaakt. Als u verder wilt gaan in de online modus, worden deze gegevens overschreven.",
     "online mode description": "In de online modus krijg je automatisch audiobestanden voor transcriptie.",
-    "online mode disabled": "De onlinemodus is momenteel inactief."
+    "online mode disabled": "De onlinemodus is momenteel inactief.",
+    "auto-transcription": {
+      "downloading model": "Model wordt gedownload…",
+      "transcription complete": "Transcriptie voltooid — editor wordt voorbereid…",
+      "transcribing audio": "Audio wordt getranscribeerd…",
+      "elapsed": "Verstreken:",
+      "running locally": "Wordt lokaal uitgevoerd in uw browser — dit kan enkele minuten duren voor langere opnames.",
+      "webgpu tip": "Tip: schakel <strong>WebGPU</strong> uit in de opties hierboven en probeer opnieuw met WASM — langzamer maar stabieler.",
+      "cancel": "Annuleren",
+      "dismiss": "Sluiten",
+      "model cached": "Het model wordt gecached voor toekomstige sessies.",
+      "safari warning": "Automatische transcriptie is niet beschikbaar voor de Safari-webbrowser. De modellen die we naar uw computer moeten downloaden zijn groot en veroorzaken momenteel een tabblad-herlaad in Safari, met gegevensverlies als gevolg. Probeer een andere browser als u de automatische transcriptiefunctie wilt gebruiken.",
+      "auto-transcribe label": "Automatisch transcriberen met Whisper",
+      "requires internet": "Internettoegang vereist — het geselecteerde model wordt gedownload van HuggingFace (150 MB – 3 GB). Gedownloade modellen worden opgeslagen in de browsercache.",
+      "requires webgpu": "Vereist WebGPU — niet beschikbaar in deze browser",
+      "no webgpu": "WebGPU niet gedetecteerd — Middelgrote en grote modellen kunnen niet betrouwbaar worden uitgevoerd en zijn uitgeschakeld",
+      "model cached after download": "Model wordt gecached na de eerste download",
+      "models": {
+        "tiny": {
+          "wasm": "Minuscuul (~120 MB) – Minst nauwkeurig, 4× sneller dan Klein",
+          "webgpu": "Minuscuul (~120 MB) — Minst nauwkeurig, 4× sneller dan Medium"
+        },
+        "small": {
+          "wasm": "Klein (~400 MB) – Nauwkeuriger, ons referentiemodel",
+          "webgpu": "Klein (~400 MB) — Nauwkeuriger, 2× sneller dan Medium"
+        },
+        "medium": {
+          "wasm": "Medium (~1 GB) – Meest nauwkeurig, 3× langzamer dan Klein",
+          "webgpu": "Medium (~650 MB) — Ons referentiemodel"
+        },
+        "large": {
+          "wasm": "Groot (~1,7 GB)",
+          "webgpu": "Groot (~1,2 GB) — Meest nauwkeurig, 2× langzamer dan Medium"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "Log opnieuw in",

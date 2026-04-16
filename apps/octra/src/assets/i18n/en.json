@@ -50,7 +50,7 @@
     "error": "Unfortunately your feedback could not be sent to us. Please send us an e-mail to {{email}}.",
     "give feedback": "Give feedback",
     "sending": "Please wait for octra sending your feedback...",
-    "sent": "Your feedback was successfully reported \uD83D\uDE42"
+    "sent": "Your feedback was successfully reported 🙂"
   },
   "converters": {
     "SRT": {
@@ -274,7 +274,42 @@
     "online mode continue": "Old data found! To continue make sure to set the login data to: {{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "There is local data available that was created in local mode. If you want to continue in online mode this data will be overwritten.",
     "online mode description": "In online mode you automatically get audio files for transcription.",
-    "online mode disabled": "Online mode is currently inactive. Please use OCTRA locally."
+    "online mode disabled": "Online mode is currently inactive. Please use OCTRA locally.",
+    "auto-transcription": {
+      "downloading model": "Downloading model…",
+      "transcription complete": "Transcription complete — preparing editor…",
+      "transcribing audio": "Transcribing audio…",
+      "elapsed": "Elapsed:",
+      "running locally": "Running locally in your browser — this may take several minutes for longer recordings.",
+      "webgpu tip": "Tip: disable <strong>WebGPU</strong> in the options above and retry with WASM — slower but more stable.",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "model cached": "Model will be cached for future sessions.",
+      "safari warning": "Automatic transcription is not available for the Safari web browser. The models we need to download to your computer are large and currently trigger a tab reload in Safari, with loss of data as a result. Please try a different browser if you wanted to use the automatic transcription feature.",
+      "auto-transcribe label": "Auto-transcribe with Whisper",
+      "requires internet": "Requires internet access — the selected model will be downloaded from HuggingFace (150 MB – 3 GB). Downloaded models are cached in the browser.",
+      "requires webgpu": "Requires WebGPU — not available in this browser",
+      "no webgpu": "WebGPU not detected — Medium and Large models cannot be run reliably and have been disabled",
+      "model cached after download": "Model will be cached after first download",
+      "models": {
+        "tiny": {
+          "wasm": "Tiny (~120 MB) – Least accurate, 4× faster than Small",
+          "webgpu": "Tiny (~120 MB) — Least accurate, 4× faster than Medium"
+        },
+        "small": {
+          "wasm": "Small (~400 MB) – More accurate, our reference model",
+          "webgpu": "Small (~400 MB) — More accurate, 2× faster than Medium"
+        },
+        "medium": {
+          "wasm": "Medium (~1 GB) – Most accurate, 3× slower than Small",
+          "webgpu": "Medium (~650 MB) — Our reference model"
+        },
+        "large": {
+          "wasm": "Large (~1.7 GB)",
+          "webgpu": "Large (~1.2 GB) — Most accurate, 2× slower than Medium"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "Login again",

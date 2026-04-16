@@ -274,7 +274,42 @@
     "online mode continue": "Gamla data hittade! För att fortsätta, se till att ställa in inloggningsdata på: {{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "Det finns en lokal arbetskopia tillgänglig som skapades i lokalt läge. Om du vill fortsätta i onlineläge kommer denna att skrivas över.",
     "online mode description": "I onlineläge får du automatiskt ljudfiler för transkription.",
-    "online mode disabled": "Onlineläge är för närvarande inaktivt. Vänligen använd OCTRA lokalt."
+    "online mode disabled": "Onlineläge är för närvarande inaktivt. Vänligen använd OCTRA lokalt.",
+    "auto-transcription": {
+      "downloading model": "Laddar ned modell…",
+      "transcription complete": "Transkription klar — förbereder redigerare…",
+      "transcribing audio": "Transkriberar ljud…",
+      "elapsed": "Förfluten tid:",
+      "running locally": "Körs lokalt i din webbläsare — detta kan ta flera minuter för längre inspelningar.",
+      "webgpu tip": "Tips: inaktivera <strong>WebGPU</strong> i alternativen ovan och försök igen med WASM — långsammare men mer stabilt.",
+      "cancel": "Avbryt",
+      "dismiss": "Stäng",
+      "model cached": "Modellen kommer att cachas för framtida sessioner.",
+      "safari warning": "Automatisk transkription är inte tillgänglig för Safari-webbläsaren. Modellerna vi behöver ladda ned till din dator är stora och utlöser för närvarande en flikomladdning i Safari, med dataفörlust som följd. Prova en annan webbläsare om du vill använda den automatiska transkriptionsfunktionen.",
+      "auto-transcribe label": "Automatisk transkribering med Whisper",
+      "requires internet": "Kräver internetåtkomst — den valda modellen laddas ned från HuggingFace (150 MB – 3 GB). Nedladdade modeller cachas i webbläsaren.",
+      "requires webgpu": "Kräver WebGPU — inte tillgängligt i denna webbläsare",
+      "no webgpu": "WebGPU inte detekterat — Medelstora och stora modeller kan inte köras tillförlitligt och har inaktiverats",
+      "model cached after download": "Modellen cachas efter första nedladdning",
+      "models": {
+        "tiny": {
+          "wasm": "Liten (~120 MB) – Minst noggrann, 4× snabbare än Small",
+          "webgpu": "Liten (~120 MB) — Minst noggrann, 4× snabbare än Medium"
+        },
+        "small": {
+          "wasm": "Liten (~400 MB) – Mer noggrann, vår referensmodell",
+          "webgpu": "Liten (~400 MB) — Mer noggrann, 2× snabbare än Medium"
+        },
+        "medium": {
+          "wasm": "Medium (~1 GB) – Mest noggrann, 3× långsammare än Small",
+          "webgpu": "Medium (~650 MB) — Vår referensmodell"
+        },
+        "large": {
+          "wasm": "Stor (~1,7 GB)",
+          "webgpu": "Stor (~1,2 GB) — Mest noggrann, 2× långsammare än Medium"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "Logga in igen",

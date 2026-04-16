@@ -162,7 +162,7 @@
                   <div class="transcription-progress mt-3 p-3 border rounded bg-light">
                     @if (transcription.phase === 'downloading') {
                       <div>
-                        <strong>Downloading model…</strong>
+                        <strong>{{ 'login.auto-transcription.downloading model' | transloco }}</strong>
                         @if (transcription.downloadFile) {
                           <div class="text-muted small">{{ transcription.downloadFile }}</div>
                         }
@@ -186,12 +186,12 @@
                       </div>
                     } @else if (transcription.phase === 'finalizing') {
                       <div>
-                        <strong>Transcription complete — preparing editor…</strong>
+                        <strong>{{ 'login.auto-transcription.transcription complete' | transloco }}</strong>
                         <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
                       </div>
                     } @else if (transcription.phase === 'transcribing') {
                       <div>
-                        <strong>Transcribing audio…</strong>
+                        <strong>{{ 'login.auto-transcription.transcribing audio' | transloco }}</strong>
                         <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
                         @if (transcription.audioDurationS > 0) {
                           <div class="progress mt-2" style="height: 14px">
@@ -203,15 +203,15 @@
                           </div>
                           <small class="text-muted">
                             {{ formatDuration(transcription.segmentEndS) }} / {{ formatDuration(transcription.audioDurationS) }}
-                            &nbsp;·&nbsp; Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
+                            &nbsp;·&nbsp; {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </small>
                         } @else {
                           <div class="mt-1 text-muted small">
-                            Elapsed: {{ formatDuration(transcription.elapsedMs / 1000) }}
+                            {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </div>
                         }
                         <div class="mt-1 text-muted small">
-                          Running locally in your browser — this may take several minutes for longer recordings.
+                          {{ 'login.auto-transcription.running locally' | transloco }}
                         </div>
                       </div>
                     }
@@ -220,9 +220,7 @@
                       <div class="alert alert-danger mt-2 py-1 mb-0 small">
                         {{ transcription.error }}
                         @if (transcription.usedWebGPU) {
-                          <div class="mt-1">
-                            Tip: disable <strong>WebGPU</strong> in the options above and retry with WASM — slower but more stable.
-                          </div>
+                          <div class="mt-1" [innerHTML]="'login.auto-transcription.webgpu tip' | transloco"></div>
                         }
                       </div>
                     }
@@ -232,11 +230,11 @@
                       type="button"
                       (click)="dismissTranscriptionError()"
                     >
-                      {{ transcription.active ? 'Cancel' : 'Dismiss' }}
+                      {{ transcription.active ? ('login.auto-transcription.cancel' | transloco) : ('login.auto-transcription.dismiss' | transloco) }}
                     </button>
 
                     <small class="d-block text-muted mt-1">
-                      Model will be cached for future sessions.
+                      {{ 'login.auto-transcription.model cached' | transloco }}
                     </small>
                   </div>
                 }

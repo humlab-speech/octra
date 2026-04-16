@@ -193,7 +193,42 @@
     "online mode continue": "发现旧数据！如果继续的话，请确保你使用以下账号资料登录：{{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "此处有使用本地模式穿件的本地数据。如果你想使用在线模式继续，此处的数据会被覆盖。",
     "online mode description": "在线模式中，你自动获取要标注的音频文件。",
-    "online mode disabled": "在线模式当前不可用。请使用本地OCTRA。"
+    "online mode disabled": "在线模式当前不可用。请使用本地OCTRA。",
+    "auto-transcription": {
+      "downloading model": "正在下载模型…",
+      "transcription complete": "转录完成 — 正在准备编辑器…",
+      "transcribing audio": "正在转录音频…",
+      "elapsed": "已用时间：",
+      "running locally": "在浏览器中本地运行 — 较长的录音可能需要几分钟。",
+      "webgpu tip": "提示：在上方选项中禁用 <strong>WebGPU</strong>，改用 WASM 重试 — 速度较慢但更稳定。",
+      "cancel": "取消",
+      "dismiss": "关闭",
+      "model cached": "模型将为未来会话缓存。",
+      "safari warning": "Safari 浏览器不支持自动转录。我们需要下载到您计算机的模型较大，目前会在 Safari 中触发标签页重新加载并导致数据丢失。如果要使用自动转录功能，请尝试其他浏览器。",
+      "auto-transcribe label": "使用 Whisper 自动转录",
+      "requires internet": "需要互联网访问 — 所选模型将从 HuggingFace 下载（150 MB – 3 GB）。下载的模型将缓存在浏览器中。",
+      "requires webgpu": "需要 WebGPU — 此浏览器不支持",
+      "no webgpu": "未检测到 WebGPU — 中型和大型模型无法可靠运行，已被禁用",
+      "model cached after download": "首次下载后模型将被缓存",
+      "models": {
+        "tiny": {
+          "wasm": "微型（约 120 MB）– 准确度最低，比小型快 4 倍",
+          "webgpu": "微型（约 120 MB）— 准确度最低，比中型快 4 倍"
+        },
+        "small": {
+          "wasm": "小型（约 400 MB）– 更精确，我们的参考模型",
+          "webgpu": "小型（约 400 MB）— 更精确，比中型快 2 倍"
+        },
+        "medium": {
+          "wasm": "中型（约 1 GB）– 最精确，比小型慢 3 倍",
+          "webgpu": "中型（约 650 MB）— 我们的参考模型"
+        },
+        "large": {
+          "wasm": "大型（约 1.7 GB）",
+          "webgpu": "大型（约 1.2 GB）— 最精确，比中型慢 2 倍"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "再次登录",

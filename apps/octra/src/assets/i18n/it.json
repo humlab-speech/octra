@@ -193,7 +193,42 @@
     "online mode continue": "Dati precedenti trovati! Per continuare assicurati di selezionare i dati di accesso: {{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "Ci sono dati locali disponibili creati in modalità locale. Se vuoi continuare in modalità online questi dati saranno sovrascritti.",
     "online mode description": "Nella modalità online puoi ottenere automaticamente file audio per la trascrizione.",
-    "online mode disabled": "La modalità online è al momento inattiva. Per favore, usa OCTRA in modalità locale."
+    "online mode disabled": "La modalità online è al momento inattiva. Per favore, usa OCTRA in modalità locale.",
+    "auto-transcription": {
+      "downloading model": "Download del modello in corso…",
+      "transcription complete": "Trascrizione completata — preparazione dell'editor…",
+      "transcribing audio": "Trascrizione audio in corso…",
+      "elapsed": "Trascorso:",
+      "running locally": "In esecuzione localmente nel browser — potrebbe richiedere diversi minuti per registrazioni lunghe.",
+      "webgpu tip": "Suggerimento: disabilitare <strong>WebGPU</strong> nelle opzioni sopra e riprovare con WASM — più lento ma più stabile.",
+      "cancel": "Annulla",
+      "dismiss": "Chiudi",
+      "model cached": "Il modello verrà memorizzato nella cache per le sessioni future.",
+      "safari warning": "La trascrizione automatica non è disponibile per il browser Safari. I modelli che dobbiamo scaricare sul tuo computer sono grandi e attualmente causano un ricaricamento della scheda in Safari, con perdita di dati. Prova un browser diverso se vuoi usare la funzione di trascrizione automatica.",
+      "auto-transcribe label": "Trascrivi automaticamente con Whisper",
+      "requires internet": "Richiede accesso a Internet — il modello selezionato verrà scaricato da HuggingFace (150 MB – 3 GB). I modelli scaricati vengono memorizzati nella cache del browser.",
+      "requires webgpu": "Richiede WebGPU — non disponibile in questo browser",
+      "no webgpu": "WebGPU non rilevato — i modelli Medi e Grandi non possono essere eseguiti in modo affidabile e sono stati disabilitati",
+      "model cached after download": "Il modello verrà memorizzato nella cache dopo il primo download",
+      "models": {
+        "tiny": {
+          "wasm": "Minuscolo (~120 MB) – Meno preciso, 4× più veloce di Piccolo",
+          "webgpu": "Minuscolo (~120 MB) — Meno preciso, 4× più veloce di Medio"
+        },
+        "small": {
+          "wasm": "Piccolo (~400 MB) – Più preciso, il nostro modello di riferimento",
+          "webgpu": "Piccolo (~400 MB) — Più preciso, 2× più veloce di Medio"
+        },
+        "medium": {
+          "wasm": "Medio (~1 GB) – Più preciso, 3× più lento di Piccolo",
+          "webgpu": "Medio (~650 MB) — Il nostro modello di riferimento"
+        },
+        "large": {
+          "wasm": "Grande (~1,7 GB)",
+          "webgpu": "Grande (~1,2 GB) — Più preciso, 2× più lento di Medio"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "Ripeti l'accesso",

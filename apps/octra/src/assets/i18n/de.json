@@ -50,7 +50,7 @@
     "error": "Dein Feedback konnte leider nicht gesendet werden. Bitte sende uns direkt eine E-Mail an {{email}}.",
     "give feedback": "Feedback geben",
     "sending": "Bitte warte bis dein Feedback gesendet wurde...",
-    "sent": "Dein Feedback wurde erfolgreich gesendet \uD83D\uDE42"
+    "sent": "Dein Feedback wurde erfolgreich gesendet 🙂"
   },
   "converters": {
     "SRT": {
@@ -274,7 +274,42 @@
     "online mode continue": "Es wurden alte Daten gefunden. Zum Fortsetzen folgende Daten angeben: {{member_id}} , {{member_project}}, {{member_jobno}}",
     "online mode data warning": "Es sind lokale Daten vorhanden, die im lokalen Modus erstellt worden sind. Das Nutzen des Online Modus überschreibt diese lokalen Daten.",
     "online mode description": "Im Online Modus werden automatisch Audiodateien zugewiesen, die verschriftlicht werden sollen.",
-    "online mode disabled": "Der Online Modus ist derzeit deaktiviert. Du kannst OCTRA stattdessen lokal nutzen."
+    "online mode disabled": "Der Online Modus ist derzeit deaktiviert. Du kannst OCTRA stattdessen lokal nutzen.",
+    "auto-transcription": {
+      "downloading model": "Modell wird heruntergeladen…",
+      "transcription complete": "Transkription abgeschlossen — Editor wird vorbereitet…",
+      "transcribing audio": "Audio wird transkribiert…",
+      "elapsed": "Abgelaufen:",
+      "running locally": "Läuft lokal in Ihrem Browser — dies kann bei längeren Aufnahmen mehrere Minuten dauern.",
+      "webgpu tip": "Tipp: Deaktivieren Sie <strong>WebGPU</strong> in den Optionen oben und versuchen Sie es mit WASM erneut — langsamer, aber stabiler.",
+      "cancel": "Abbrechen",
+      "dismiss": "Schließen",
+      "model cached": "Das Modell wird für zukünftige Sitzungen gecacht.",
+      "safari warning": "Automatische Transkription ist für den Safari-Browser nicht verfügbar. Die Modelle, die wir auf Ihren Computer herunterladen müssen, sind groß und verursachen derzeit in Safari ein Neuladen des Tabs mit Datenverlust. Bitte verwenden Sie einen anderen Browser, wenn Sie die automatische Transkriptionsfunktion nutzen möchten.",
+      "auto-transcribe label": "Automatisch transkribieren mit Whisper",
+      "requires internet": "Internetzugang erforderlich — das ausgewählte Modell wird von HuggingFace heruntergeladen (150 MB – 3 GB). Heruntergeladene Modelle werden im Browser gecacht.",
+      "requires webgpu": "Erfordert WebGPU — in diesem Browser nicht verfügbar",
+      "no webgpu": "WebGPU nicht erkannt — Mittlere und große Modelle können nicht zuverlässig ausgeführt werden und wurden deaktiviert",
+      "model cached after download": "Modell wird nach dem ersten Download gecacht",
+      "models": {
+        "tiny": {
+          "wasm": "Winzig (~120 MB) – Ungenaueste, 4× schneller als Klein",
+          "webgpu": "Winzig (~120 MB) — Ungenaueste, 4× schneller als Mittel"
+        },
+        "small": {
+          "wasm": "Klein (~400 MB) – Genauer, unser Referenzmodell",
+          "webgpu": "Klein (~400 MB) — Genauer, 2× schneller als Mittel"
+        },
+        "medium": {
+          "wasm": "Mittel (~1 GB) – Genaueste, 3× langsamer als Klein",
+          "webgpu": "Mittel (~650 MB) — Unser Referenzmodell"
+        },
+        "large": {
+          "wasm": "Groß (~1,7 GB)",
+          "webgpu": "Groß (~1,2 GB) — Genaueste, 2× langsamer als Mittel"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "Erneut anmelden",

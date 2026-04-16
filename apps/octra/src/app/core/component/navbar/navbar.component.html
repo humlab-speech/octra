@@ -16,16 +16,12 @@
         ) {
           ({{ appStorage.useMode }})
         }
-        @if ((environment.beta_version || environment.dev_version) && !localOnly) {
+        @if (environment.beta_version && !localOnly) {
           <span
             class="text-outline-white d-inline-block d-md-none text-danger fw-bold"
             style="font-size: 0.85rem"
           >
-            @if (environment.dev_version) {
-              in development
-            } @else {
-              beta
-            }
+            beta
           </span>
         }
       </a>

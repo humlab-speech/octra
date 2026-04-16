@@ -9,15 +9,16 @@ import {
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 
 export interface KbWhisperModel {
-  label: string;
-  /** Label shown when WebGPU is available (includes speed hint relative to Medium). */
-  labelWebgpu?: string;
+  /** Translation key suffix for i18n, e.g. 'tiny', 'small', 'medium', 'large'. */
+  key: string;
   modelId: string;
   sizeMb: number;
   requiresWebGpu: boolean;
+  hasWebgpuVariant: boolean;
   /** Set when the model cannot be used in a browser regardless of hardware. */
   unsupportedReason?: string;
   /** ONNX dtype to request when running on WASM (e.g. 'q8'). */
@@ -28,58 +29,55 @@ export interface KbWhisperModel {
 
 export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   {
-    label: 'Tiny (~120 MB) - Least accurate, 4x faster than Small',
-    labelWebgpu: 'Tiny (~120 MB) — Least accurate, 4× faster than Medium',
+    key: 'tiny',
     modelId: 'onnx-community/kb-whisper-tiny-ONNX',
     sizeMb: 120,
     requiresWebGpu: false,
+    hasWebgpuVariant: true,
     dtypeWasm: 'q8',
     dtypeWebgpu: 'q4',
   },
   {
-    label: 'Small (~400 MB) - More accurate, our reference model',
-    labelWebgpu: 'Small (~400 MB) — More accurate, 2× faster than Medium',
+    key: 'small',
     modelId: 'onnx-community/kb-whisper-small-ONNX',
     sizeMb: 400,
     requiresWebGpu: false,
+    hasWebgpuVariant: true,
     dtypeWasm: 'q8',
     dtypeWebgpu: 'q4',
   },
   {
-    label: 'Medium (~1 GB) - Most accurate, 3x slower than Small',
-    labelWebgpu: 'Medium (~650 MB) — Our reference model',
+    key: 'medium',
     modelId: 'onnx-community/kb-whisper-medium-ONNX',
     sizeMb: 1000,
     requiresWebGpu: true,
+    hasWebgpuVariant: true,
     dtypeWasm: 'q4',
     dtypeWebgpu: 'q4',
   },
   {
-    label: 'Large (~1.7 GB)',
-    labelWebgpu: 'Large (~1.2 GB) — Most accurate, 2× slower than Medium',
+    key: 'large',
     modelId: 'onnx-community/kb-whisper-large-ONNX',
     sizeMb: 1200,
     requiresWebGpu: true,
+    hasWebgpuVariant: true,
     dtypeWasm: 'q4',
     dtypeWebgpu: 'q4',
   },
 ];
 
-const SAFARI_MESSAGE =
-  'Automatic transcription is not available for the Safari web browser. The models we need to download to your computer are large and currently trigger a tab reload in Safari, with loss of data as a result. Please try a different browser if you wanted to use the automatic transcription feature. ';
-
 
 @Component({
   selector: 'octra-auto-transcribe-options',
   standalone: true,
-  imports: [FormsModule, NgbTooltipModule],
+  imports: [FormsModule, NgbTooltipModule, TranslocoPipe],
   template: `
     @if (audioLoaded() && !annotationAlreadyLoaded()) {
       <div class="auto-transcribe-options mt-2 p-2 border rounded">
         @if (isSafari()) {
           <div class="alert alert-warning mb-2">
             <i class="bi bi-exclamation-triangle"></i>
-            {{ safariMessage }}
+            {{ 'login.auto-transcription.safari warning' | transloco }}
           </div>
         }
         <div class="form-check mb-1">
@@ -93,15 +91,13 @@ const SAFARI_MESSAGE =
             [class.safari-disabled]="isSafari()"
           />
           <label class="form-check-label" for="autoTranscribeCheck">
-            Auto-transcribe with Whisper
+            {{ 'login.auto-transcription.auto-transcribe label' | transloco }}
           </label>
         </div>
         @if (!isSafari()) {
           <small class="text-muted d-block mb-2">
             <i class="bi bi-cloud-download"></i>
-            Requires internet access — the selected model will be downloaded
-            from HuggingFace (150 MB – 3 GB). Downloaded models are cached in
-            the browser.
+            {{ 'login.auto-transcription.requires internet' | transloco }}
           </small>
         }
 
@@ -131,14 +127,15 @@ const SAFARI_MESSAGE =
                   [ngbTooltip]="
                     model.unsupportedReason ??
                     (model.requiresWebGpu && !hasWebGpu()
-                      ? 'Requires WebGPU — not available in this browser'
+                      ? ('login.auto-transcription.requires webgpu' | transloco)
                       : null)
                   "
                 >
                   {{
-                    hasWebGpu() && model.labelWebgpu
-                      ? model.labelWebgpu
-                      : model.label
+                    (hasWebGpu() && model.hasWebgpuVariant
+                      ? 'login.auto-transcription.models.' + model.key + '.webgpu'
+                      : 'login.auto-transcription.models.' + model.key + '.wasm')
+                      | transloco
                   }}
                 </label>
               </div>
@@ -147,14 +144,13 @@ const SAFARI_MESSAGE =
             @if (!hasWebGpu()) {
               <small class="text-muted">
                 <i class="bi bi-exclamation-triangle"></i>
-                WebGPU not detected — Medium and Large models cannot be run
-                reliably and have been disabled
+                {{ 'login.auto-transcription.no webgpu' | transloco }}
               </small>
             }
 
             <small class="text-muted mt-1">
               <i class="bi bi-info-circle"></i>
-              Model will be cached after first download
+              {{ 'login.auto-transcription.model cached after download' | transloco }}
             </small>
           </div>
         }
@@ -183,7 +179,6 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   selectedModelId = KB_WHISPER_MODELS[2].modelId; // default: medium
   readonly hasWebGpu = signal(false);
   readonly isSafari = signal(false);
-  readonly safariMessage = SAFARI_MESSAGE;
 
   readonly models = KB_WHISPER_MODELS;
 

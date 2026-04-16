@@ -193,7 +193,42 @@
     "online mode continue": "이전 데이터를 찾았습니다! 계속하려면 로그인 데이터를 {{member_id}, {{member_project}, {{member_jobno}}(으)로 설정하십시오.\t",
     "online mode data warning": "로컬 모드에서 생성된 로컬 데이터를 사용할 수 있습니다. 온라인 모드에서 계속 진행하시려면 이 데이터를 덮어씁니다.",
     "online mode description": "온라인 모드에서는 녹음할 오디오 파일을 자동으로 가져옵니다.",
-    "online mode disabled": "온라인 모드는 현재 비활성 상태입니다. OCTRA를 현지에서 사용하십시오."
+    "online mode disabled": "온라인 모드는 현재 비활성 상태입니다. OCTRA를 현지에서 사용하십시오.",
+    "auto-transcription": {
+      "downloading model": "모델 다운로드 중…",
+      "transcription complete": "전사 완료 — 편집기 준비 중…",
+      "transcribing audio": "오디오 전사 중…",
+      "elapsed": "경과 시간:",
+      "running locally": "브라우저에서 로칼로 실행 중 — 긴 녹음의 경우 몇 분 정도 걸릴 수 있습니다.",
+      "webgpu tip": "팁: 위 옵션에서 <strong>WebGPU</strong>를 비활성화하고 WASM으로 재시도하세요 — 느리지만 더 안정적입니다.",
+      "cancel": "취소",
+      "dismiss": "닫기",
+      "model cached": "모델은 향후 세션을 위해 캐시됩니다.",
+      "safari warning": "Safari 웹 브라우저에서는 자동 전사를 사용할 수 없습니다. 컴퓨터에 다운로드해야 하는 모델이 크며 현재 Safari에서 탭이 다시 로드되어 데이터가 손실됩니다. 자동 전사 기능을 사용하려면 다른 브라우저를 사용해 주세요.",
+      "auto-transcribe label": "Whisper로 자동 전사",
+      "requires internet": "인터넷 접속 필요 — 선택된 모델이 HuggingFace에서 다운로드됩니다 (150 MB – 3 GB). 다운로드된 모델은 브라우저에 캐시됩니다.",
+      "requires webgpu": "WebGPU 필요 — 이 브라우저에서 사용 불가",
+      "no webgpu": "WebGPU가 감지되지 않았습니다 — 중형 및 대형 모델은 안정적으로 실행할 수 없어 비활성화되었습니다",
+      "model cached after download": "모델은 첫 번째 다운로드 후 캐시됩니다",
+      "models": {
+        "tiny": {
+          "wasm": "작은 (~120 MB) – 정확도 낙음, Small보다 4배 빠름",
+          "webgpu": "작은 (~120 MB) — 정확도 낙음, Medium보다 4배 빠름"
+        },
+        "small": {
+          "wasm": "소형 (~400 MB) – 더 정확함, 참조 모델",
+          "webgpu": "소형 (~400 MB) — 더 정확함, Medium보다 2배 빠름"
+        },
+        "medium": {
+          "wasm": "중형 (~1 GB) – 가장 정확함, Small보다 3배 느림",
+          "webgpu": "중형 (~650 MB) — 참조 모델"
+        },
+        "large": {
+          "wasm": "대형 (~1.7 GB)",
+          "webgpu": "대형 (~1.2 GB) — 가장 정확함, Medium보다 2배 느림"
+        }
+      }
+    }
   },
   "logout": {
     "login again": "다시 로그인",
