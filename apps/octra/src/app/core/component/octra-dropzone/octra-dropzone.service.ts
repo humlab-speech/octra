@@ -508,7 +508,7 @@ export class OctraDropzoneService {
               new OSegment(
                 last.id + 1,
                 last.sampleStart! + last.sampleDur!,
-                this._oaudiofile.duration! * this._oaudiofile.sampleRate -
+                this._oaudiofile.duration! -
                   (last.sampleStart! + last.sampleDur!),
                 [new OLabel(level.name, '')],
               ),

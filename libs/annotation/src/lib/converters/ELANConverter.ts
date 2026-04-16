@@ -192,7 +192,10 @@ export class ELANConverter extends Converter {
 
       if (timeUnit !== undefined && timeUnit === 'milliseconds') {
         let lastSample = 0;
-        for (const tier of jsonXML.ANNOTATION_DOCUMENT.TIER) {
+        const tiers = Array.isArray(jsonXML.ANNOTATION_DOCUMENT.TIER)
+          ? jsonXML.ANNOTATION_DOCUMENT.TIER
+          : [jsonXML.ANNOTATION_DOCUMENT.TIER];
+        for (const tier of tiers) {
           const level: OSegmentLevel<OSegment> = new OSegmentLevel<OSegment>(
             tier._TIER_ID,
           );
@@ -278,8 +281,9 @@ export class ELANConverter extends Converter {
     slotID: string,
     sampleRate: number,
   ) {
-    for (const timeorderElement of obj.ANNOTATION_DOCUMENT.TIME_ORDER
-      .TIME_SLOT!) {
+    const rawSlots = obj.ANNOTATION_DOCUMENT.TIME_ORDER.TIME_SLOT;
+    const slots = Array.isArray(rawSlots) ? rawSlots : rawSlots ? [rawSlots] : [];
+    for (const timeorderElement of slots) {
       if (timeorderElement._TIME_SLOT_ID === slotID) {
         const miliseconds = timeorderElement._TIME_VALUE!;
         return Math.round((miliseconds / 1000) * sampleRate);
