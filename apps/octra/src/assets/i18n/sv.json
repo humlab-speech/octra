@@ -251,10 +251,10 @@
     "yes": "Ja"
   },
   "interfaces": {
-    "2D editor": "2D-Editor",
+    "2D editor": "2D Vy",
     "TRN editor": "TRN-Editor",
-    "linear editor": "Linjär editor",
-    "simple editor": "Diktatorfone-editor"
+    "linear editor": "Linjär vy",
+    "simple editor": "Diktafon-vy"
   },
   "login": {
     "api not available": "Servern är för närvarande otillgänglig. Vänligen försök igen senare. Om det här felmeddelandet fortfarande visas efter 15 minuter, vänligen skicka ett e-postmeddelande till {{email_link}}.",
