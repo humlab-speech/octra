@@ -13,7 +13,6 @@ import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
 import {
   NgbCollapseModule,
   NgbDropdownModule,
@@ -126,7 +125,6 @@ bootstrapApplication(AppComponent, {
     ...MODALS_PROVIDERS,
 
     // i18n & UI Modules (standalone or root)
-    TranslocoModule,
     importProvidersFrom(TranslocoRootModule),
     NgbDropdownModule,
     NgbNavModule,
@@ -136,9 +134,9 @@ bootstrapApplication(AppComponent, {
     NgbCollapseModule,
     NgbOffcanvasModule,
 
-    // Feature Modules
-    PagesModule,
-    NgxOctraApiModule,
+    // Feature Modules (NgModules must be wrapped in importProvidersFrom)
+    importProvidersFrom(PagesModule),
+    importProvidersFrom(NgxOctraApiModule),
     OctraComponentsModule,
     OctraUtilitiesModule,
 
