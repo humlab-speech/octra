@@ -36,6 +36,10 @@
   text-align: left;
 }
 
+.dropzone-placeholder {
+  color: var(--octra-surface-background);
+}
+
 .progress {
   height: 13px !important;
   margin-bottom: 3px;

@@ -30,7 +30,6 @@ export class ALoginGuard {
               console.error(error);
             });
           return false;
-        } else {
         }
         return true;
       }),

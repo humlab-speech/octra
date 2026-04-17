@@ -98,7 +98,7 @@ octra-transcr-editor ngx-jodit .jodit-workplace {
 }
 
 .jodit-toolbar__box .jodit-ui-group.jodit-ui-group_size_middle {
-  background: whitesmoke !important;
+  background: var(--octra-surface-background) !important;
 }
 
 .jodit-toolbar__box .jodit-toolbar-content {

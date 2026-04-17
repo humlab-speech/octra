@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgbActiveModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Action } from '@ngrx/store';
@@ -20,7 +20,6 @@ import { AuthenticationStoreService } from '../../store/authentication';
 })
 export class ReAuthenticationModalComponent
   extends DefaultComponent
-  implements OnInit
 {
   public static options: NgbModalOptions = {
     backdrop: 'static',
@@ -50,10 +49,6 @@ export class ReAuthenticationModalComponent
   init() {
     this.initialized = true;
   }
-
-  callback() {}
-
-  ngOnInit(): void {}
 
   onSubmit($event: {
     type: AccountLoginMethod;

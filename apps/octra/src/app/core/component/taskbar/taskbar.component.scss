@@ -3,8 +3,10 @@
   text-align: center;
 }
 
-#fastbar a {
-  color: #2a4765;
+#fastbar .btn-link,
+#fastbar .btn-link:hover,
+#fastbar .btn-link:focus {
+  color: var(--octra-text-primary);
 }
 
 #fastbar div {
@@ -13,10 +15,4 @@
 
 .btn-group.btn-group-justified.btn-group-sm {
   margin: 0;
-}
-
-a:not([href]):not([tabindex]),
-a:not([href]):not([tabindex]):focus,
-a:not([href]):not([tabindex]):hover {
-  color: #5b8e8a;
 }

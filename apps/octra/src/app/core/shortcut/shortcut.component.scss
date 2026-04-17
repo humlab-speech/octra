@@ -21,7 +21,7 @@
 }
 
 :host .light {
-  background-color: white;
+  background-color: var(--octra-surface-background);
   color: black;
   border: 1px solid gray;
 }

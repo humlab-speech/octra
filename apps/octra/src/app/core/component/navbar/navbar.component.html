@@ -118,12 +118,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a
-                class="nav-link"
+              <button
+                type="button"
+                class="nav-link btn btn-link"
                 (click)="isCollapsed = true; openAboutModal()"
               >
                 {{ 'g.about' | transloco }}
-              </a>
+              </button>
             </li>
           </ul>
         } @else {
@@ -134,22 +135,23 @@
                 navbarServ.showInterfaces &&
                 interfaceActive(editor.name)
               ) {
-                <li class="nav-item" (click)="setInterface(editor.name)">
-                  <a
-                    class="nav-link"
-                    [ngClass]="{
-                      active: appStorage.interface === editor.name,
-                    }"
-                    (click)="isCollapsed = true"
-                  >
-                    <span>
-                      <i [classList]="['bi', editor.icon]"></i>
-                      <span class="d-md-none d-xxl-inline">
-                        {{ editor.translate | transloco }}
+                  <li class="nav-item">
+                    <button
+                      type="button"
+                      class="nav-link btn btn-link"
+                      [ngClass]="{
+                        active: appStorage.interface === editor.name,
+                      }"
+                      (click)="setInterface(editor.name); isCollapsed = true"
+                    >
+                      <span>
+                        <i [classList]="['bi', editor.icon]"></i>
+                        <span class="d-md-none d-xxl-inline">
+                          {{ editor.translate | transloco }}
+                        </span>
                       </span>
-                    </span>
-                  </a>
-                </li>
+                    </button>
+                  </li>
               }
             }
             @if (
@@ -158,13 +160,14 @@
               isAdministrator
             ) {
               <li class="nav-item">
-                <a
-                  (mouseup)="isCollapsed = true; openStatisticsModal()"
-                  class="nav-link"
+                <button
+                  type="button"
+                  (click)="isCollapsed = true; openStatisticsModal()"
+                  class="nav-link btn btn-link"
                 >
                   <i class="bi bi-pie-chart-fill"></i>
-                  <span class="d-md-none d-xxl-inline"> Statistics</span></a
-                >
+                  <span class="d-md-none d-xxl-inline"> Statistics</span>
+                </button>
               </li>
             }
           </ul>
@@ -213,6 +216,9 @@
                 role="menu"
                 style="min-width: 300px"
                 (click)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
+                (keydown.space)="$event.stopPropagation()"
+                tabindex="0"
               >
                 <table class="w-100">
                   <tbody>
@@ -233,14 +239,18 @@
                         class="level-row"
                       >
                         <td
-                          (click)="selectLevel(i)"
                           [ngClass]="{
                             disabled: level.type !== 'SEGMENT',
                             'rounded-top-3 rounded-end-0': i === 0,
                           }"
-                          style="cursor: pointer"
                         >
-                          {{ i + 1 }}:
+                          <button
+                            type="button"
+                            class="btn btn-link p-0 text-start"
+                            (click)="selectLevel(i)"
+                          >
+                            {{ i + 1 }}:
+                          </button>
                         </td>
                         <td
                           [ngClass]="{
@@ -263,11 +273,14 @@
                           @if (
                             annotationStoreService.transcript!.levels.length > 1
                           ) {
-                            <i
-                              class="bi bi-trash"
+                            <button
+                              type="button"
+                              class="btn btn-link p-0"
                               (click)="onLevelRemoveClick(level)"
-                              style="cursor: pointer"
-                            ></i>
+                            >
+                              <i class="bi bi-trash"></i>
+                              <span class="visually-hidden">Remove level</span>
+                            </button>
                           }
                           @if (level.type === annotJSONType.SEGMENT) {
                             <i
@@ -280,12 +293,15 @@
                       </tr>
                     }
                     <tr>
-                      <td
-                        colspan="3"
-                        (click)="onLevelAddClick()"
-                        class="level-add-row rounded rounded-bottom-3"
-                      >
-                        <i class="bi bi-plus-lg"></i>
+                      <td colspan="3" class="level-add-row rounded rounded-bottom-3">
+                        <button
+                          type="button"
+                          class="btn btn-link w-100 p-0"
+                          (click)="onLevelAddClick()"
+                        >
+                          <i class="bi bi-plus-lg"></i>
+                          <span class="visually-hidden">Add level</span>
+                        </button>
                       </td>
                     </tr>
                   </tbody>
@@ -440,13 +456,17 @@
             (settService.projectsettings?.octra?.tools ?? []).length > 0
           ) {
             <li class="nav-item">
-              <a (mouseup)="openToolsModal()" class="nav-link">
-                <i class="bi bi-tools navbar-icon"></i>
-                <span class="d-md-none d-xxl-inline">
-                  {{ 'g.tools' | transloco }}</span
+                <button
+                  type="button"
+                  (click)="openToolsModal()"
+                  class="nav-link btn btn-link"
                 >
-              </a>
-            </li>
+                  <i class="bi bi-tools navbar-icon"></i>
+                  <span class="d-md-none d-xxl-inline">
+                    {{ 'g.tools' | transloco }}</span
+                  >
+                </button>
+              </li>
           }
           @if (
             appStorage.loggedIn &&
@@ -454,13 +474,17 @@
             navbarServ.showExport
           ) {
             <li class="nav-item">
-              <a (mouseup)="openExportModal()" class="nav-link">
-                <i class="bi bi-download navbar-icon"></i>
-                <span class="d-md-none d-xxl-inline">
-                  {{ 'g.export' | transloco }}</span
+                <button
+                  type="button"
+                  (click)="openExportModal()"
+                  class="nav-link btn btn-link"
                 >
-              </a>
-            </li>
+                  <i class="bi bi-download navbar-icon"></i>
+                  <span class="d-md-none d-xxl-inline">
+                    {{ 'g.export' | transloco }}</span
+                  >
+                </button>
+              </li>
           }
           <!-- options -->
           <ng-template #canvasContent let-offcanvas>
@@ -585,8 +609,8 @@
               @if (appStorage.interface === '2D-Editor') {
                 <hr style="border: 1px solid lightgray" />
                 <br />
-                <label style="font-size: 1rem"
-                  >{{ 'settings.seconds per line' | transloco }}:</label
+                <span style="font-size: 1rem"
+                  >{{ 'settings.seconds per line' | transloco }}:</span
                 >
                 <br />
                 <div
@@ -658,9 +682,9 @@
                 @if (asrStoreService.asrEnabled) {
                   <br /><br />
                   <hr />
-                  <label style="font-size: 1rem" class="mb-2">{{
+                  <span style="font-size: 1rem" class="mb-2 d-block">{{
                     'g.asr options' | transloco
-                  }}</label>
+                  }}</span>
                   <octra-asr-options
                     [options]="asrStoreService.asrOptions ?? undefined"
                     (optionsChange)="asrStoreService.setASRSettings($event)"
@@ -693,12 +717,16 @@
                 : 'inherit',
             }"
           >
-            <a type="button" class="nav-link" (click)="openEnd()">
+            <button
+              type="button"
+              class="nav-link btn btn-link"
+              (click)="openEnd()"
+            >
               <i class="bi bi-gear-wide-connected"></i>
               <span class="d-inline d-md-none">
                 {{ 'g.settings' | transloco }}
               </span>
-            </a>
+            </button>
           </li>
           <!-- profile -->
           @if (
@@ -748,15 +776,19 @@
                 }
                 <div class="dropdown-divider"></div>
                 @if (appStorage.useMode === 'online') {
-                  <a class="dropdown-item" (click)="backToProjectsList()">
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    (click)="backToProjectsList()"
+                  >
                     <i class="bi bi-arrow-left"></i>
                     {{ 'p.back to projects' | transloco }}
-                  </a>
+                  </button>
                 }
-                <a class="dropdown-item" (click)="logout()">
+                <button type="button" class="dropdown-item" (click)="logout()">
                   <i class="bi bi-door-open-fill"></i>
                   Logout
-                </a>
+                </button>
               </div>
             </li>
           }
@@ -765,9 +797,10 @@
                                     -->
           @if (api.appProperties?.send_feedback) {
             <li class="nav-item">
-              <a
-                (mouseup)="isCollapsed = true; openBugReport()"
-                class="nav-link"
+              <button
+                type="button"
+                (click)="isCollapsed = true; openBugReport()"
+                class="nav-link btn btn-link"
               >
                 <i
                   class="bi bi-question-circle-fill navbar-icon"
@@ -780,7 +813,7 @@
                 <span class="d-inline d-md-none">
                   {{ 'g.feedback' | transloco }}
                 </span>
-              </a>
+              </button>
             </li>
           }
           <!-- languageDropdown -->
@@ -805,9 +838,13 @@
                   item of settService.appSettings.octra.languages;
                   track item
                 ) {
-                  <a (click)="changeLanguage(item)" class="dropdown-item">
-                    {{ item | uppercase }}</a
+                  <button
+                    type="button"
+                    (click)="changeLanguage(item)"
+                    class="dropdown-item"
                   >
+                    {{ item | uppercase }}
+                  </button>
                 }
               }
               <div class="dropdown-divider"></div>

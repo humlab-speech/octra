@@ -8,17 +8,23 @@
     </div>
     <div class="row">
       <div class="col-md-6">
-        <a
+        <button
+          type="button"
           (click)="backToProjectsList()"
           class="btn btn-primary"
           style="width: 100%"
-          >{{ 'p.back to projects' | transloco }}</a
+          >{{ 'p.back to projects' | transloco }}</button
         >
       </div>
       <div class="col-md-6">
-        <a (click)="leave()" class="btn btn-secondary" style="width: 100%">{{
-          'transcription submitted.quit' | transloco
-        }}</a>
+        <button
+          type="button"
+          (click)="leave()"
+          class="btn btn-secondary"
+          style="width: 100%"
+        >
+          {{ 'transcription submitted.quit' | transloco }}
+        </button>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 .dropzone {
-  border: 2px dashed grey;
-  background-color: rgb(240, 240, 240);
+  border: 2px dashed var(--octra-accent-warning);
+  background-color: var(--octra-waveform-background);
   padding: 20px;
   min-height: 100px;
   text-align: center;
@@ -13,6 +13,6 @@
 
 .dropzone .dragndrop {
   padding: 10px;
-  color: #d8d8d8;
+  color: black;
   font-size: 30px;
 }

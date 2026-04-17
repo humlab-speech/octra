@@ -9,7 +9,9 @@
       class="btn-close"
       aria-describedby="modal-title"
       (click)="close()"
-    ></button>
+    >
+      <span class="visually-hidden">Close</span>
+    </button>
   </div>
   <div class="modal-body">
     <div class="row" style="width: 100%">
@@ -54,11 +56,7 @@
         </div>
       </div>
     </div>
-    @if (
-      shownGuidelines == null ||
-      shownGuidelines.instructions == null ||
-      shownGuidelines!.instructions.length === 0
-    ) {
+    @if ((shownGuidelines?.instructions?.length ?? 0) === 0) {
       <div class="bg-warning">
         {{ 'g.no guidelines found' | transloco }}
       </div>
@@ -82,22 +80,39 @@
                     let k = $index
                   ) {
                     <div class="row select-row">
-                      <div (click)="toggle(j, k)" class="col-1 chevron">
-                        <i
-                          class="bi"
-                          [ngClass]="{
-                            'bi-chevron-down': collapsed[j][k],
-                            'bi-chevron-up': !collapsed[j][k],
-                          }"
-                        ></i>
+                      <div class="col-1 chevron">
+                        <button
+                          type="button"
+                          class="btn btn-link p-0"
+                          (click)="toggle(j, k)"
+                        >
+                          <i
+                            class="bi"
+                            [ngClass]="{
+                              'bi-chevron-down': collapsed[j][k],
+                              'bi-chevron-up': !collapsed[j][k],
+                            }"
+                          ></i>
+                          <span class="visually-hidden">Toggle guideline</span>
+                        </button>
                       </div>
-                      <div (click)="toggle(j, k)" class="col-2 code">
-                        {{ entry.code }}
+                      <div class="col-2 code">
+                        <button
+                          type="button"
+                          class="btn btn-link p-0 text-start"
+                          (click)="toggle(j, k)"
+                        >
+                          {{ entry.code }}
+                        </button>
                       </div>
                       <div class="col-8">
-                        <span (click)="toggle(j, k)" class="guidelines-title">{{
-                          entry.title
-                        }}</span>
+                        <button
+                          type="button"
+                          class="btn btn-link p-0 guidelines-title text-start"
+                          (click)="toggle(j, k)"
+                        >
+                          {{ entry.title }}
+                        </button>
                         <div [(ngbCollapse)]="collapsed[j][k]">
                           <div
                             [innerHTML]="entry.description"
@@ -177,9 +192,11 @@
                                             <a
                                               [href]="example.url"
                                               target="_blank"
-                                              ><img [src]="example.url"
-                                            /></a>
-                                          </div>
+                                               ><img
+                                                 [src]="example.url"
+                                                 alt="Guideline example image"
+                                             /></a>
+                                           </div>
                                         }
                                       }
                                       <div class="text">
@@ -195,13 +212,16 @@
                           </div>
                         </div>
                       </div>
-                      <div
-                        (click)="toggle(j, k)"
-                        class="col-1 d-none d-sm-inline col-priority"
-                      >
-                        <span class="label label-info">{{
-                          entry.priority
-                        }}</span>
+                      <div class="col-1 d-none d-sm-inline col-priority">
+                        <button
+                          type="button"
+                          class="btn btn-link p-0"
+                          (click)="toggle(j, k)"
+                        >
+                          <span class="label label-info">{{
+                            entry.priority
+                          }}</span>
+                        </button>
                       </div>
                     </div>
                   }

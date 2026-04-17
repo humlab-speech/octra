@@ -35,10 +35,18 @@
       <div class="text-info">{{ warning }}</div>
       @if (warning !== undefined && warning !== '') {
         <div>
-          <span (click)="retry()" class="link">Retry </span>
+          <button type="button" (click)="retry()" class="btn btn-link link p-0">
+            Retry
+          </button>
           @if (appStorage.useMode !== 'url') {
             or
-            <span (click)="goBack()" class="link"> Back</span>
+            <button
+              type="button"
+              (click)="goBack()"
+              class="btn btn-link link p-0"
+            >
+              Back
+            </button>
           }
         </div>
       }
@@ -47,10 +55,18 @@
   <div [innerHTML]="settService.log" class="log"></div>
   @if (settService.log !== '') {
     <div>
-      <span (click)="retry()" class="link">Retry </span>
+      <button type="button" (click)="retry()" class="btn btn-link link p-0">
+        Retry
+      </button>
       @if (appStorage.useMode !== 'url') {
         or
-        <span (click)="goBack()" class="link"> Back</span>
+        <button
+          type="button"
+          (click)="goBack()"
+          class="btn btn-link link p-0"
+        >
+          Back
+        </button>
       }
     </div>
   }

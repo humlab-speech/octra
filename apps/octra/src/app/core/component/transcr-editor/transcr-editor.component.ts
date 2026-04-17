@@ -180,7 +180,7 @@ export class TranscrEditorComponent
   };
 
   public htmlValue = '';
-  private initialized: boolean = false;
+  private initialized = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -470,7 +470,7 @@ export class TranscrEditorComponent
       const validationError = document.createElement('div');
       validationError.setAttribute('class', 'card error-card');
       validationError.innerHTML = `
-      <div class="card-header" style="padding:5px 10px; font-weight: bold;background-color:whitesmoke;">
+      <div class="card-header" style="padding:5px 10px; font-weight: bold;background-color:var(--octra-surface-background);">
       <span style="color:red;">( ! )</span> <span class="error-title"></span></div>
       <div class="card-body" style="padding:5px 10px;"></div>
       `;
@@ -610,7 +610,7 @@ export class TranscrEditorComponent
   /**
    * set focus to the very last position of the editors text
    */
-  public focus = (atEnd: boolean = true, later: boolean = false) => {
+  public focus = (atEnd = true, later = false) => {
     return new Promise<void>((resolve, reject) => {
       const func = () => {
         try {
@@ -1703,7 +1703,9 @@ export class TranscrEditorComponent
     }
   }
 
-  onChange() {}
+  onChange() {
+    this.triggerTyping();
+  }
 
   async onPaste($event: Event) {
     $event.preventDefault();

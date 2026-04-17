@@ -142,8 +142,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let result: any;
-    result = await (transcriber as any)(audio, {
+    const result: any = await (transcriber as any)(audio, {
       return_timestamps: true,
       chunk_length_s: CHUNK_LENGTH_S,
       stride_length_s: STRIDE_LENGTH_S,

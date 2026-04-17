@@ -884,7 +884,9 @@ export class AnnotationEffects {
                       key === 'audio'
                         ? this.routingService.staticQueryParams.audio_type
                         : undefined;
-                    let decodedURL = decodeURIComponent(urlInfoIndexed[key].url!);
+                    const decodedURL = decodeURIComponent(
+                      urlInfoIndexed[key].url!,
+                    );
 
                     if (decodedURL.includes('?')) {
                       const regex = /mediatype=([^&]+)/g;

@@ -1,28 +1,38 @@
 @use 'bootstrap/scss/bootstrap';
 @use 'bootstrap-icons/font/bootstrap-icons';
 
+:root {
+  --octra-waveform-background: #eabab9;
+  --octra-surface-background: #f1efe4;
+  --octra-accent-green: #73a790;
+  --octra-accent-green-dark: #5b8e8a;
+  --octra-text-primary: #2a4765;
+  --octra-accent-error: #b87d5e;
+  --octra-accent-warning: #d7b17c;
+}
+
 .btn.btn-success {
-  color: #fff;
-  background-color: #5b8e8a;
-  border-color: #5b8e8a;
+  color: var(--octra-surface-background);
+  background-color: var(--octra-accent-green);
+  border-color: var(--octra-accent-green);
 }
 
 .btn.btn-warning {
   color: #fff;
-  background-color: #d7b17c;
-  border-color: #d7b17c;
+  background-color: var(--octra-accent-warning);
+  border-color: var(--octra-accent-warning);
 }
 
 .btn.btn-danger {
   color: #fff;
-  background-color: #b87d5e;
-  border-color: #b87d5e;
+  background-color: var(--octra-accent-error);
+  border-color: var(--octra-accent-error);
 }
 
 .btn.btn-primary {
-  color: #fff !important;
-  background-color: #5b8e8a !important;
-  border-color: #5b8e8a !important;
+  color: var(--octra-surface-background) !important;
+  background-color: var(--octra-accent-green) !important;
+  border-color: var(--octra-accent-green) !important;
 }
 
 .btn.btn-secondary {
@@ -50,6 +60,7 @@ body {
   min-height: 100vh;
   height: 100%;
   overflow: hidden;
+  background-color: var(--octra-surface-background);
 }
 
 main {
@@ -58,6 +69,7 @@ main {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+  background-color: var(--octra-surface-background);
 }
 
 @media (max-width: 400px) {
@@ -91,7 +103,7 @@ footer {
 }
 
 .link {
-  color: #2a4765;
+  color: var(--octra-text-primary);
   cursor: pointer;
 }
 
@@ -136,7 +148,7 @@ footer {
 }
 
 .export-button {
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
   border: 1px solid grey;
   text-align: center;
   padding: 20px;
@@ -152,14 +164,14 @@ footer {
 }
 
 .error_underline {
-  border-bottom: 2px solid #b87d5e;
+  border-bottom: 2px solid var(--octra-accent-error);
   display: inline;
   cursor: pointer;
 }
 
 .error-tooltip {
   display: none;
-  background-color: #eabab9;
+  background-color: var(--octra-waveform-background);
   padding: 10px;
   max-width: 70%;
   position: absolute;
@@ -219,8 +231,8 @@ footer {
 }
 
 .seg-popover {
-  border: 1px solid #d7b17c;
-  background-color: white;
+  border: 1px solid var(--octra-accent-warning);
+  background-color: var(--octra-surface-background);
   z-index: 100;
   position: absolute;
   padding: 5px;
@@ -240,13 +252,13 @@ footer {
 }
 
 .alert-warning {
-  color: #856404;
-  background-color: #fff3cd;
-  border-color: #ffeeba;
+  color: var(--octra-surface-background);
+  background-color: var(--octra-accent-warning);
+  border-color: var(--octra-accent-warning);
 }
 
 .note-toolbar button.note-btn.btn.btn-light.btn-sm {
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
   color: black;
   padding: 2px 6px;
 }
@@ -281,7 +293,7 @@ footer {
 }
 
 .note-toolbar-wrapper.panel-default {
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
 }
 
 .val-error {
@@ -373,7 +385,7 @@ label.radio-inline .bmd-radio {
   vertical-align: middle;
   /* width: 30px; */
   text-align: center;
-  background-color: ghostwhite;
+  background-color: var(--octra-surface-background);
   color: gray;
   position: relative;
 }
@@ -399,7 +411,7 @@ label.radio-inline .bmd-radio {
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: white;
+  background: var(--octra-surface-background);
   font-size: 14px;
   margin: 0;
 }
@@ -408,7 +420,7 @@ label.radio-inline .bmd-radio {
   border-bottom: 1px solid lightgray;
   padding: 5px;
   height: 35px;
-  background-color: white;
+  background-color: var(--octra-surface-background);
 }
 
 .column.ng-star-inserted.gu-mirror .cell:last-of-type {
@@ -417,7 +429,7 @@ label.radio-inline .bmd-radio {
 
 .note-toolbar.card-header {
   padding: 0;
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
 }
 
 .highlighted {
@@ -428,14 +440,23 @@ label.radio-inline .bmd-radio {
 
 .modal-content {
   border-radius: 20px !important;
+  background-color: var(--octra-surface-background);
+}
+
+.bg-white,
+.bg-light,
+.card,
+.dropdown-menu,
+.panel {
+  background-color: var(--octra-surface-background) !important;
 }
 
 .btn-info,
 .bg-info,
 .btn-info:hover {
-  color: #f1efe4;
-  background-color: #73a790;
-  border-color: #73a790;
+  color: var(--octra-surface-background);
+  background-color: var(--octra-accent-green);
+  border-color: var(--octra-accent-green);
 }
 
 a {
@@ -465,7 +486,7 @@ a {
 
 .jodit-toolbar__box:not(:empty):not(:empty),
 .jodit-toolbar-editor-collection_size_middle.jodit-toolbar-editor-collection_mode_horizontal {
-  background: whitesmoke !important;
+  background: var(--octra-surface-background) !important;
 }
 
 .jodit-toolbar__box .btn-shortcut {
@@ -484,10 +505,10 @@ a {
 
 .text-outline-white {
   text-shadow:
-    -1px -1px 0 #f1efe4,
-    1px -1px 0 #f1efe4,
-    -1px 1px 0 #f1efe4,
-    1px 1px 0 #f1efe4 !important;
+    -1px -1px 0 var(--octra-surface-background),
+    1px -1px 0 var(--octra-surface-background),
+    -1px 1px 0 var(--octra-surface-background),
+    1px 1px 0 var(--octra-surface-background) !important;
 }
 
 .beta_mark {

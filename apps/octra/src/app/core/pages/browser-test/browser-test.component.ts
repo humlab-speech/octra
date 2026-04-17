@@ -2,6 +2,7 @@ import { NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BrowserInfo } from '@octra/web-media';
+import { OCTRA_COLORS } from '@octra/ngx-components';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
 
 @Component({
@@ -35,11 +36,11 @@ export class BrowserTestComponent {
   getStateColor(rule: any): string {
     switch (rule.state) {
       case 'processing':
-        return '#2A4765';
+        return OCTRA_COLORS.textPrimary;
       case 'failed':
-        return '#B87D5E';
+        return OCTRA_COLORS.accentError;
       case 'ok':
-        return '#73A790';
+        return OCTRA_COLORS.accentGreen;
     }
     return 'processing';
   }

@@ -18,8 +18,6 @@ export class ShortcutService {
   private _generalShortcuts: ShortcutGroup[] = [];
   private previouslyEnabled: string[] = [];
 
-  constructor() {}
-
   registerGeneralShortcutGroup(shortcutGroup: ShortcutGroup) {
     if (!this._generalShortcuts.find((a) => a.name === shortcutGroup.name)) {
       this._generalShortcuts.push(shortcutGroup);

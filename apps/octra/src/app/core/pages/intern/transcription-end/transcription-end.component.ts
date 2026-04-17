@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { navigateTo } from '@octra/ngx-utilities';
@@ -16,7 +16,6 @@ import { AnnotationStoreService } from '../../../store/login-mode/annotation/ann
 })
 export class TranscriptionEndComponent
   extends DefaultComponent
-  implements OnInit
 {
   constructor(
     private router: Router,
@@ -30,9 +29,6 @@ export class TranscriptionEndComponent
     this.navService.showExport = false;
     this.navService.dataloaded = false;
   }
-
-  ngOnInit() {}
-
   leave() {
     this.annotationStoreService.endTranscription();
 

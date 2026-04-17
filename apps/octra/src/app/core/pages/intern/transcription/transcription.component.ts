@@ -793,8 +793,7 @@ export class TranscriptionComponent
 
   closeTranscriptionAndGetNew() {
     // close current session
-    if (this._useMode === LoginMode.ONLINE) {
-    } else if (this._useMode === LoginMode.DEMO) {
+    if (this._useMode === LoginMode.DEMO) {
       this.reloadDemo();
     }
   }

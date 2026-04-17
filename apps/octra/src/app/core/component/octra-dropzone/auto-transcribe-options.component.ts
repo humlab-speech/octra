@@ -160,7 +160,7 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   styles: [
     `
       .auto-transcribe-options {
-        background-color: #f8f9fa;
+        background-color: var(--octra-surface-background);
         font-size: 0.9rem;
       }
       .form-check-input.safari-disabled {

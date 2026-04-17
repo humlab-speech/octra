@@ -62,7 +62,7 @@
               <div class="form-group">
                 @if (control.type.type === 'textarea') {
                   <div>
-                    <label>{{
+                    <label [attr.for]="'feedback-textarea-' + group.name">{{
                       translate(
                         control.label.languages,
                         langService.getActiveLang()
@@ -71,6 +71,7 @@
                     <textarea
                       [required]="control.required"
                       class="form-control"
+                      [id]="'feedback-textarea-' + group.name"
                       name="{{ group.name }}"
                       value="{{ control.value }}"
                     ></textarea>
@@ -83,12 +84,13 @@
         }
       }
       <div class="form-group">
-        <label>{{
-          'transcription-submit.comment description' | transloco
-        }}</label>
+          <label for="feedback-comment">{{
+            'transcription-submit.comment description' | transloco
+          }}</label>
         <textarea
           [(ngModel)]="comment"
           class="form-control"
+          id="feedback-comment"
           name="comment"
         ></textarea>
       </div>

@@ -2,22 +2,26 @@
   @if (
     appStorage.snapshot.application.mode === LoginMode.ONLINE && forceLogout
   ) {
-    <a
+    <button
+      type="button"
       (click)="abort()"
-      class="position-absolute end-0 top-0 mt-2 me-3 link"
+      class="btn btn-link position-absolute end-0 top-0 mt-2 me-3 link p-0"
       style="font-size: 0.85rem"
-      >{{ 'g.logout' | transloco }}</a
     >
+      {{ 'g.logout' | transloco }}
+    </button>
   }
   @if (
     appStorage.snapshot.application.mode !== LoginMode.ONLINE || !forceLogout
   ) {
-    <a
+    <button
+      type="button"
       (click)="abort()"
-      class="position-absolute end-0 top-0 mt-2 me-3 link"
+      class="btn btn-link position-absolute end-0 top-0 mt-2 me-3 link p-0"
       style="font-size: 0.85rem"
-      >{{ 'g.abort' | transloco }}</a
     >
+      {{ 'g.abort' | transloco }}
+    </button>
   }
   <div class="container-fluid">
     <div class="row mt-3">

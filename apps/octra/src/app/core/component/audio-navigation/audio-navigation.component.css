@@ -28,8 +28,11 @@
   margin: 0;
 }
 
-.audio-nav .btn-group .bg-info {
+.audio-nav .btn-group .audio-nav-panel {
   min-height: 40px;
+  color: var(--octra-surface-background);
+  background-color: var(--octra-accent-green);
+  border: 1px solid var(--octra-accent-green);
 }
 
 .audio-nav .col-1 {

@@ -43,7 +43,10 @@
         @if (i !== clicked) {
           <div class="naming-content">
             <span class="value">{{ item.value }}</span>
-            <i class="bi bi-x-circle" (click)="remove(i)"></i>
+            <button type="button" class="btn btn-link p-0" (click)="remove(i)">
+              <i class="bi bi-x-circle"></i>
+              <span class="visually-hidden">Remove item</span>
+            </button>
           </div>
         }
         @if (i === clicked) {
@@ -56,7 +59,10 @@
               style="min-width: 10px; user-select: text"
               [innerText]="item.value"
             ></span>
-            <i class="bi bi-x-circle" (click)="remove(i)"></i>
+            <button type="button" class="btn btn-link p-0" (click)="remove(i)">
+              <i class="bi bi-x-circle"></i>
+              <span class="visually-hidden">Remove item</span>
+            </button>
           </div>
         }
       </div>

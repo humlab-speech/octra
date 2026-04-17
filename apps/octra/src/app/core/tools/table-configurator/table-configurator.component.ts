@@ -438,7 +438,7 @@ export class TableConfiguratorComponent implements OnInit {
     this.tableConfiguratorAddColumn();
   }
 
-  tableConfiguratorAddColumn(position = -1, type: string = '') {
+  tableConfiguratorAddColumn(position = -1, type = '') {
     let colDef: ColumnDefinition;
 
     if (type === '') {
@@ -752,7 +752,7 @@ export class TableConfiguratorComponent implements OnInit {
 
   private getLevelNumber(): number {
     if (
-      !this.currentLevelID !== undefined &&
+      this.currentLevelID !== undefined &&
       this.annotation?.levels !== undefined
     ) {
       const result = this.annotation.levels.findIndex((a) => {

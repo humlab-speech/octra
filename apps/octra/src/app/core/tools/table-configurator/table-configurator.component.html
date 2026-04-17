@@ -12,12 +12,13 @@
     </button>
     <div ngbDropdownMenu style="cursor: pointer">
       @for (colDef of remainingColDefs; track colDef) {
-        <a
+        <button
+          type="button"
           (click)="tableConfiguratorAddColumn(-1, colDef.type)"
           class="dropdown-item"
         >
           {{ colDef.type }}
-        </a>
+        </button>
       }
     </div>
   </div>
@@ -35,7 +36,7 @@
   <div
     class="settings justify-content-center align-middle justify-content-center"
   >
-    <label>{{ 'custom.table configurator.time format' | transloco }}: </label>
+    <span>{{ 'custom.table configurator.time format' | transloco }}: </span>
     <div class="btn-group" ngbDropdown>
       <button
         ngbDropdownToggle
@@ -48,13 +49,14 @@
 
       <div ngbDropdownMenu style="cursor: pointer">
         @for (timeFormat of tableOptions.timeFormats; track timeFormat) {
-          <a
+          <button
+            type="button"
             (click)="onTimeFormatChange(timeFormat)"
             class="dropdown-item"
             role="menuitem"
           >
             {{ timeFormat }}
-          </a>
+          </button>
         }
       </div>
     </div>
@@ -78,9 +80,14 @@
         <div class="grip">
           <i class="bi bi-grip-vertical"></i>
         </div>
-        <div (click)="onDeleteColumnClick(i)" class="delete-column">
+        <button
+          type="button"
+          (click)="onDeleteColumnClick(i)"
+          class="delete-column btn btn-link p-0"
+        >
           <i class="bi bi-x-lg"></i>
-        </div>
+          <span class="visually-hidden">Delete column</span>
+        </button>
         <div class="header">
           <div
             #title
@@ -131,12 +138,14 @@
               style="cursor: pointer"
             >
               @for (divider of tableOptions.selection.dividers; track divider) {
-                <li
-                  (click)="onDividerClick(divider.value)"
-                  class="dropdown-item"
-                  role="menuitem"
-                >
-                  {{ divider.name }} ({{ divider.value }})
+                <li role="menuitem">
+                  <button
+                    type="button"
+                    (click)="onDividerClick(divider.value)"
+                    class="dropdown-item"
+                  >
+                    {{ divider.name }} ({{ divider.value }})
+                  </button>
                 </li>
               }
             </ul>
@@ -171,12 +180,14 @@
                 extension of tableOptions.selection.extension;
                 track extension
               ) {
-                <li
-                  (click)="onExtensionClick(extension)"
-                  class="dropdown-item"
-                  role="menuitem"
-                >
-                  {{ extension }}
+                <li role="menuitem">
+                  <button
+                    type="button"
+                    (click)="onExtensionClick(extension)"
+                    class="dropdown-item"
+                  >
+                    {{ extension }}
+                  </button>
                 </li>
               }
             </ul>

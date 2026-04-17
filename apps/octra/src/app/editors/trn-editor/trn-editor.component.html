@@ -215,15 +215,15 @@
               class="transcript-column"
             ></td>
           }
-          <td
-            class="control-column"
-            style="width: 100px"
-            (click)="onTableLineClick($event, i)"
-          >
-            <i
-              [classList]="['bi', playStateSegments[i].icon]"
-              (click)="playSelectedSegment(i)"
-            ></i>
+          <td class="control-column" style="width: 100px">
+            <button
+              type="button"
+              class="btn btn-link p-0"
+              (click)="onTableLineClick($event, i); playSelectedSegment(i)"
+            >
+              <i [classList]="['bi', playStateSegments[i].icon]"></i>
+              <span class="visually-hidden">Play segment</span>
+            </button>
           </td>
         </tr>
       }

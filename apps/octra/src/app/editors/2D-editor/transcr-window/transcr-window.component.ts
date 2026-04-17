@@ -1354,7 +1354,11 @@ export class TranscrWindowComponent
           end?: number;
         }
       | undefined,
-  ) {}
+  ) {
+    if (!selectionEvent) {
+      return;
+    }
+  }
 
   onFontChange(fontName: string) {
     this.appStoreService.changeApplicationOption('editorFont', fontName);
@@ -1444,11 +1448,10 @@ export class TranscrWindowComponent
               : 0;
           const sampleLength = segment.time.samples - sampleStart;
 
-          if (
-            sampleLength /
-              this.audiochunk?.audioManager!.resource!.info!.sampleRate! >
-            600
-          ) {
+          const sampleRate =
+            this.audiochunk?.audioManager?.resource?.info?.sampleRate ?? 0;
+
+          if (sampleRate > 0 && sampleLength / sampleRate > 600) {
             this.alertService
               .showAlert(
                 'danger',

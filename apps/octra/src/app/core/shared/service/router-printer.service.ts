@@ -10,7 +10,7 @@ export class RoutePrinterService {
     //this.logRoutes(this.router.config);
   }
 
-  private logRoutes(routes: Route[], parentPath: string = '') {
+  private logRoutes(routes: Route[], parentPath = '') {
     for (const route of routes) {
       const fullPath = parentPath + '/' + (route.path || '');
       console.log(fullPath);

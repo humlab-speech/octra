@@ -8,7 +8,9 @@
       class="btn-close"
       aria-describedby="modal-title"
       (click)="close()"
-    ></button>
+    >
+      <span class="visually-hidden">Close</span>
+    </button>
   </div>
   <div class="modal-body">
     <div class="row" style="overflow: auto; flex: auto">
@@ -81,7 +83,7 @@
                 <button
                   (click)="sendTranscriptionForShortAudioFiles('middle')"
                   class="btn btn-raised btn-warning w-100"
-                  style="background-color: #d7b17c"
+                  style="background-color: var(--octra-accent-warning)"
                 >
                   <i class="bi bi-star-fill"></i>
                   <i class="bi bi-star-fill"></i>

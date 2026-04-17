@@ -31,7 +31,7 @@
 
 .tw-loading .background {
   opacity: 0.75;
-  background-color: white;
+  background-color: var(--octra-surface-background);
   position: absolute;
   z-index: 110;
 }

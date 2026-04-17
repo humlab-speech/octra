@@ -8,7 +8,9 @@
       class="btn-close"
       aria-describedby="modal-title"
       (click)="activeModal.close()"
-    ></button>
+    >
+      <span class="visually-hidden">{{ 'g.close' | transloco }}</span>
+    </button>
   </div>
   <div class="modal-body p-4">
     <img

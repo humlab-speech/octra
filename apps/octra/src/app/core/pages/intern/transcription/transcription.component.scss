@@ -58,8 +58,8 @@
 }
 
 #bottom-feedback {
-  border: 1px solid #2a4765;
-  background-color: white;
+  border: 1px solid var(--octra-text-primary);
+  background-color: var(--octra-surface-background);
   padding: 5px;
   height: 30px;
   position: relative;
@@ -129,7 +129,7 @@
 #subnav {
   padding: 3px;
   text-align: center;
-  background-color: #eabab9;
+  background-color: var(--octra-waveform-background);
   margin-bottom: 0;
 }
 

@@ -1,4 +1,5 @@
 import { ShortcutGroup } from '@octra/web-media';
+import { OCTRA_COLORS } from '../../../obj';
 
 export class AudioviewerConfig {
   public multiLine = false;
@@ -6,7 +7,7 @@ export class AudioviewerConfig {
   public justifySignalHeight = true;
   public cropping = 'none';
   public lineheight = 60;
-  public backgroundcolor = '#EABAB9';
+  public backgroundcolor = OCTRA_COLORS.surfaceBackground;
   public margin: {
     top: number;
     right: number;
@@ -30,12 +31,12 @@ export class AudioviewerConfig {
     enabled: false,
     width: 20,
     background: {
-      color: '#F1EFE4',
+      color: OCTRA_COLORS.surfaceBackground,
       stroke: 'gray',
       strokeWidth: 1,
     },
     selector: {
-      color: '#5B8E8A',
+      color: OCTRA_COLORS.accentGreenDark,
       stroke: 'gray',
       strokeWidth: 1,
       width: 20,
@@ -60,7 +61,7 @@ export class AudioviewerConfig {
     enabled: true,
     readonly: false,
     width: 3,
-    color: '#D7B17C',
+    color: OCTRA_COLORS.accentWarning,
   };
   public grid: {
     enabled: true;

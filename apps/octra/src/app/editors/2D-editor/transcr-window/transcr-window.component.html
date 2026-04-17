@@ -5,7 +5,9 @@
       class="btn-close"
       aria-describedby="modal-title"
       (click)="close()"
-    ></button>
+    >
+      <span class="visually-hidden">Close</span>
+    </button>
   </div>
   <div class="modal-body">
     <div #main class="d-flex flex-column h-100">
@@ -31,7 +33,7 @@
       }
       @if (asrStoreService.asrEnabled$ | async) {
         <div class="container-fluid">
-          <div class="row py-2" style="background-color: whitesmoke">
+          <div class="row py-2" style="background-color: var(--octra-surface-background)">
             <div class="col">
               <span class="me-1"> ASR: </span>
               <div ngbDropdown class="btn-group dropend">
@@ -97,11 +99,15 @@
                 </div>
               </div>
               <span>
-                <i
-                  class="bi bi-gear-fill ms-2 pointer"
+                <button
+                  type="button"
+                  class="btn btn-link p-0 ms-2"
                   style="color: gray"
                   (click)="openSettings()"
-                ></i>
+                >
+                  <i class="bi bi-gear-fill pointer"></i>
+                  <span class="visually-hidden">Open settings</span>
+                </button>
               </span>
             </div>
           </div>

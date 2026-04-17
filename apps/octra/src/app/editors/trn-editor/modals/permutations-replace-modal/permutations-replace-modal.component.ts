@@ -29,8 +29,6 @@ export class PermutationsReplaceModalComponent implements OnDestroy {
     replaceWith: string;
   }[] = [];
 
-  constructor() {}
-
   private readListOfSpeakers() {
     /* TODO
     const result = [];

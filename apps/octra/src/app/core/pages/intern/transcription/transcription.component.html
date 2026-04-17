@@ -21,12 +21,14 @@
           class="col-12 col-sm-3"
           style="text-align: right; padding-right: 20px"
         >
-          <a
+          <button
+            type="button"
             (click)="openPromptModal()"
-            style="cursor: pointer; color: #5b8e8a"
+            class="btn btn-link p-0 border-0 text-decoration-none"
+            style="cursor: pointer; color: var(--octra-accent-green-dark)"
           >
             {{ 'g.prompt' | transloco }}
-          </a>
+          </button>
         </div>
       }
     </div>
@@ -39,7 +41,7 @@
       <i class="bi bi-save-fill" style="color: #333333"></i>
     }
     @if (saving === 'error') {
-      <i class="bi bi-save-fill" style="color: #b87d5e"></i>
+      <i class="bi bi-save-fill" style="color: var(--octra-accent-error)"></i>
     }
   </span>
   <octra-fastbar
@@ -117,7 +119,7 @@
           (click)="sendTranscriptionForShortAudioFiles('middle')"
           class="btn btn-raised btn-warning col-md-3 btn btn-warning"
           type="button"
-          style="background-color: #d7b17c"
+          style="background-color: var(--octra-accent-warning)"
         >
           <i class="bi bi-star-fill"></i>
           <i class="bi bi-star-fill"></i>

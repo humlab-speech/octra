@@ -1,5 +1,5 @@
 .red {
-  background-color: #eabab9;
+  background-color: var(--octra-waveform-background);
 }
 
 .segment-number {
@@ -46,13 +46,13 @@
   text-align: center;
   vertical-align: middle;
   width: 100px;
+}
+
 .last-column .btn-link,
 .last-column .btn-link:hover,
 .last-column .btn-link:focus,
 .last-column .btn-link:active {
   color: #73a790;
-}
-
 }
 
 .table fa-icon {
@@ -70,14 +70,14 @@
 }
 
 .bg-danger {
-  background-color: #eabab9 !important;
-  border: 1px solid #b87d5e !important;
+  background-color: var(--octra-waveform-background) !important;
+  border: 1px solid var(--octra-accent-error) !important;
   color: black !important;
 }
 
 .bg-info {
   background-color: #8b8fae !important;
-  border: 1px solid #2a4765 !important;
+  border: 1px solid var(--octra-text-primary) !important;
   color: black !important;
 }
 
@@ -88,7 +88,7 @@
 }
 
 .bg-highlight {
-  background-color: #d7b17c !important;
-  border: 1px solid #b87d5e !important;
+  background-color: var(--octra-accent-warning) !important;
+  border: 1px solid var(--octra-accent-error) !important;
   color: black;
 }

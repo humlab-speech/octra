@@ -1,10 +1,12 @@
 @if (showForgetPassword || showSignup) {
-  <a
-    class="d-block text-start pointer"
+  <button
+    class="btn btn-link d-block text-start pointer p-0"
+    type="button"
     (click)="goBack()"
     style="font-size: 0.8rem; text-decoration: none"
-    >< {{ 'p.back to login' | transloco }}</a
   >
+    < {{ 'p.back to login' | transloco }}
+  </button>
   @if (showForgetPassword) {
     @if (!passwordResetRequested) {
       <form #form="ngForm" (ngSubmit)="resetPassword()">
@@ -17,7 +19,6 @@
             name="email"
             [(ngModel)]="email"
             [required]="true"
-            autofocus
             email="true"
           />
           <label for="email">{{ 'g.e-mail' | transloco }}</label>
@@ -85,7 +86,6 @@
           [(ngModel)]="credentials.usernameEmail"
           name="name"
           required
-          autofocus
         />
         <label for="inputName">{{ 'p.username or email' | transloco }}</label>
       </div>
@@ -117,25 +117,27 @@
       </button>
       <div class="d-block mt-2 text-center">
         @if (passwordReset) {
-          <a
-            class="pointer"
+          <button
+            class="btn btn-link pointer p-0"
+            type="button"
             style="font-size: 0.8rem; text-decoration: none"
             (click)="showForgetPassword = true"
           >
             {{ 'p.forgot password' | transloco }}
-          </a>
+          </button>
         }
         @if (passwordReset && registrations) {
-          <a> | </a>
+          <span> | </span>
         }
         @if (registrations) {
-          <a
-            class="pointer"
+          <button
+            class="btn btn-link pointer p-0"
+            type="button"
             style="font-size: 0.8rem; text-decoration: none"
             (click)="showSignUpForm()"
           >
             {{ 'p.sign up' | transloco }}
-          </a>
+          </button>
         }
       </div>
     </form>

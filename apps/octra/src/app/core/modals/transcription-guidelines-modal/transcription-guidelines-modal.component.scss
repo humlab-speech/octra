@@ -67,11 +67,11 @@ audio {
 }
 
 .card-header {
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
 }
 
 .card-header.example {
-  background-color: #73a790;
+  background-color: var(--octra-accent-green);
 }
 
 .modal-dialog.modal-lg {

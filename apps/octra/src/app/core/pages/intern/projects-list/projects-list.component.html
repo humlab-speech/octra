@@ -28,9 +28,13 @@
             "
           ></span>
           <p>
-            <a class="link" (click)="resumeTaskManually()">{{
-              'projects-list.resume transcription' | transloco
-            }}</a>
+            <button
+              type="button"
+              class="link btn btn-link p-0 border-0 align-baseline"
+              (click)="resumeTaskManually()"
+            >
+              {{ 'projects-list.resume transcription' | transloco }}
+            </button>
           </p>
         </div>
       }
@@ -43,13 +47,14 @@
     </div>
     <div class="flex" style="height: 100px">
       @if (shownProjects) {
-        <div
-          class="text-end link"
+        <button
+          type="button"
+          class="text-end link btn btn-link p-0 border-0 w-100"
           style="font-size: 0.8rem"
           (click)="openCreateProjectRequestModal()"
         >
           {{ 'projects-list.project creation wanted' | transloco }}
-        </div>
+        </button>
         <div class="list-group flex" style="height: 100px">
           <div class="list-group-item">
             <div class="row g-0">

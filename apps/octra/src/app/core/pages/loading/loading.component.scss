@@ -18,9 +18,9 @@
 .progress {
   height: 10px;
   background: transparent;
-  border: 1px solid #5b8e8a;
+  border: 1px solid var(--octra-accent-green-dark);
 }
 
 .progress-bar {
-  background-color: #5b8e8a;
+  background-color: var(--octra-accent-green-dark);
 }

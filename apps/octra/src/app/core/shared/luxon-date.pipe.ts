@@ -6,8 +6,6 @@ import { DateTime } from 'luxon';
   standalone: true,
 })
 export class LuxonShortDateTimePipe implements PipeTransform {
-  constructor() {}
-
   transform(
     value: string | Date | DateTime | number | undefined,
     options: { locale: string | undefined },

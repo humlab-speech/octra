@@ -44,6 +44,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { MultiThreadingService } from '../../../multi-threading.service';
 import { Position, Size } from '../../../obj';
 import { PlayCursor } from '../../../obj/play-cursor';
+import { OCTRA_COLORS } from '../../../obj';
 import { AudioViewerShortcutEvent } from './audio-viewer.component';
 import { AudioviewerConfig } from './audio-viewer.config';
 
@@ -156,7 +157,7 @@ export class AudioViewerService {
 
   private styles = {
     playHead: {
-      backgroundColor: '#5B8E8A',
+      backgroundColor: OCTRA_COLORS.accentGreenDark,
       strokeColor: 'pruple',
       strokeWidth: 1,
       width: 10,
@@ -171,7 +172,7 @@ export class AudioViewerService {
       color: '#b5b5b5',
     },
     background: {
-      color: '#EABAB9',
+      color: OCTRA_COLORS.surfaceBackground,
     },
     grid: {
       strokeColor: 'gray',
@@ -4349,30 +4350,7 @@ export class AudioViewerService {
 
             // console.log(`draw overlay for line ${j + lineInterval.from} and segment at ${sceneSegment.time.seconds}`);
             if (sceneSegment.context?.asr?.isBlockedBy === undefined) {
-              // not blocked
-              if (
-                sceneSegment.getFirstLabelWithoutName('Speaker')?.value ===
-                  undefined ||
-                sceneSegment.getFirstLabelWithoutName('Speaker')?.value === ''
-              ) {
-                context.fillStyle = 'rgba(255,0,0,0.2)';
-              } else if (
-                this.silencePlaceholder !== undefined &&
-                sceneSegment.getFirstLabelWithoutName('Speaker')?.value ===
-                  this.silencePlaceholder
-              ) {
-                context.fillStyle = 'rgba(0,0,255,0.2)';
-              } else if (
-                sceneSegment.getFirstLabelWithoutName('Speaker')?.value !==
-                  undefined &&
-                sceneSegment.getFirstLabelWithoutName('Speaker')?.value !== ''
-              ) {
-                context.fillStyle = 'rgba(0,128,0,0.2)';
-              } else {
-                console.error(`Audioviewer shows black segment`);
-              }
               context.clearRect(x, localY, w, h);
-              context.fillRect(x, localY, w, h);
             } else {
               // something running
               let progressBarFillColor = '';
@@ -4390,13 +4368,13 @@ export class AudioViewerService {
               ) {
                 context.fillStyle = 'rgba(179,10,179,0.5)';
                 progressBarFillColor = 'rgba(179,10,179,0.8)';
-                progressBarForeColor = '#F1EFE4';
+                progressBarForeColor = OCTRA_COLORS.surfaceBackground;
               } else if (
                 sceneSegment.context?.asr?.isBlockedBy === ASRQueueItemType.MAUS
               ) {
                 context.fillStyle = 'rgba(26,229,160,0.5)';
                 progressBarFillColor = 'rgba(17,176,122,0.8)';
-                progressBarForeColor = '#F1EFE4';
+                progressBarForeColor = OCTRA_COLORS.surfaceBackground;
               }
               context.clearRect(x, localY, w, h);
               context.fillRect(x, localY, w, h);
@@ -4454,8 +4432,8 @@ export class AudioViewerService {
                     );
                     context.fillStyle =
                       progressStart + loadedPixels > textPosition &&
-                      progressBarForeColor === '#F1EFE4'
-                        ? '#F1EFE4'
+                      progressBarForeColor === OCTRA_COLORS.surfaceBackground
+                        ? OCTRA_COLORS.surfaceBackground
                         : 'black';
                     context.fillText(progressString, textPosition, localY + 14);
                   }

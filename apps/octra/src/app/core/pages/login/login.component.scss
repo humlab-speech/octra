@@ -5,7 +5,7 @@ h4 {
 }
 
 :host {
-  background-color: whitesmoke;
+  background-color: var(--octra-surface-background);
 }
 
 .login-submit,
@@ -42,7 +42,7 @@ h4 {
 
 footer {
   padding-top: 40px;
-  background: whitesmoke;
+  background: var(--octra-surface-background);
 }
 
 footer .logo {

@@ -41,14 +41,14 @@
                   otherSpeaker of getSpeakerListWithout(speaker.replaceWith);
                   track otherSpeaker
                 ) {
-                  <li
-                    role="menuitem"
-                    (click)="setReplacement(i, otherSpeaker.name)"
-                    style="cursor: pointer"
-                  >
-                    <span class="dropdown-item" href="#">{{
-                      otherSpeaker.name
-                    }}</span>
+                  <li role="menuitem">
+                    <button
+                      type="button"
+                      class="dropdown-item"
+                      (click)="setReplacement(i, otherSpeaker.name)"
+                    >
+                      {{ otherSpeaker.name }}
+                    </button>
                   </li>
                 }
               </ul>

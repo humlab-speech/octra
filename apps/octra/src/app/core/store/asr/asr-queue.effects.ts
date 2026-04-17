@@ -43,7 +43,7 @@ export class AsrQueueEffects {
         }
 
         const asrSettings =
-          state.application.appConfiguration?.octra.plugins!.asr!;
+          state.application.appConfiguration?.octra.plugins?.asr;
 
         if (!asrSettings) {
           return of(

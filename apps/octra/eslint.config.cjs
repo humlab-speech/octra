@@ -6,6 +6,9 @@ module.exports = [
   ...nx.configs['flat/angular'],
   ...nx.configs['flat/angular-template'],
   {
+    ignores: ['apps/octra/src/assets/**/*', 'apps/octra/src/config/**/*.js'],
+  },
+  {
     files: ['**/*.ts'],
     rules: {
       '@angular-eslint/directive-selector': [

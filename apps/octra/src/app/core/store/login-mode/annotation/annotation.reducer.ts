@@ -145,14 +145,14 @@ export class AnnotationStateReducers {
         (state: AnnotationState, { mode, audioFile }) => {
           if (this.mode === mode) {
             return {
-              ...state,
-              audio: {
-                ...state.audio,
-                loaded: true,
-                sampleRate: audioFile!.metadata?.sampleRate!,
-                fileName: audioFile!.filename,
-                file: audioFile,
-              },
+                ...state,
+                audio: {
+                  ...state.audio,
+                  loaded: true,
+                  sampleRate: audioFile?.metadata?.sampleRate ?? 0,
+                  fileName: audioFile!.filename,
+                  file: audioFile,
+                },
             };
           }
           return state;
@@ -348,9 +348,12 @@ export class AnnotationStateReducers {
                       removeOptions?.silenceCode,
                       removeOptions?.mergeTranscripts,
                       (transcript: string) => {
+                        if (!state.guidelines?.selected?.json) {
+                          return transcript;
+                        }
                         return tidyUpAnnotation(
                           transcript,
-                          state.guidelines?.selected?.json!,
+                          state.guidelines.selected.json,
                         );
                       },
                     );
@@ -362,9 +365,12 @@ export class AnnotationStateReducers {
                       removeOptions?.silenceCode,
                       removeOptions?.mergeTranscripts,
                       (transcript: string) => {
+                        if (!state.guidelines?.selected?.json) {
+                          return transcript;
+                        }
                         return tidyUpAnnotation(
                           transcript,
-                          state.guidelines?.selected?.json!,
+                          state.guidelines.selected.json,
                         );
                       },
                     );

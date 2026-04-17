@@ -325,7 +325,7 @@ export class DictaphoneEditorComponent
       this.boundaryselected = true;
       const start =
         i > 0
-          ? (this.annotationStoreService.currentLevel?.items[i - 1]! as any)
+          ? (this.annotationStoreService.currentLevel?.items[i - 1] as any)
               .time.samples
           : 0;
 
