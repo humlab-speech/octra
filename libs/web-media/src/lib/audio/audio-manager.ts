@@ -319,6 +319,7 @@ export class AudioManager {
 
 export class AudioChunk {
   private static _counter = 0;
+  private static readonly replayRestartTag = 'replay-restart';
   public statuschange: Subject<PlayBackStatus> = new Subject<PlayBackStatus>();
   private readonly _audioManger: AudioManager;
   private subscrManager = new SubscriptionManager<Subscription>();
@@ -512,6 +513,7 @@ export class AudioChunk {
 
   public async startPlayback(playOnHover = false): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      this.cancelPendingReplayRestart();
       new Promise<void>((resolve2, reject2) => {
         if (!this._audioManger.isPlaying) {
           resolve2();
@@ -571,6 +573,7 @@ export class AudioChunk {
                   if (this._replay) {
                     this.setState(state);
                     new Promise<void>((resolve2, reject2) => {
+                      this.cancelPendingReplayRestart();
                       this.subscrManager.add(
                         timer(200).subscribe(() => {
                           this.startPlayback(playOnHover)
@@ -582,6 +585,7 @@ export class AudioChunk {
                               reject2(error);
                             });
                         }),
+                        AudioChunk.replayRestartTag,
                       );
                     });
                   } else {
@@ -618,6 +622,7 @@ export class AudioChunk {
    * stops the playback
    */
   public stopPlayback: () => Promise<void> = async () => {
+    this.cancelPendingReplayRestart();
     if (this._audioManger.isPlaying) {
       await this._audioManger.stopPlayback();
       this.afterPlaybackStopped();
@@ -627,6 +632,7 @@ export class AudioChunk {
   };
 
   public async pausePlayback() {
+    this.cancelPendingReplayRestart();
     await this._audioManger.pausePlayback();
     if (
       this.audioManager.state !== this.status &&
@@ -708,11 +714,15 @@ export class AudioChunk {
   }
 
   public destroy() {
+    this.cancelPendingReplayRestart();
     this.subscrManager.destroy();
   }
 
   public toggleReplay() {
     this._replay = !this._replay;
+    if (!this._replay) {
+      this.cancelPendingReplayRestart();
+    }
   }
 
   private setState(state: PlayBackStatus) {
@@ -731,4 +741,8 @@ export class AudioChunk {
     this.absolutePlayposition = this.audioManager.playPosition.clone();
     this.startpos = this.absolutePlayposition.clone();
   };
+
+  private cancelPendingReplayRestart() {
+    this.subscrManager.removeByTag(AudioChunk.replayRestartTag);
+  }
 }
