@@ -73,7 +73,7 @@ export class AudioviewerConfig {
   public data: {
     color: string;
   } = {
-    color: '#73A790',
+    color: 'rgba(42, 71, 101, 0.8)',
   };
 
   public selection: {

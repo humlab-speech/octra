@@ -178,7 +178,7 @@ export class AudioViewerService {
       strokeWidth: 1,
     },
     signal: {
-      strokeColor: '#73A790',
+      strokeColor: 'rgba(42, 71, 101, 0.8)',
       strokeWidth: 1,
     },
   };
