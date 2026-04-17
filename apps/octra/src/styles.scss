@@ -3,26 +3,26 @@
 
 .btn.btn-success {
   color: #fff;
-  background-color: #009688;
-  border-color: #009688;
+  background-color: #5b8e8a;
+  border-color: #5b8e8a;
 }
 
 .btn.btn-warning {
   color: #fff;
-  background-color: #ff5722;
-  border-color: #ff5722;
+  background-color: #d7b17c;
+  border-color: #d7b17c;
 }
 
 .btn.btn-danger {
   color: #fff;
-  background-color: #f44336;
-  border-color: #f44336;
+  background-color: #b87d5e;
+  border-color: #b87d5e;
 }
 
 .btn.btn-primary {
   color: #fff !important;
-  background-color: #009688 !important;
-  border-color: #009688 !important;
+  background-color: #5b8e8a !important;
+  border-color: #5b8e8a !important;
 }
 
 .btn.btn-secondary {
@@ -91,7 +91,7 @@ footer {
 }
 
 .link {
-  color: #0095dd;
+  color: #2a4765;
   cursor: pointer;
 }
 
@@ -152,14 +152,14 @@ footer {
 }
 
 .error_underline {
-  border-bottom: 2px solid #ff6a7d;
+  border-bottom: 2px solid #b87d5e;
   display: inline;
   cursor: pointer;
 }
 
 .error-tooltip {
   display: none;
-  background-color: #ff899d;
+  background-color: #eabab9;
   padding: 10px;
   max-width: 70%;
   position: absolute;
@@ -219,7 +219,7 @@ footer {
 }
 
 .seg-popover {
-  border: 1px solid orange;
+  border: 1px solid #d7b17c;
   background-color: white;
   z-index: 100;
   position: absolute;
@@ -433,7 +433,9 @@ label.radio-inline .bmd-radio {
 .btn-info,
 .bg-info,
 .btn-info:hover {
-  color: white;
+  color: #f1efe4;
+  background-color: #73a790;
+  border-color: #73a790;
 }
 
 a {
@@ -482,10 +484,10 @@ a {
 
 .text-outline-white {
   text-shadow:
-    -1px -1px 0 white,
-    1px -1px 0 white,
-    -1px 1px 0 white,
-    1px 1px 0 white !important;
+    -1px -1px 0 #f1efe4,
+    1px -1px 0 #f1efe4,
+    -1px 1px 0 #f1efe4,
+    1px 1px 0 #f1efe4 !important;
 }
 
 .beta_mark {

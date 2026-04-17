@@ -6,7 +6,7 @@ export class AudioviewerConfig {
   public justifySignalHeight = true;
   public cropping = 'none';
   public lineheight = 60;
-  public backgroundcolor = 'rgb(255, 248, 248)';
+  public backgroundcolor = '#EABAB9';
   public margin: {
     top: number;
     right: number;
@@ -30,12 +30,12 @@ export class AudioviewerConfig {
     enabled: false,
     width: 20,
     background: {
-      color: 'white',
+      color: '#F1EFE4',
       stroke: 'gray',
       strokeWidth: 1,
     },
     selector: {
-      color: 'rgb(10,140,140)',
+      color: '#5B8E8A',
       stroke: 'gray',
       strokeWidth: 1,
       width: 20,
@@ -49,7 +49,7 @@ export class AudioviewerConfig {
   } = {
     height: 20,
     width: 10,
-    color: 'purple',
+    color: '#9C7A8C',
   };
   public boundaries: {
     enabled: boolean;
@@ -60,7 +60,7 @@ export class AudioviewerConfig {
     enabled: true,
     readonly: false,
     width: 3,
-    color: '#ebaf4c',
+    color: '#D7B17C',
   };
   public grid: {
     enabled: true;
@@ -73,7 +73,7 @@ export class AudioviewerConfig {
   public data: {
     color: string;
   } = {
-    color: 'rgb(0, 127, 0)',
+    color: '#73A790',
   };
 
   public selection: {

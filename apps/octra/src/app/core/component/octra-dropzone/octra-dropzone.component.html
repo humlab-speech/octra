@@ -26,11 +26,11 @@
           @if (fileProgress.status === 'valid' && fileProgress.warning) {
             <i
               class="bi bi-exclamation-triangle-fill"
-              [popoverTitle]="'Validation Warning'"
-              [triggers]="'hover'"
-              [ngbPopover]="fileProgress.warning"
-              style="font-size: 16px; color: orange"
-            ></i>
+               [popoverTitle]="'Validation Warning'"
+               [triggers]="'hover'"
+               [ngbPopover]="fileProgress.warning"
+               style="font-size: 16px; color: #d7b17c"
+             ></i>
           }
           @if (fileProgress.status === 'waiting') {
             <div

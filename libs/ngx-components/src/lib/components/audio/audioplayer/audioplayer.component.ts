@@ -67,7 +67,7 @@ export class AudioplayerComponent
     },
     playHead: {
       height: 20,
-      backgroundColor: '#56a09e',
+      backgroundColor: '#5b8e8a',
       width: 10,
     },
     height: 60,
@@ -76,7 +76,7 @@ export class AudioplayerComponent
       color: '#b5b5b5',
     },
     background: {
-      color: '#e2e6ff',
+      color: '#8b8fae',
     },
   };
 
@@ -201,7 +201,7 @@ export class AudioplayerComponent
           settings.slider.margin.left -
           settings.slider.margin.right,
         height: settings.slider.height,
-        fill: '#84d5d3',
+        fill: '#73a790',
       });
 
       this.canvasElements.sliderBar.on('click', this.onSliderClick);

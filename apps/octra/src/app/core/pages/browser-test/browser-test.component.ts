@@ -35,11 +35,11 @@ export class BrowserTestComponent {
   getStateColor(rule: any): string {
     switch (rule.state) {
       case 'processing':
-        return 'cornflowerblue';
+        return '#2A4765';
       case 'failed':
-        return 'red';
+        return '#B87D5E';
       case 'ok':
-        return 'forestgreen';
+        return '#73A790';
     }
     return 'processing';
   }

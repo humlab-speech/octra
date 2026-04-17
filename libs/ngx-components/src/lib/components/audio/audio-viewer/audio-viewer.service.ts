@@ -156,7 +156,7 @@ export class AudioViewerService {
 
   private styles = {
     playHead: {
-      backgroundColor: '#56a09e',
+      backgroundColor: '#5B8E8A',
       strokeColor: 'pruple',
       strokeWidth: 1,
       width: 10,
@@ -171,14 +171,14 @@ export class AudioViewerService {
       color: '#b5b5b5',
     },
     background: {
-      color: '#e2e6ff',
+      color: '#EABAB9',
     },
     grid: {
       strokeColor: 'gray',
       strokeWidth: 1,
     },
     signal: {
-      strokeColor: 'green',
+      strokeColor: '#73A790',
       strokeWidth: 1,
     },
   };
@@ -4238,7 +4238,7 @@ export class AudioViewerService {
             w = lineWidth - select.start + 1;
           }
 
-          context.fillStyle = 'white';
+          context.fillStyle = '#F1EFE4';
           context.clearRect(x, localY + this.settings.lineheight - 20, w, 20);
           context.fillRect(x, localY + this.settings.lineheight - 20, w, 20);
         }
@@ -4384,13 +4384,13 @@ export class AudioViewerService {
               ) {
                 context.fillStyle = 'rgba(179,10,179,0.5)';
                 progressBarFillColor = 'rgba(179,10,179,0.8)';
-                progressBarForeColor = 'white';
+                progressBarForeColor = '#F1EFE4';
               } else if (
                 sceneSegment.context?.asr?.isBlockedBy === ASRQueueItemType.MAUS
               ) {
                 context.fillStyle = 'rgba(26,229,160,0.5)';
                 progressBarFillColor = 'rgba(17,176,122,0.8)';
-                progressBarForeColor = 'white';
+                progressBarForeColor = '#F1EFE4';
               }
               context.clearRect(x, localY, w, h);
               context.fillRect(x, localY, w, h);
@@ -4448,8 +4448,8 @@ export class AudioViewerService {
                     );
                     context.fillStyle =
                       progressStart + loadedPixels > textPosition &&
-                      progressBarForeColor === 'white'
-                        ? 'white'
+                      progressBarForeColor === '#F1EFE4'
+                        ? '#F1EFE4'
                         : 'black';
                     context.fillText(progressString, textPosition, localY + 14);
                   }

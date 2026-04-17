@@ -1,5 +1,5 @@
 .red {
-  background-color: #ff899d;
+  background-color: #eabab9;
 }
 
 .segment-number {
@@ -56,25 +56,25 @@
 }
 
 .bg-danger {
-  background-color: #ffd4dc !important;
-  border: 1px solid #fc9dac !important;
+  background-color: #eabab9 !important;
+  border: 1px solid #b87d5e !important;
   color: black !important;
 }
 
 .bg-info {
-  background-color: lightblue !important;
-  border: 1px solid #64aabd !important;
+  background-color: #8b8fae !important;
+  border: 1px solid #2a4765 !important;
   color: black !important;
 }
 
 .bg-success {
-  background-color: #9ad09a !important;
-  border: 1px solid #51a451 !important;
+  background-color: #73a790 !important;
+  border: 1px solid #5b8e8a !important;
   color: black !important;
 }
 
 .bg-highlight {
-  background-color: yellow !important;
-  border: 1px solid #ffdd00 !important;
+  background-color: #d7b17c !important;
+  border: 1px solid #b87d5e !important;
   color: black;
 }

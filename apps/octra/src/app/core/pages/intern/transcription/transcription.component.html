@@ -23,7 +23,7 @@
         >
           <a
             (click)="openPromptModal()"
-            style="cursor: pointer; color: #009688"
+            style="cursor: pointer; color: #5b8e8a"
           >
             {{ 'g.prompt' | transloco }}
           </a>
@@ -39,7 +39,7 @@
       <i class="bi bi-save-fill" style="color: #333333"></i>
     }
     @if (saving === 'error') {
-      <i class="bi bi-save-fill" style="color: red"></i>
+      <i class="bi bi-save-fill" style="color: #b87d5e"></i>
     }
   </span>
   <octra-fastbar
@@ -68,7 +68,7 @@
           <div
             class="spinner-border"
             role="status"
-            style="color: lightgray; height: 150px; width: 150px"
+            style="color: #8b8fae; height: 150px; width: 150px"
           >
             <span class="visually-hidden">Loading...</span>
           </div>
@@ -117,7 +117,7 @@
           (click)="sendTranscriptionForShortAudioFiles('middle')"
           class="btn btn-raised btn-warning col-md-3 btn btn-warning"
           type="button"
-          style="background-color: orange"
+          style="background-color: #d7b17c"
         >
           <i class="bi bi-star-fill"></i>
           <i class="bi bi-star-fill"></i>
