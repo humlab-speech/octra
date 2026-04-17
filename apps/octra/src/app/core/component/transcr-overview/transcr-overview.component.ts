@@ -74,6 +74,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       html: string;
       text: string;
     };
+    validationMessages: string[];
   }[] = [];
   public transcript = '';
 
@@ -235,7 +236,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async onMouseOver(
-    $event: MouseEvent,
+    $event: Event,
     rowNumber: number,
     row: HTMLDivElement,
     validationPopover: ValidationPopoverComponent,
@@ -446,6 +447,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       html: string;
     };
     validation: string;
+    validationMessages: string[];
   }> {
     const obj = {
       start: startSamples,
@@ -455,6 +457,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
         html: rawText ?? '',
       },
       validation: '',
+      validationMessages: [] as string[],
     };
 
     if (this.appStorage.useMode !== 'url') {
@@ -500,6 +503,12 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       /(<p>)|(<\/p>)/g,
       '',
     );
+
+    for (const v of validation[i]?.validation ?? []) {
+      const detail = await this.annotationStoreService.getErrorDetails(v.code);
+      obj.validationMessages.push(detail?.title ?? v.code);
+    }
+
     return obj;
   }
 

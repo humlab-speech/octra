@@ -95,11 +95,15 @@
             <label for="skip-silence-checkbox">{{
               'g.skip silence' | transloco
             }}</label>
-            <i
-              [class]="playAllState.icon"
+            <button
+              type="button"
+              class="btn btn-link p-0"
               (click)="togglePlayAll()"
               style="font-size: 1.2rem"
-            ></i>
+            >
+              <i [class]="playAllState.icon"></i>
+              <span class="visually-hidden">Toggle play all</span>
+            </button>
           </th>
         </tr>
       </thead>
@@ -140,6 +144,7 @@
             >
               <i
                 class="bi bi-exclamation-triangle segment-warning"
+                [title]="segment.validationMessages.join('\n')"
                 [ngStyle]="{
                   display:
                     segment.transcription.html.indexOf(
@@ -166,9 +171,13 @@
                 'bg-highlight': playAllState.currentSegment === i,
               }"
             >
-              <span class="link" (click)="onSegmentClicked(i)"
-                ># {{ i + 1 | leadingnull: shownSegments.length }}</span
+              <button
+                type="button"
+                class="btn btn-link link p-0"
+                (click)="onSegmentClicked(i)"
               >
+                # {{ i + 1 | leadingnull: shownSegments.length }}
+              </button>
             </td>
             @if (
               textEditor.state === 'active' && textEditor.selectedSegment === i
@@ -232,7 +241,8 @@
                 class="segment-transcript"
                 (mousedown)="onMouseDown(i)"
                 (mouseover)="onMouseOver($event, i, row, validationPopover)"
-              >
+                (focus)="onMouseOver($event, i, row, validationPopover)"
+                >
                 <octra-validation-popover
                   #validationPopover
                   style="position: absolute"
@@ -260,10 +270,14 @@
                 'bg-highlight': playAllState.currentSegment === i,
               }"
             >
-              <i
-                [class]="playStateSegments[i].icon"
+              <button
+                type="button"
+                class="btn btn-link p-0"
                 (click)="playSelectedSegment(i)"
-              ></i>
+              >
+                <i [class]="playStateSegments[i].icon"></i>
+                <span class="visually-hidden">Play segment</span>
+              </button>
             </td>
           </tr>
         }

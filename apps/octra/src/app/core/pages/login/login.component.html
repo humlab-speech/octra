@@ -12,7 +12,7 @@
       </div>
       <p style="text-align: justify">
         OCTRA is a free web-application for plain text (orthographic) transcription of speech recordings. 
-	It has three different editors that caters for 
+	It has three different editors that cater for
         different needs when transcribing, and you may switch between them freely in a session. 
 	  
       </p>
@@ -130,9 +130,13 @@
               margin-right: 10px;
             "
           >
-            <a (click)="startDemo()" class="link pointer">{{
-              'login.demo' | transloco
-            }}</a>
+            <button
+              type="button"
+              (click)="startDemo()"
+              class="btn btn-link link pointer p-0"
+            >
+              {{ 'login.demo' | transloco }}
+            </button>
           </p>
           <div class="card-body">
             <section>

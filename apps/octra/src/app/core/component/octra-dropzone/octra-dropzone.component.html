@@ -1,10 +1,11 @@
-<div
+<button
+  type="button"
   (click)="showSupported()"
-  class="link"
+  class="btn btn-link link p-0"
   style="z-index: 20; width: 100%; text-align: right; font-size: 0.85rem"
 >
   <i class="bi bi-info-circle"></i> {{ 'g.supported files' | transloco }}
-</div>
+</button>
 <octra-drop-zone #dropzone (afterdrop)="afterDrop()" [height]="height">
   <table [hidden]="files.length === 0" class="dropzone-table position-relative">
     @for (fileProgress of files; track fileProgress) {
@@ -13,7 +14,7 @@
           @if (fileProgress.status === 'invalid') {
             <i
               class="bi bi-x-lg icon-invalid"
-              [popoverTitle]="'Validation Error'"
+              [popoverTitle]="'dropzone.validation error' | transloco"
               [ngbPopover]="fileProgress.error ?? ''"
               [triggers]="'hover'"
               style="font-size: 16px"
@@ -26,19 +27,20 @@
           @if (fileProgress.status === 'valid' && fileProgress.warning) {
             <i
               class="bi bi-exclamation-triangle-fill"
-               [popoverTitle]="'Validation Warning'"
+               [popoverTitle]="'dropzone.validation warning' | transloco"
                [triggers]="'hover'"
                [ngbPopover]="fileProgress.warning"
-               style="font-size: 16px; color: #d7b17c"
-             ></i>
+               style="font-size: 16px; color: var(--octra-accent-warning)"
+              ></i>
           }
           @if (fileProgress.status === 'waiting') {
             <div
               class="spinner-border icon-wait"
               role="status"
               style="width: 16px; height: 16px; border-width: 2px; color: gray"
+              [title]="'dropzone.waiting for audio' | transloco"
             >
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">{{ 'dropzone.waiting for audio' | transloco }}</span>
             </div>
           } @else if (
             !fileProgress.file.type.includes('audio') &&
@@ -49,7 +51,7 @@
               role="status"
               style="width: 16px; height: 16px; border-width: 2px; color: gray"
             >
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">{{ 'g.please wait' | transloco }}</span>
             </div>
           }
           @if (
@@ -77,31 +79,39 @@
         </td>
         <td>{{ getDropzoneFileString(fileProgress.file.file!) }}</td>
         <td>
-          <i
-            class="bi bi-trash3-fill icon-delete"
+          <button
+            type="button"
+            class="btn btn-link p-0 icon-delete"
             (click)="onDeleteEntry($event, fileProgress.id)"
             style="font-size: 14px; color: dimgray"
-          ></i>
+          >
+            <i class="bi bi-trash3-fill"></i>
+            <span class="visually-hidden">Delete file</span>
+          </button>
         </td>
         <td>
-          <i
+          <button
+            type="button"
             [ngStyle]="{
               visibility: fileProgress.needsOptions ? 'visible' : 'hidden',
             }"
-            class="bi bi-gear-wide-connected ms-1"
+            class="btn btn-link p-0 ms-1"
             (click)="
               $event.stopImmediatePropagation();
               $event.stopPropagation();
               octraDropzoneService.openImportOptionsModal(fileProgress)
             "
             style="font-size: 14px; color: dimgray"
-          ></i>
+          >
+            <i class="bi bi-gear-wide-connected"></i>
+            <span class="visually-hidden">Open import options</span>
+          </button>
         </td>
       </tr>
     }
   </table>
   @if (files.length === 0) {
-    <span class="position-relative">{{
+    <span class="dropzone-placeholder position-relative">{{
       'dropzone.drag&drop here' | transloco
     }}</span>
   }

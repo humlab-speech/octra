@@ -84,7 +84,14 @@
   },
   "dropzone": {
     "drag&drop here": "Dra och släpp en ljudfil (+ en valfri transkriptfil) här eller klicka här.",
-    "file selected": "{{file_label}} vald"
+    "file selected": "{{file_label}} vald",
+    "waiting for audio": "Väntar på ljudfil — vänligen lägg även till en ljudfil",
+    "validation error": "Valideringsfel",
+    "validation warning": "Valideringsvarning",
+    "invalid file type": "Den här filtypen stöds inte.",
+    "file format not supported": "Filformatet stöds inte.",
+    "file names not same": "Transkriptfilens namn matchar inte ljudfilens namn.",
+    "file too large": "Filen överskrider den maximalt tillåtna storleken på {{maxSize}} MB."
   },
   "export": {
     "meta data": {

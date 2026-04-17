@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import {
   AnnotationLevelType,
@@ -114,6 +115,7 @@ export class OctraDropzoneService {
   constructor(
     private modService: OctraModalService,
     private store: Store<RootState>,
+    private translocoService: TranslocoService,
   ) {}
 
   add(file: File) {
@@ -151,7 +153,7 @@ export class OctraDropzoneService {
       );
     } else {
       progressFile.status = 'invalid';
-      progressFile.error = 'Invalid file type';
+      progressFile.error = this.translocoService.translate('dropzone.invalid file type');
       this._files.push(progressFile);
       this.updateStatistics();
     }
@@ -292,7 +294,7 @@ export class OctraDropzoneService {
           );
         } else {
           fileProgress.status = 'invalid';
-          fileProgress.error = `The file size is bigger than ${AppInfo.maxAudioFileSize} MB.`;
+          fileProgress.error = this.translocoService.translate('dropzone.file too large', { maxSize: AppInfo.maxAudioFileSize });
           this.updateStatistics();
           return throwError(
             () =>
@@ -442,7 +444,7 @@ export class OctraDropzoneService {
             if (!converter) {
               // no valid converter found
               fileProgress.status = 'invalid';
-              fileProgress.error = 'File format not supported.';
+              fileProgress.error = this.translocoService.translate('dropzone.file format not supported');
             } else {
               fileProgress.status = 'valid';
               fileProgress.error = '';
@@ -473,7 +475,7 @@ export class OctraDropzoneService {
         )
         .join('|')}$`;
       if (new RegExp(regexStr).exec(fileProgress.file.fullname) === null) {
-        fileProgress.warning = 'File names are not the same.';
+        fileProgress.warning = this.translocoService.translate('dropzone.file names not same');
       }
       for (const lvl of importResult.annotjson.levels) {
         if (lvl.type === AnnotationLevelType.SEGMENT) {
