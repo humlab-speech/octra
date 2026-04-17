@@ -1701,12 +1701,11 @@ export class AudioViewerService {
 
             overlayGroup.add(overlaySegment);
 
-            if (this.settings.showTranscripts) {
-              const textBackground = new Shape({
-                opacity: 0.75,
-                x: this.settings.margin.left,
-                y: 0,
-                width: this.innerWidth,
+              if (this.settings.showTranscripts) {
+                const textBackground = new Shape({
+                  x: this.settings.margin.left,
+                  y: 0,
+                  width: this.innerWidth,
                 listening: false,
                 height: segmentHeight,
                 transformsEnabled: 'position',
@@ -4238,7 +4237,14 @@ export class AudioViewerService {
             w = lineWidth - select.start + 1;
           }
 
-          context.fillStyle = '#F1EFE4';
+          const transcript = segment.getFirstLabelWithoutName('Speaker')?.value;
+          const hasTranscription =
+            transcript !== undefined &&
+            transcript !== '' &&
+            transcript !== this.silencePlaceholder;
+          context.fillStyle = hasTranscription
+            ? 'rgba(234, 186, 185, 0.6)'
+            : this.settings.backgroundcolor;
           context.clearRect(x, localY + this.settings.lineheight - 20, w, 20);
           context.fillRect(x, localY + this.settings.lineheight - 20, w, 20);
         }

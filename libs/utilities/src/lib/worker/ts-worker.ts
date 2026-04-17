@@ -19,7 +19,7 @@ export class TsWorker {
         type: 'application/javascript',
       }),
     );
-    this.worker = new Worker(this.blobURL);
+    this.worker = this.createWorker();
   }
 
   private _jobstatuschange = new Subject<TsWorkerJob<any, any>>();
@@ -224,7 +224,23 @@ onmessage = (msg) => {
    * destroys the Taskmanager if not needed anymore.
    */
   public destroy() {
+    this.worker.terminate();
     URL.revokeObjectURL(this.blobURL);
+  }
+
+  public recoverFromStalledJob(id: number) {
+    this.worker.terminate();
+    this.worker = this.createWorker();
+    this.status = TsWorkerStatus.INITIALIZED;
+
+    if (id !== undefined && id > -1) {
+      const index = this._queue.findIndex((a) => a !== undefined && a.id === id);
+      if (index > -1) {
+        this._queue.splice(index, 1);
+      }
+    }
+
+    this.checkBeforeStart();
   }
 
   /**
@@ -259,4 +275,8 @@ onmessage = (msg) => {
       });
     });
   };
+
+  private createWorker(): Worker {
+    return new Worker(this.blobURL);
+  }
 }

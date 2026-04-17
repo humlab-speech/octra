@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 })
 export class MultiThreadingService {
   private numberOfThreads = 2;
+  private readonly workerTimeoutMs = 1500;
   private subscrManager = new SubscriptionManager<Subscription>();
 
   private _workers: TsWorker[] = [];
@@ -31,25 +32,74 @@ export class MultiThreadingService {
       const bestWorker = this.getBestWorker();
 
       if (bestWorker !== undefined) {
-        const id = this.subscrManager.add(
+        let settled = false;
+        let subscriptionId = -1;
+        let timeoutId: number | undefined;
+        const clear = () => {
+          if (timeoutId !== undefined) {
+            window.clearTimeout(timeoutId);
+          }
+          if (subscriptionId > -1) {
+            this.subscrManager.removeById(subscriptionId);
+          }
+        };
+        const finish = (callback: () => void) => {
+          if (!settled) {
+            settled = true;
+            clear();
+            callback();
+          }
+        };
+        const runInlineFallback = async (reason: unknown) => {
+          console.warn('TsWorker stalled, running job inline.', reason);
+
+          try {
+            const doFunction =
+              typeof job.doFunction === 'string'
+                ? eval(job.doFunction)
+                : job.doFunction;
+            const result = await doFunction(...job.args);
+            finish(() => {
+              resolve(result as T);
+            });
+          } catch (error) {
+            finish(() => {
+              reject(error);
+            });
+          }
+        };
+
+        subscriptionId = this.subscrManager.add(
           bestWorker.jobstatuschange.subscribe(
             (changedJob: TsWorkerJob) => {
               if (changedJob.id === job.id) {
                 if (changedJob.status === TsWorkerStatus.FINISHED) {
-                  resolve(changedJob.result);
+                  finish(() => {
+                    resolve(changedJob.result);
+                  });
                 } else if (changedJob.status === TsWorkerStatus.FAILED) {
-                  reject(`job id ${job.id} failed in worker ${bestWorker.id}`);
+                  void runInlineFallback(
+                    new Error(
+                      `job id ${job.id} failed in worker ${bestWorker.id}`,
+                    ),
+                  );
                 }
-
-                // unsubscribe because not needed anymore
-                this.subscrManager.removeById(id);
               }
             },
             (error: any) => {
-              reject(error);
+              void runInlineFallback(error);
             },
           ),
         );
+
+        timeoutId = window.setTimeout(() => {
+          bestWorker.recoverFromStalledJob(job.id);
+          void runInlineFallback(
+            new Error(
+              `job id ${job.id} timed out in worker ${bestWorker.id} after ${this.workerTimeoutMs} ms`,
+            ),
+          );
+        }, this.workerTimeoutMs);
 
         bestWorker.addJob(job);
       } else {

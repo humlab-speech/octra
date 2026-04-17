@@ -68,8 +68,8 @@
 }
 
 .bg-success {
-  background-color: #73a790 !important;
-  border: 1px solid #5b8e8a !important;
+  background-color: rgba(234, 186, 185, 0.6) !important;
+  border: 1px solid #eabab9 !important;
   color: black !important;
 }
 
