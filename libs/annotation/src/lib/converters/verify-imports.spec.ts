@@ -73,12 +73,11 @@ describe('annotation import fixes', () => {
   it('WebVTTConverter: imports VTT', () => {
     const converter = new WebVTTConverter();
     const content = readFile(`${BASE}.vtt`);
-    // last VTT cue ends at 00:44:52.000 = 2692s = 129216000 samples,
-    // which exceeds the actual WAV duration (129210690); use a duration that covers it
-    const vttAudio = { ...audiofile, duration: 129216000 };
+    // last VTT cue ends at 2692s = 129216000 samples, slightly past the actual
+    // WAV duration (129210690); the converter now clamps rather than rejecting.
     const result = converter.import(
       { name: `${BASE}.vtt`, type: 'text/vtt', content, encoding: 'UTF-8' },
-      vttAudio,
+      audiofile,
     );
     expect(result.error).toBe('');
     expect(result.annotjson).toBeDefined();

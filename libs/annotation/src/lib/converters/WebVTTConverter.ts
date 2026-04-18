@@ -230,22 +230,21 @@ export class WebVTTConverter extends Converter {
         tsMatches[0][0],
         audiofile.sampleRate,
       );
-      const timeEnd = this.getSamplesFromTimeString(
+      const timeEndRaw = this.getSamplesFromTimeString(
         tsMatches[1][0],
         audiofile.sampleRate,
       );
 
-      if (
-        timeStart < 0 ||
-        timeEnd < 0 ||
-        timeStart >= audiofile.duration ||
-        timeEnd > audiofile.duration
-      ) {
+      if (timeStart < 0 || timeEndRaw < 0 || timeStart >= audiofile.duration) {
         return {
           error:
             "The last segment's end or start point is out of the audio duration.",
         };
       }
+
+      // Clamp timeEnd to audio duration; VTT timestamps are ms-rounded and the
+      // last cue may overshoot the actual sample count by a small amount.
+      const timeEnd = Math.min(timeEndRaw, audiofile.duration);
 
       const rawText = lines
         .slice(tsLineIdx + 1)

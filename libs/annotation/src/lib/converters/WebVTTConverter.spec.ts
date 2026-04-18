@@ -219,13 +219,17 @@ describe('WebVTTConverter — boundary check', () => {
     expect(r.error).toBe('');
   });
 
-  it('rejects cue whose end exceeds audio duration', () => {
+  it('clamps cue whose end exceeds audio duration (ms-rounding tolerance)', () => {
     const dur = SR * 4; // 4 s — last cue ends at 5 s
     const vtt = buildVtt([
-      { start: '00:00:01.000', end: '00:00:05.000', text: 'Too long' },
+      { start: '00:00:01.000', end: '00:00:05.000', text: 'Clamped' },
     ]);
     const c = new WebVTTConverter();
     const r = c.import(vttFile(vtt), audiofile(dur));
-    expect(r.error).toBeTruthy();
+    // Import succeeds; last segment is clamped to audio boundary
+    expect(r.error).toBe('');
+    const items = r.annotjson!.levels[0].items;
+    const last = items[items.length - 1];
+    expect(last.sampleStart! + last.sampleDur!).toBe(dur);
   });
 });
