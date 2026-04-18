@@ -73,9 +73,9 @@ describe('annotation import fixes', () => {
   it('WebVTTConverter: imports VTT', () => {
     const converter = new WebVTTConverter();
     const content = readFile(`${BASE}.vtt`);
-    // last VTT entry ends at 00:44:52.000 = 2692s = 129216000 samples
-    // converter checks timeEnd < duration (strict), so +1 avoids boundary rejection
-    const vttAudio = { ...audiofile, duration: 129216001 };
+    // last VTT cue ends at 00:44:52.000 = 2692s = 129216000 samples,
+    // which exceeds the actual WAV duration (129210690); use a duration that covers it
+    const vttAudio = { ...audiofile, duration: 129216000 };
     const result = converter.import(
       { name: `${BASE}.vtt`, type: 'text/vtt', content, encoding: 'UTF-8' },
       vttAudio,

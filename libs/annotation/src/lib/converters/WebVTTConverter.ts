@@ -22,8 +22,20 @@ import {
 } from './SupportedApplications';
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
+
+export class WebVTTConverterImportOptions {
+  extractSpeakers = true;
+  sortSpeakerSegments = false;
+
+  constructor(partial?: Partial<WebVTTConverterImportOptions>) {
+    if (partial) Object.assign(this, partial);
+  }
+}
+
 export class WebVTTConverter extends Converter {
   override _name: OctraAnnotationFormatType = 'WebVTT';
+
+  override defaultImportOptions = new WebVTTConverterImportOptions();
 
   public constructor() {
     super();
@@ -46,9 +58,9 @@ export class WebVTTConverter extends Converter {
     this._conversion.import = true;
     this._encoding = 'UTF-8';
     this._category = 'specialist';
-    this._multitiers = false;
+    this._multitiers = true;
     this._notice =
-      'OCTRA reads timestamps and the transcripts. STYLE, NOTICE and other parts of VTT will be ignored. Multi-Line-Transcript will be merged.';
+      'Supports voice-tagged speaker extraction (<v Name>). STYLE, REGION and NOTE blocks are ignored. Multi-line cues are merged.';
   }
 
   public export(
@@ -82,11 +94,16 @@ export class WebVTTConverter extends Converter {
       if (level.type === 'SEGMENT') {
         for (let j = 0; j < level.items.length; j++) {
           const item = level.items[j] as OSegment;
-          const transcript = (
-            item.getFirstLabelWithoutName('Speaker')?.value ?? ''
-          )
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+          const rawText =
+            item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (rawText === '') continue;
+
+          const speaker = item.labels.find((l) => l.name === 'Speaker')?.value;
+          const escapedText = this.escapeXml(rawText);
+          const cueText = speaker
+            ? `<v ${speaker}>${escapedText}</v>`
+            : escapedText;
+
           const start = this.getTimeStringFromSamples(
             item.sampleStart!,
             annotation.sampleRate,
@@ -96,12 +113,10 @@ export class WebVTTConverter extends Converter {
             annotation.sampleRate,
           );
 
-          if (transcript !== '') {
-            result += `${counter}\n`;
-            result += `${start} --> ${end}\n`;
-            result += `${transcript}\n\n`;
-            counter++;
-          }
+          result += `${counter}\n`;
+          result += `${start} --> ${end}\n`;
+          result += `${cueText}\n\n`;
+          counter++;
         }
       }
 
@@ -126,182 +141,264 @@ export class WebVTTConverter extends Converter {
     file: IFile,
     audiofile: OAudiofile,
   ): any | undefined {
-    return undefined;
+    return {
+      $gui_support: true,
+      type: 'object',
+      properties: {
+        extractSpeakers: {
+          title: 'extractSpeakers',
+          type: 'boolean',
+          default: true,
+          description:
+            'Extract speaker names from <v Name> voice tags in cue text.',
+        },
+        sortSpeakerSegments: {
+          title: 'sortSpeakerSegments',
+          dependsOn: ['extractSpeakers'],
+          type: 'boolean',
+          default: false,
+          description: 'Create a separate annotation level for each speaker.',
+        },
+      },
+    };
   }
 
-  public import(file: IFile, audiofile: OAudiofile): ImportResult {
+  public import(
+    file: IFile,
+    audiofile: OAudiofile,
+    options: WebVTTConverterImportOptions = new WebVTTConverterImportOptions(),
+  ): ImportResult {
     if (!audiofile?.sampleRate) {
-      return {
-        error: 'Missing sample rate',
-      };
+      return { error: 'Missing sample rate' };
     }
     if (!audiofile?.name) {
-      return {
-        error: 'Missing audiofile name',
-      };
+      return { error: 'Missing audiofile name' };
     }
     if (!audiofile?.duration) {
-      return {
-        error: 'Missing audiofile duration',
-      };
+      return { error: 'Missing audiofile duration' };
     }
+
+    const content = file.content;
+    if (content === '') {
+      return { error: 'Empty file' };
+    }
+
+    if (!/^WEBVTT(\s|$)/.test(content.trimStart())) {
+      return { error: 'This WebVTT file is bad formatted (header)' };
+    }
+
+    // Split into blocks (blank-line separated) and classify each block
+    const blocks = content.split(/\n\n+/).filter((b) => b.trim() !== '');
+    const parsedCues: Array<{
+      timeStart: number;
+      timeEnd: number;
+      text: string;
+      speaker?: string;
+    }> = [];
+
+    for (const block of blocks) {
+      const lines = block.split('\n').filter((l) => l !== '');
+      if (lines.length === 0) continue;
+
+      const first = lines[0].trim();
+
+      // Skip header, NOTE, STYLE and REGION blocks
+      if (
+        /^WEBVTT/.test(first) ||
+        /^NOTE(\s|$)/.test(first) ||
+        /^STYLE(\s|$)/.test(first) ||
+        /^REGION(\s|$)/.test(first)
+      ) {
+        continue;
+      }
+
+      // Locate the timestamp line (may be preceded by an optional cue identifier)
+      const tsLineIdx = first.includes('-->') ? 0 : 1;
+      if (tsLineIdx >= lines.length || !lines[tsLineIdx].includes('-->')) {
+        continue; // not a valid cue block
+      }
+
+      const tsLine = lines[tsLineIdx].trim();
+
+      // Extract start and end timestamps (ignore cue settings after end time)
+      const tsMatches = [
+        ...tsLine.matchAll(/(?:[0-9]+:)?[0-9]{2}:[0-9]{2}\.[0-9]{3}/g),
+      ];
+      if (tsMatches.length < 2) continue;
+
+      const timeStart = this.getSamplesFromTimeString(
+        tsMatches[0][0],
+        audiofile.sampleRate,
+      );
+      const timeEnd = this.getSamplesFromTimeString(
+        tsMatches[1][0],
+        audiofile.sampleRate,
+      );
+
+      if (
+        timeStart < 0 ||
+        timeEnd < 0 ||
+        timeStart >= audiofile.duration ||
+        timeEnd > audiofile.duration
+      ) {
+        return {
+          error:
+            "The last segment's end or start point is out of the audio duration.",
+        };
+      }
+
+      const rawText = lines
+        .slice(tsLineIdx + 1)
+        .join(' ')
+        .trim();
+      const { text, speaker } = this.parseVttCueText(rawText);
+
+      if (text !== '') {
+        parsedCues.push({ timeStart, timeEnd, text, speaker });
+      }
+    }
+
+    if (parsedCues.length === 0) {
+      return { error: 'Could not find a cue in VTT file' };
+    }
+
     const result = new OAnnotJSON(
       audiofile.name,
       FileInfo.extractFileName(file.name).name,
       audiofile.sampleRate,
     );
-    result.levels.push(new OSegmentLevel(`OCTRA_1`));
-
-    const content = file.content;
 
     let counterID = 1;
-    if (content !== '') {
-      // check header
-      const headerCheck = new RegExp('WEBVTT(?: - ([^\\n]+))?', 'g');
-      const headerMatches = headerCheck.exec(content);
 
-      if (headerMatches !== undefined) {
-        let body = content;
-        const findFirstCueRegex = new RegExp(
-          '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}) --> ' +
-            '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}).*',
-          'g',
-        );
-
-        const firstCueMatch = findFirstCueRegex.exec(content);
-
-        if (firstCueMatch !== null) {
-          body = body.substring(firstCueMatch.index).replace(/^\n+/g, '');
-          const cues = body.split(/\n\n/g).filter((a) => a.trim() !== '');
-
-          for (const cue of cues) {
-            const regex = new RegExp(
-              '([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}) -->' +
-                ' ([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}).*',
-              'g',
-            );
-            const matches = regex.exec(cue);
-
-            let lastEnd = 0;
-            if (matches !== null) {
-              const cueWithoutTimestamp = cue.substring(
-                matches.index + matches[0].length,
-              );
-              const linesOfCue = cueWithoutTimestamp
-                .split(/\n/g)
-                .filter((a) => a.trim() !== '');
-
-              const timeStart = this.getSamplesFromTimeString(
-                matches[1],
-                audiofile.sampleRate,
-              );
-              const timeEnd = this.getSamplesFromTimeString(
-                matches[2],
-                audiofile.sampleRate,
-              );
-              let escapedTranscript = '';
-              if (
-                timeStart > -1 &&
-                timeEnd > -1 &&
-                timeStart < audiofile.duration &&
-                timeEnd < audiofile.duration
-              ) {
-                for (let i = 0; i < linesOfCue.length; i++) {
-                  let transcriptLineOfCue = linesOfCue[i];
-                  if (
-                    transcriptLineOfCue === 'NOTE' ||
-                    transcriptLineOfCue === 'STYLE'
-                  ) {
-                    // stop reading cue because of NOTE block
-                    break;
-                  }
-
-                  transcriptLineOfCue = transcriptLineOfCue
-                    .replace(/NOTE\s.*/g, '')
-                    .replace(/(\n|\s)+$/g, '')
-                    .replace('&lt;', '<')
-                    .replace('&gt;', '>')
-                    .replace(/^-\s/g, '');
-
-                  if (transcriptLineOfCue.trim() !== '') {
-                    escapedTranscript += ` ${transcriptLineOfCue}`;
-                  }
-                }
-
-                if (escapedTranscript.trim() !== '') {
-                  if (timeStart > lastEnd) {
-                    (result.levels[0].items as OSegment[]).push(
-                      new OSegment(counterID++, lastEnd, timeStart - lastEnd, [
-                        new OLabel('OCTRA_1', ''),
-                      ]),
-                    );
-                  }
-
-                  (result.levels[0].items as OSegment[]).push(
-                    new OSegment(counterID++, timeStart, timeEnd - timeStart, [
-                      new OLabel('OCTRA_1', escapedTranscript),
-                    ]),
-                  );
-
-                  lastEnd = timeEnd;
-                } else {
-                  // ignore
-                }
-              } else {
-                return {
-                  error:
-                    "The last segment's end or start point is out of the audio duration.",
-                };
-              }
-            }
-          }
-
-          for (let i = 0; i < result.levels.length; i++) {
-            const level = result.levels[i] as OSegmentLevel<OSegment>;
-            if (level.items.length > 0) {
-              const lastItem = level.items[level.items.length - 1];
-              const restSamples =
-                audiofile.duration -
-                (lastItem.sampleStart + lastItem.sampleDur);
-
-              if (restSamples > 300) {
-                // add empty segment
-                level.items.push(
-                  new OSegment(
-                    counterID++,
-                    lastItem.sampleStart + lastItem.sampleDur,
-                    restSamples,
-                    [new OLabel(`OCTRA_${i + 1}`, '')],
-                  ),
-                );
-              } else {
-                // set last segment duration to fit last sample
-                const lastSegment = level.items[level.items.length - 1];
-                level.items[level.items.length - 1].sampleDur =
-                  Number(audiofile.duration) - Number(lastSegment.sampleStart);
-              }
-            }
-          }
-
-          return {
-            annotjson: result,
-            error: '',
-          };
-        } else {
-          // not found
-          return {
-            error: 'Could not find a cue in VTT file',
-          };
-        }
-      } else {
-        return {
-          error: 'This WebVTT file is bad formatted (header)',
-        };
+    if (options.extractSpeakers && options.sortSpeakerSegments) {
+      // Build one level per unique speaker
+      const cuesBySpeaker = new Map<
+        string,
+        Array<{ timeStart: number; timeEnd: number; text: string }>
+      >();
+      for (const cue of parsedCues) {
+        const key = cue.speaker ?? 'OCTRA_1';
+        if (!cuesBySpeaker.has(key)) cuesBySpeaker.set(key, []);
+        cuesBySpeaker.get(key)!.push(cue);
       }
+
+      let levelIdx = 0;
+      for (const [speakerName, cues] of cuesBySpeaker) {
+        const level = new OSegmentLevel<OSegment>(speakerName);
+        let lastEnd = 0;
+        for (const cue of cues) {
+          if (cue.timeStart > lastEnd) {
+            level.items.push(
+              new OSegment(
+                counterID++,
+                lastEnd,
+                cue.timeStart - lastEnd,
+                [new OLabel(speakerName, '')],
+              ),
+            );
+          }
+          level.items.push(
+            new OSegment(
+              counterID++,
+              cue.timeStart,
+              cue.timeEnd - cue.timeStart,
+              [new OLabel(speakerName, cue.text)],
+            ),
+          );
+          lastEnd = cue.timeEnd;
+        }
+        this.fillTrailingGap(level, audiofile.duration, speakerName, counterID++);
+        result.levels.push(level);
+        levelIdx++;
+      }
+    } else {
+      // Single level; speaker name stored as a second label when present
+      const level = new OSegmentLevel<OSegment>('OCTRA_1');
+      let lastEnd = 0;
+      for (const cue of parsedCues) {
+        if (cue.timeStart > lastEnd) {
+          level.items.push(
+            new OSegment(counterID++, lastEnd, cue.timeStart - lastEnd, [
+              new OLabel('OCTRA_1', ''),
+            ]),
+          );
+        }
+        const labels: OLabel[] = [new OLabel('OCTRA_1', cue.text)];
+        if (options.extractSpeakers && cue.speaker) {
+          labels.push(new OLabel('Speaker', cue.speaker));
+        }
+        level.items.push(
+          new OSegment(
+            counterID++,
+            cue.timeStart,
+            cue.timeEnd - cue.timeStart,
+            labels,
+          ),
+        );
+        lastEnd = cue.timeEnd;
+      }
+      this.fillTrailingGap(level, audiofile.duration, 'OCTRA_1', counterID++);
+      result.levels.push(level);
     }
-    return {
-      error: 'Empty file',
-    };
+
+    return { annotjson: result, error: '' };
+  }
+
+  /**
+   * Strip all VTT inline markup from cue text and extract the speaker name.
+   * Handles: <v Name>, <b>, <i>, <u>, <c.class>, <ruby>, <rt>, inline timestamps.
+   * Decodes HTML entities.
+   */
+  private parseVttCueText(raw: string): { text: string; speaker?: string } {
+    const voiceMatch = /^<v\s+([^>]+)>/.exec(raw.trim());
+    const speaker = voiceMatch?.[1]?.trim() || undefined;
+
+    let text = raw;
+    // Ruby: strip <rt>…</rt> content entirely, then ruby wrappers
+    text = text.replace(/<rt>[^<]*<\/rt>/g, '');
+    text = text.replace(/<\/?ruby>/g, '');
+    // Strip inline timestamp tags e.g. <00:01:23.456>
+    text = text.replace(/<[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}>/g, '');
+    // Strip VTT voice/formatting tags: <v x>, <b>, <i>, <u>, <c.x> and closers
+    text = text.replace(/<\/?[vbiuc][^>]*>/g, '');
+    // Decode HTML entities
+    text = text
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&nbsp;/g, ' ');
+    // Collapse whitespace and trim
+    text = text.replace(/\s+/g, ' ').trim();
+
+    return { text, speaker };
+  }
+
+  private fillTrailingGap(
+    level: OSegmentLevel<OSegment>,
+    audioDuration: number,
+    labelName: string,
+    counterID: number,
+  ): void {
+    if (level.items.length === 0) return;
+    const lastItem = level.items[level.items.length - 1];
+    const restSamples =
+      audioDuration - (lastItem.sampleStart + lastItem.sampleDur);
+
+    if (restSamples > 300) {
+      level.items.push(
+        new OSegment(
+          counterID,
+          lastItem.sampleStart + lastItem.sampleDur,
+          restSamples,
+          [new OLabel(labelName, '')],
+        ),
+      );
+    } else {
+      level.items[level.items.length - 1].sampleDur =
+        Number(audioDuration) - Number(lastItem.sampleStart);
+    }
   }
 
   public getTimeStringFromSamples(samples: number, sampleRate: number) {
@@ -320,12 +417,12 @@ export class WebVTTConverter extends Converter {
 
   public getSamplesFromTimeString(timeString: string, sampleRate: number) {
     if (sampleRate > 0) {
-      const regex = new RegExp(/([0-9]+):([0-9]+):([0-9]+)\.([0-9]+)/g);
+      // Optional hours: matches MM:SS.mmm or HH:MM:SS.mmm
+      const regex = /^(?:([0-9]+):)?([0-9]{2}):([0-9]{2})\.([0-9]{3})$/;
+      const matches = regex.exec(timeString.trim());
 
-      const matches = regex.exec(timeString);
-
-      if (matches !== null && matches.length > -1) {
-        const hours = Number(matches[1]);
+      if (matches !== null) {
+        const hours = matches[1] ? Number(matches[1]) : 0;
         const minutes = Number(matches[2]);
         const seconds = Number(matches[3]);
         const miliseconds = Number(matches[4]);

@@ -169,11 +169,9 @@ describe('annotation round-trip (export → re-import)', () => {
     expect(exported.file!.content.startsWith('WEBVTT')).toBe(true);
 
     const importer = new WebVTTConverter();
-    // WebVTT import rejects if timeEnd >= duration (strict); last cue ends at 129216000
-    const vttAudio = { ...rtAudiofile, duration: 129216001 };
     const reimported = importer.import(
       { name: `${BASE}.vtt`, type: 'text/vtt', content: exported.file!.content, encoding: 'UTF-8' },
-      vttAudio,
+      rtAudiofile,
     );
     expect(reimported.error).toBe('');
     expect(reimported.annotjson).toBeDefined();
