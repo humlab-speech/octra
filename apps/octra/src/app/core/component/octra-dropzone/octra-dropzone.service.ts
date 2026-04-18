@@ -132,11 +132,7 @@ export class OctraDropzoneService {
       AppInfo.audioformats,
     );
 
-    if (
-      isValidaAudioFile ||
-      (!progressFile.file.type.includes('image') &&
-        !progressFile.file.type.includes('video'))
-    ) {
+    if (isValidaAudioFile || !this.isImageOrVideoFile(progressFile.file.type)) {
       const typeToDrop = isValidaAudioFile ? 'audio' : 'transcript';
       this.dropFiles(typeToDrop);
       this._files.push(progressFile);
@@ -349,13 +345,7 @@ export class OctraDropzoneService {
           fileProgress.file.fullname,
           AppInfo.audioformats,
         );
-        if (
-          !isAudioFile &&
-          !(
-            fileProgress.file.type.includes('image') ||
-            fileProgress.file.type.includes('video')
-          )
-        ) {
+        if (!isAudioFile && !this.isImageOrVideoFile(fileProgress.file.type)) {
           if (!this._oaudiofile) {
             fileProgress.status = 'waiting';
             this.updateStatistics();
@@ -609,5 +599,9 @@ export class OctraDropzoneService {
   destroy() {
     this._audioManager?.destroy();
     this._subscrManager.destroy();
+  }
+
+  private isImageOrVideoFile(type: string): boolean {
+    return type.includes('image') || type.includes('video');
   }
 }

@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { describe, it, expect } from 'vitest';
 import { TextConverter } from './TextConverter';
 import { PraatTextgridConverter } from './PraatTextgridConverter';
@@ -8,23 +6,7 @@ import { ELANConverter } from './ELANConverter';
 import { SRTConverter } from './SRTConverter';
 import { WebVTTConverter } from './WebVTTConverter';
 import { AnnotJSONConverter } from './AnnotJSONConverter';
-import { OAudiofile } from '@octra/media';
-
-const FILES = path.resolve(__dirname, '../../../../..');
-
-function readFile(name: string): string {
-  return fs.readFileSync(path.join(FILES, name), 'utf-8');
-}
-
-const audiofile: OAudiofile = {
-  name: 'Intervju med Stig Bergling.wav',
-  size: 86140502,
-  duration: 129210690, // samples at 48000 Hz ≈ 2691.9 s
-  sampleRate: 48000,
-  arraybuffer: undefined,
-};
-
-const BASE = 'Intervju med Stig Bergling';
+import { BASE, readFile, audiofile } from './spec-helpers';
 
 describe('annotation import fixes', () => {
   it('TextConverter: imports <ts="..."> timestamps (Bug #1)', () => {
