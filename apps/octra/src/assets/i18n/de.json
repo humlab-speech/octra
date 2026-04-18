@@ -68,6 +68,18 @@
           "title": "Regulärer Ausdruck für Sprecheridentifikation"
         }
       }
+    },
+    "WebVTT": {
+      "options": {
+        "extractSpeakers": {
+          "title": "Sprecher aus Stimmmarkierungen extrahieren",
+          "description": "Liest den Sprechernamen aus <v Name>-Stimmmarkierungen im Cue-Text und speichert ihn als Sprechermarkierung."
+        },
+        "sortSpeakerSegments": {
+          "title": "Pro Sprecher eine eigene Transkriptionsspur",
+          "description": "Erstellt eine separate Annotationsebene für jeden in der Datei gefundenen Sprecher."
+        }
+      }
     }
   },
   "custom": {

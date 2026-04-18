@@ -68,6 +68,18 @@
           "title": "Regular expression for speaker identification"
         }
       }
+    },
+    "WebVTT": {
+      "options": {
+        "extractSpeakers": {
+          "title": "Extract speakers from voice tags",
+          "description": "Reads the speaker name from <v Name> voice tags in cue text and stores it as a speaker label."
+        },
+        "sortSpeakerSegments": {
+          "title": "Move units with speaker label to separate levels",
+          "description": "Creates a separate annotation level for each speaker found in the file."
+        }
+      }
     }
   },
   "custom": {

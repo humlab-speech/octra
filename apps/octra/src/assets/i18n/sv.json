@@ -68,6 +68,18 @@
           "title": "Reguljärt uttryck för talaridentifikation"
         }
       }
+    },
+    "WebVTT": {
+      "options": {
+        "extractSpeakers": {
+          "title": "Extrahera talare från rösttaggar",
+          "description": "Läser talarnamnet från <v Namn>-rösttaggar i textinnehållet och lagrar det som en talaretikett."
+        },
+        "sortSpeakerSegments": {
+          "title": "Flytta enheter med talaretikett till separata nivåer",
+          "description": "Skapar en separat anteckningsnivå för varje talare som hittas i filen."
+        }
+      }
     }
   },
   "custom": {
