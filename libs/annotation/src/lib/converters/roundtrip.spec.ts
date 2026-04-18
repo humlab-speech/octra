@@ -30,7 +30,7 @@ function importTextGrid(): OAnnotJSON {
 // ── round-trip tests ─────────────────────────────────────────────────────────
 
 describe('annotation round-trip (export → re-import)', () => {
-  let sharedSource: OAnnotJSON;
+  let sharedSource!: OAnnotJSON;
 
   beforeAll(() => {
     sharedSource = importTextGrid();
@@ -181,7 +181,6 @@ describe('annotation round-trip (export → re-import)', () => {
   });
 
   it('AnnotJSON (_annot.json)', () => {
-    // Clone before mutating annotates
     const source = { ...sharedSource };
     const src_count = segmentCount(source);
     // Patch annotates to match the mock audio name so re-import accepts it
