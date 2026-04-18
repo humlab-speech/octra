@@ -124,7 +124,7 @@ export class PraatTextgridConverter extends Converter {
       file: {
         name: filename,
         content: result,
-        encoding: 'UTF-16',
+        encoding: 'UTF-8',
         type: 'text/plain',
       },
     };

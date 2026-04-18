@@ -134,7 +134,8 @@ export class OctraDropzoneService {
 
     if (
       isValidaAudioFile ||
-      !progressFile.file.type.includes('image')
+      (!progressFile.file.type.includes('image') &&
+        !progressFile.file.type.includes('video'))
     ) {
       const typeToDrop = isValidaAudioFile ? 'audio' : 'transcript';
       this.dropFiles(typeToDrop);
@@ -445,9 +446,8 @@ export class OctraDropzoneService {
               // no valid converter found
               fileProgress.status = 'invalid';
               fileProgress.error = this.translocoService.translate('dropzone.file format not supported');
-            } else {
-              fileProgress.status = 'valid';
-              fileProgress.error = '';
+            } else if (fileProgress.status !== 'valid') {
+              fileProgress.status = 'invalid';
             }
           }
         }
@@ -524,9 +524,9 @@ export class OctraDropzoneService {
     } else {
       if (
         fileProgress.checked_converters >= AppInfo.converters.length ||
-        converter.name === 'BundleJSON'
+        converter.name === 'BundleJSON' ||
+        importResult?.error
       ) {
-        // last converter to check
         fileProgress.status = 'invalid';
         fileProgress.error = importResult?.error;
         this._oannotation = undefined;

@@ -207,7 +207,7 @@ export class TextConverter extends Converter {
             // use sample point
             samplePoint = Number(match[samplePointIndex + 1]);
           } else {
-            const timeStringIndex = match.findIndex((a) => a === '⏱');
+            const timeStringIndex = match.findIndex((a) => a === 'ts');
             if (timeStringIndex > -1 && timeStringIndex + 1 < match.length) {
               // use time string
               const timeString = match[timeStringIndex + 1];
