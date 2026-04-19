@@ -20,7 +20,7 @@ import { getProperties } from '@octra/utilities';
 import { TranscrEditorComponent } from '../../../core/component';
 
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
   NgbActiveModal,
@@ -120,9 +120,9 @@ export class TranscrWindowComponent
     return FileInfo.isVideoMimeType(mime);
   }
 
-  get videoUrl(): SafeResourceUrl | null {
+  get videoUrl(): SafeUrl | null {
     const url = this.audioManager?.resource?.info?.url;
-    return url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null;
+    return url ? this.sanitizer.bypassSecurityTrustUrl(url) : null;
   }
 
   act = new EventEmitter<{
@@ -1590,7 +1590,11 @@ export class TranscrWindowComponent
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((status: PlayBackStatus) => {
           if (status === PlayBackStatus.PLAYING) {
-            video.play().catch(() => { /* autoplay policy — ignore */ });
+            video.play().catch((err: DOMException) => {
+              if (err.name !== 'NotAllowedError') {
+                console.warn('[TranscrWindow] video.play() failed:', err);
+              }
+            });
           } else {
             video.pause();
           }
