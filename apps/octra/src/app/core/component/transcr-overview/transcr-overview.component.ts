@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -133,6 +134,8 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     selectedSegment: -1,
     audioChunk: undefined,
   };
+
+  private _leavePending = false;
 
   public get numberOfSegments(): number {
     if (this.currentLevel && this.currentLevel.type === 'SEGMENT') {
@@ -282,6 +285,17 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  @HostListener('document:mousedown', ['$event'])
+  onDocumentMouseDown(event: MouseEvent) {
+    if (this.textEditor.state === 'active' && this.textEditor.selectedSegment > -1) {
+      const target = event.target as HTMLElement;
+      const editorContainer = document.querySelector('octra-transcr-editor');
+      if (editorContainer && !editorContainer.contains(target)) {
+        void this.onTextEditorLeave(this.textEditor.selectedSegment);
+      }
+    }
+  }
+
   onMouseDown(i: number) {
     if (this.currentLevel?.items && this.currentLevel.type === 'SEGMENT') {
       if (this.textEditor.state === 'inactive') {
@@ -304,32 +318,68 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
         this.transcript =
           segment.getFirstLabelWithoutName('Speaker')?.value ?? '';
         // this.transcrEditor.focus();
+        this.cd.markForCheck();
       }
     }
   }
 
   async onTextEditorLeave(i: number) {
+    if (this._leavePending) return;
     if (
-      this.transcrEditor &&
-      this._internLevel?.items &&
-      this._internLevel.type === 'SEGMENT'
+      !this.transcrEditor ||
+      !this._internLevel?.items ||
+      this._internLevel.type !== 'SEGMENT'
     ) {
-      this.transcrEditor.updateRawText();
-      (
-        this._internLevel?.items[i] as OctraAnnotationSegment
-      ).changeFirstLabelWithoutName('Speaker', this.transcrEditor.rawText);
-      const segment = this._internLevel?.items[i] as OctraAnnotationSegment;
+      return;
+    }
+
+    this._leavePending = true;
+
+    // Capture data before resetting state
+    this.transcrEditor.updateRawText();
+    const rawText = this.transcrEditor.rawText;
+    (this._internLevel.items[i] as OctraAnnotationSegment)
+      .changeFirstLabelWithoutName('Speaker', rawText);
+    const segment = this._internLevel.items[i] as OctraAnnotationSegment;
+
+    // Close editor UI immediately — no await before markForCheck
+    this.textEditor.state = 'inactive';
+    this.textEditor.selectedSegment = -1;
+    const chunk = this.textEditor.audioChunk;
+    this.textEditor.audioChunk = undefined;
+    if (chunk) {
+      this.audio.audiomanagers[0].removeChunk(chunk);
+    }
+    this.cd.markForCheck(); // Editor disappears immediately
+
+    // Async save runs in background — UI is already restored
+    try {
       this.annotationStoreService.validateAll();
 
-      this.cd.markForCheck();
+      const startTime =
+        i > 0
+          ? (this._internLevel.items[i - 1] as OctraAnnotationSegment).time
+              .samples
+          : 0;
+      const validationArray = this.annotationStoreService.validationArray.filter(
+        (a) => a.level === this._internLevel!.id,
+      );
 
-      await this.updateSegments();
+      const updatePromise = this.updateSingleSegment(
+        i,
+        startTime,
+        segment,
+        validationArray,
+      );
+      const timeoutPromise = new Promise<void>((_, reject) =>
+        setTimeout(
+          () => reject(new Error('segment update timed out after 8s')),
+          8000,
+        ),
+      );
+      await Promise.race([updatePromise, timeoutPromise]);
 
       this.annotationStoreService.changeCurrentItemById(segment.id, segment);
-      this.textEditor.state = 'inactive';
-      this.textEditor.selectedSegment = -1;
-      this.audio.audiomanagers[0].removeChunk(this.textEditor.audioChunk!);
-      this.cd.markForCheck();
 
       const startSample =
         i > 0
@@ -341,19 +391,19 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
           : 0;
       this.uiService.addElementFromEvent(
         'segment',
-        {
-          value: 'updated',
-        },
+        { value: 'updated' },
         Date.now(),
         undefined,
         undefined,
         undefined,
-        {
-          start: startSample,
-          length: segment.time.samples - startSample,
-        },
+        { start: startSample, length: segment.time.samples - startSample },
         'overview',
       );
+    } catch (err) {
+      console.error('onTextEditorLeave async save error:', err);
+    } finally {
+      this._leavePending = false;
+      this.cd.markForCheck();
     }
   }
 
@@ -422,6 +472,31 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       this.showLoading = false;
       this.validationErrors = this.readValidationErrors();
     }
+  }
+
+  private async updateSingleSegment(
+    i: number,
+    startTime: number,
+    segment: OctraAnnotationSegment,
+    validationArray: any[],
+  ): Promise<void> {
+    const rawText = segment.getFirstLabelWithoutName('Speaker')?.value ?? '';
+    const obj = await this.getShownSegment(
+      startTime,
+      segment.time.samples,
+      i,
+      validationArray,
+      rawText,
+    );
+
+    // New array reference required for OnPush change detection
+    this.shownSegments = [
+      ...this.shownSegments.slice(0, i),
+      obj,
+      ...this.shownSegments.slice(i + 1),
+    ];
+    this.validationErrors = this.readValidationErrors();
+    this.cd.markForCheck();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -584,14 +659,17 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
           console.error(err);
         });
     } else {
-      // stop
+      // stop — set state synchronously so playAll() sees it immediately
+      this.playAllState.state = 'stopped';
       this.stopPlayback()
         .then(() => {
-          this.playAllState.state = 'stopped';
-          this.playStateSegments[this.playAllState.currentSegment].state =
-            'stopped';
-          this.playStateSegments[this.playAllState.currentSegment].icon =
-            'bi bi-play-fill';
+          if (this.playAllState.currentSegment > -1) {
+            this.playStateSegments[this.playAllState.currentSegment].state =
+              'stopped';
+            this.playStateSegments[this.playAllState.currentSegment].icon =
+              'bi bi-play-fill';
+          }
+          this.playAllState.currentSegment = -1;
 
           this.cd.markForCheck();
 

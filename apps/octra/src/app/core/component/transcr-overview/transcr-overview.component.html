@@ -142,18 +142,12 @@
                 'bg-highlight': playAllState.currentSegment === i,
               }"
             >
-              <i
-                class="bi bi-exclamation-triangle segment-warning"
-                [title]="segment.validationMessages.join('\n')"
-                [ngStyle]="{
-                  display:
-                    segment.transcription.html.indexOf(
-                      '<span class=\'val-error\''
-                    ) > -1
-                      ? 'normal'
-                      : 'none',
-                }"
-              ></i>
+              @if (segment.validationMessages.length > 0) {
+                <i
+                  class="bi bi-exclamation-triangle segment-warning"
+                  [title]="segment.validationMessages.join('\n')"
+                ></i>
+              }
             </td>
             <td
               class="segment-number"
@@ -196,7 +190,6 @@
                   'bg-danger': segment.transcription.text === '',
                   'bg-highlight': playAllState.currentSegment === i,
                 }"
-                (mouseleave)="onTextEditorLeave(i)"
               >
                 <div>
                   <octra-transcr-editor

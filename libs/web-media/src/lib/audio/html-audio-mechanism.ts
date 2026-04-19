@@ -619,7 +619,13 @@ export class HtmlAudioMechanism extends AudioMechanism {
         reject(new Error('Missing Audio instance.'));
         return;
       }
-      if (this._state === 'PLAYING') {
+      // Remove canplay listener first to prevent initPlayback from re-arming after pause
+      this._audio.removeEventListener('canplay', this.initPlayback);
+      if (
+        this._state === PlayBackStatus.PLAYING ||
+        this._state === PlayBackStatus.PREPARE ||
+        this._state === PlayBackStatus.INITIALIZED
+      ) {
         this._statusRequest = PlayBackStatus.STOPPED;
         this.callBacksAfterEnded.push(() => {
           resolve();
