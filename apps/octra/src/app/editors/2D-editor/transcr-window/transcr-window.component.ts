@@ -117,6 +117,10 @@ export class TranscrWindowComponent
     return FileInfo.isVideoMimeType(mime);
   }
 
+  get videoUrl(): string | undefined {
+    return this.audioManager?.resource?.info?.url;
+  }
+
   act = new EventEmitter<{
     action: string;
     segmentIndex: number;
