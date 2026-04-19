@@ -20,6 +20,7 @@ import { getProperties } from '@octra/utilities';
 import { TranscrEditorComponent } from '../../../core/component';
 
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
   NgbActiveModal,
@@ -52,7 +53,7 @@ import {
   ShortcutGroup,
 } from '@octra/web-media';
 import { HotkeysEvent } from 'hotkeys-js';
-import { fromEvent, interval, timer } from 'rxjs';
+import { fromEvent, interval, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AudioNavigationComponent } from '../../../core/component/audio-navigation';
 import { AudioNavigationComponent as AudioNavigationComponent_1 } from '../../../core/component/audio-navigation/audio-navigation.component';
@@ -111,14 +112,17 @@ export class TranscrWindowComponent
   @ViewChild('videoEl') videoEl?: ElementRef<HTMLVideoElement>;
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly sanitizer = inject(DomSanitizer);
+  private videoSyncSubscription?: Subscription;
 
   get isVideoFile(): boolean {
     const mime = this.audioManager?.resource?.info?.type ?? '';
     return FileInfo.isVideoMimeType(mime);
   }
 
-  get videoUrl(): string | undefined {
-    return this.audioManager?.resource?.info?.url;
+  get videoUrl(): SafeResourceUrl | null {
+    const url = this.audioManager?.resource?.info?.url;
+    return url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null;
   }
 
   act = new EventEmitter<{
@@ -558,6 +562,11 @@ export class TranscrWindowComponent
         this.listenToAudioChunkStatusChanges();
 
         this.setValidationEnabledToDefault();
+
+        if (this.isVideoFile) {
+          this.videoSyncSubscription?.unsubscribe();
+          this.subscribe(timer(0), () => this.setupVideoSync());
+        }
       }
     }
   }
@@ -1561,32 +1570,45 @@ export class TranscrWindowComponent
     const video = this.videoEl?.nativeElement;
     if (!video) return;
 
+    // Cancel any previous video sync subscriptions
+    this.videoSyncSubscription?.unsubscribe();
+
+    const subs = new Subscription();
+
     // Wait for video metadata before seeking to segment start
-    fromEvent(video, 'loadedmetadata')
-      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        video.currentTime = this.audiochunk.time.start.seconds;
-      });
+    subs.add(
+      fromEvent(video, 'loadedmetadata')
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          video.currentTime = this.audiochunk.time.start.seconds;
+        })
+    );
 
     // Mirror play/pause state from AudioChunk to video element
-    this.audiochunk.statuschange
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((status: PlayBackStatus) => {
-        if (status === PlayBackStatus.PLAYING) {
-          video.play().catch(() => { /* autoplay policy — ignore */ });
-        } else {
-          video.pause();
-        }
-      });
+    subs.add(
+      this.audiochunk.statuschange
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((status: PlayBackStatus) => {
+          if (status === PlayBackStatus.PLAYING) {
+            video.play().catch(() => { /* autoplay policy — ignore */ });
+          } else {
+            video.pause();
+          }
+        })
+    );
 
     // Position sync: poll every 50ms, correct if drift > 100ms
-    interval(50)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        const pos = this.audiochunk.absolutePlayposition?.seconds;
-        if (pos !== undefined && Math.abs(video.currentTime - pos) > 0.1) {
-          video.currentTime = pos;
-        }
-      });
+    subs.add(
+      interval(50)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          const pos = this.audiochunk.absolutePlayposition?.seconds;
+          if (pos !== undefined && Math.abs(video.currentTime - pos) > 0.1) {
+            video.currentTime = pos;
+          }
+        })
+    );
+
+    this.videoSyncSubscription = subs;
   }
 }
