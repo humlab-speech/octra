@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   HostListener,
@@ -12,7 +13,9 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getProperties } from '@octra/utilities';
 import { TranscrEditorComponent } from '../../../core/component';
 
@@ -34,7 +37,7 @@ import {
   OctraAnnotationSegmentLevel,
 } from '@octra/annotation';
 import { OctraGuidelines } from '@octra/assets';
-import { AudioSelection, SampleUnit } from '@octra/media';
+import { AudioSelection, PlayBackStatus, SampleUnit } from '@octra/media';
 import {
   AudioViewerComponent,
   AudioViewerShortcutEvent,
@@ -44,11 +47,12 @@ import {
   AudioChunk,
   AudioManager,
   AudioResource,
+  FileInfo,
   Shortcut,
   ShortcutGroup,
 } from '@octra/web-media';
 import { HotkeysEvent } from 'hotkeys-js';
-import { timer } from 'rxjs';
+import { interval, timer } from 'rxjs';
 import { AudioNavigationComponent } from '../../../core/component/audio-navigation';
 import { AudioNavigationComponent as AudioNavigationComponent_1 } from '../../../core/component/audio-navigation/audio-navigation.component';
 import { DefaultComponent } from '../../../core/component/default.component';
@@ -103,6 +107,14 @@ export class TranscrWindowComponent
   @ViewChild('audionav', { static: true }) audionav!: AudioNavigationComponent;
   @ViewChild('window', { static: true }) window!: ElementRef;
   @ViewChild('main', { static: true }) main!: ElementRef;
+  @ViewChild('videoEl') videoEl?: ElementRef<HTMLVideoElement>;
+
+  private readonly destroyRef = inject(DestroyRef);
+
+  get isVideoFile(): boolean {
+    const mime = this.audioManager?.resource?.info?.type ?? '';
+    return FileInfo.isVideoMimeType(mime);
+  }
 
   act = new EventEmitter<{
     action: string;
@@ -603,6 +615,11 @@ export class TranscrWindowComponent
       }
     });
     this.editor.focus(true, true);
+
+    // Video sync — only run when a video file is loaded
+    if (this.isVideoFile) {
+      this.setupVideoSync();
+    }
   }
 
   ngAfterContentInit() {
@@ -1533,5 +1550,36 @@ export class TranscrWindowComponent
       this.cd.markForCheck();
       this.cd.detectChanges();
     }
+  }
+
+  private setupVideoSync(): void {
+    const video = this.videoEl?.nativeElement;
+    if (!video) return;
+
+    // Wait for video metadata before seeking to segment start
+    video.addEventListener('loadedmetadata', () => {
+      video.currentTime = this.audiochunk.time.start.seconds;
+    }, { once: true });
+
+    // Mirror play/pause state from AudioChunk to video element
+    this.audiochunk.statuschange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status: PlayBackStatus) => {
+        if (status === PlayBackStatus.PLAYING) {
+          video.play().catch(() => { /* autoplay policy — ignore */ });
+        } else {
+          video.pause();
+        }
+      });
+
+    // Position sync: poll every 50ms, correct if drift > 100ms
+    interval(50)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const pos = this.audiochunk.absolutePlayposition?.seconds;
+        if (pos !== undefined && Math.abs(video.currentTime - pos) > 0.1) {
+          video.currentTime = pos;
+        }
+      });
   }
 }
