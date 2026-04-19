@@ -1602,6 +1602,7 @@ export class TranscrWindowComponent
       interval(50)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
+          if (!this.audiochunk.isPlaying) return;
           const pos = this.audiochunk.absolutePlayposition?.seconds;
           if (pos !== undefined && Math.abs(video.currentTime - pos) > 0.1) {
             video.currentTime = pos;
