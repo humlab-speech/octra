@@ -163,6 +163,10 @@ export class FileInfo extends DataInfo {
     return 'text/plain';
   }
 
+  public static isVideoMimeType(mime: string): boolean {
+    return mime.startsWith('video/');
+  }
+
   public static escapeFileName(name: string) {
     return name
       .replace(/[\s/?!%*(){}ß&:=+#'<>^;,Ââ°]/g, '_')
