@@ -52,7 +52,8 @@ import {
   ShortcutGroup,
 } from '@octra/web-media';
 import { HotkeysEvent } from 'hotkeys-js';
-import { interval, timer } from 'rxjs';
+import { fromEvent, interval, timer } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { AudioNavigationComponent } from '../../../core/component/audio-navigation';
 import { AudioNavigationComponent as AudioNavigationComponent_1 } from '../../../core/component/audio-navigation/audio-navigation.component';
 import { DefaultComponent } from '../../../core/component/default.component';
@@ -618,7 +619,7 @@ export class TranscrWindowComponent
 
     // Video sync — only run when a video file is loaded
     if (this.isVideoFile) {
-      this.setupVideoSync();
+      this.subscribe(timer(0), () => this.setupVideoSync());
     }
   }
 
@@ -1557,9 +1558,11 @@ export class TranscrWindowComponent
     if (!video) return;
 
     // Wait for video metadata before seeking to segment start
-    video.addEventListener('loadedmetadata', () => {
-      video.currentTime = this.audiochunk.time.start.seconds;
-    }, { once: true });
+    fromEvent(video, 'loadedmetadata')
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        video.currentTime = this.audiochunk.time.start.seconds;
+      });
 
     // Mirror play/pause state from AudioChunk to video element
     this.audiochunk.statuschange
