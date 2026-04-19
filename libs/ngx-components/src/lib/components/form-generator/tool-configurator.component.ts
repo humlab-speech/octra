@@ -399,7 +399,7 @@ export class ConfigurationControl<R = any, S = any> {
       return true;
     }
 
-    return this.toggled;
+    return !this.toggleable || this.toggled;
   }
 
   private findControlOfAttributeName(
@@ -634,7 +634,7 @@ export class ConfigurationControlGroup {
       return true;
     }
 
-    return this.toggled;
+    return !this.toggleable || this.toggled;
   }
 
   private findControlOfAttributeName(
