@@ -52,7 +52,7 @@ export class AppInfo {
   };
 
   public static BUILD = {
-    version: '0.0.0',
+    version: '1.0.0',
     hash: '2893u092i349i23904',
     timestamp: new Date().toISOString(),
   };
