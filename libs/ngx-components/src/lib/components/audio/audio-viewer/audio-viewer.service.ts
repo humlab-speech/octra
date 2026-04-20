@@ -4241,7 +4241,7 @@ export class AudioViewerService {
           const transcript = segment.getFirstLabelWithoutName('Speaker')?.value;
           const hasTranscription =
             transcript !== undefined &&
-            transcript !== '' &&
+            transcript.trim().length > 0 &&
             transcript !== this.silencePlaceholder;
           context.fillStyle = hasTranscription
             ? 'rgba(234, 186, 185, 0.6)'

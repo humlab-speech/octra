@@ -540,7 +540,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       if (
         typeof validateAnnotation !== 'undefined' &&
         typeof validateAnnotation === 'function' &&
-        validation[i].validation.length > 0
+        (validation[i]?.validation?.length ?? 0) > 0
       ) {
         obj.transcription.html = this.annotationStoreService.underlineTextRed(
           obj.transcription.text,

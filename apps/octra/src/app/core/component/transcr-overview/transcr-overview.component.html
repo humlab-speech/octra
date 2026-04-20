@@ -114,15 +114,16 @@
             class="segment-row"
             [ngClass]="{
               'bg-success':
-                segment.transcription.text !== '' &&
+                segment.transcription.text.trim() !== '' &&
                 (!annotationStoreService.breakMarker ||
                   segment.transcription.text !==
                     annotationStoreService.breakMarker!.code),
               'bg-info':
                 annotationStoreService.breakMarker &&
-                segment.transcription.text ===
-                  annotationStoreService.breakMarker!.code,
-              'bg-danger': segment.transcription.text === '',
+                (segment.transcription.text ===
+                  annotationStoreService.breakMarker!.code ||
+                  segment.transcription.text.trim() === ''),
+              'bg-danger': segment.transcription.text.trim() === '' && !annotationStoreService.breakMarker,
               'bg-highlight': playAllState.currentSegment === i,
             }"
           >

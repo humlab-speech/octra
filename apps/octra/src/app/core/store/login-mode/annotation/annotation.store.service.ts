@@ -80,7 +80,7 @@ export class AnnotationStoreService {
           (a) => a.name !== 'Speaker',
         );
 
-        if (labelIndex > -1 && item.labels[labelIndex].value !== '') {
+        if (labelIndex > -1 && item.labels[labelIndex].value.trim().length > 0) {
           if (
             breakMarkerCode !== undefined &&
             item.labels[labelIndex].value.indexOf(breakMarkerCode) >

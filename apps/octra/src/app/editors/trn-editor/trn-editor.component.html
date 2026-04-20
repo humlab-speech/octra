@@ -102,13 +102,15 @@
           [ngClass]="{
             'segment-selected': segment.isSelected,
             'table-success':
-              segment.transcription.text !== '' &&
+              segment.transcription.text.trim() !== '' &&
               segment.transcription.text !==
                 annotationStoreService.breakMarker?.code,
             'table-info':
-              segment.transcription.text ===
-              annotationStoreService.breakMarker?.code,
-            'table-danger': segment.transcription.text === '',
+              annotationStoreService.breakMarker &&
+              (segment.transcription.text ===
+                annotationStoreService.breakMarker.code ||
+                segment.transcription.text.trim() === ''),
+            'table-danger': segment.transcription.text.trim() === '' && !annotationStoreService.breakMarker,
             'active-playback': i === playAllState.currentSegment,
           }"
         >

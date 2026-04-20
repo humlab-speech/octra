@@ -1,8 +1,10 @@
 import { Action, ActionReducer, on } from '@ngrx/store';
 import {
   ASRContext,
+  OLabel,
   OctraAnnotation,
   OctraAnnotationSegment,
+  OctraAnnotationSegmentLevel,
 } from '@octra/annotation';
 import { getProperties } from '@octra/utilities';
 import { undoRedo } from 'ngrx-wieder';
@@ -276,8 +278,33 @@ export class LoginModeReducers {
         ) => {
           if (this.mode === mode) {
             console.log("Project:", project);
+
+            // Normalize empty/whitespace-only segments to the break marker so
+            // they display as "Silent transcription units" rather than "Empty".
+            const breakMarkerCode = (selectedGuidelines as any)?.json?.markers
+              ?.find((m: any) => m.type === 'break')?.code as string | undefined;
+            let transcript = state.transcript;
+            if (breakMarkerCode && transcript) {
+              transcript = transcript.clone();
+              for (const level of transcript.levels) {
+                if (level instanceof OctraAnnotationSegmentLevel) {
+                  for (const item of (level as OctraAnnotationSegmentLevel<OctraAnnotationSegment<ASRContext>>).items) {
+                    const idx = item.labels.findIndex((l) => l.name !== 'Speaker');
+                    if (idx > -1 && item.labels[idx].value.trim().length === 0) {
+                      item.labels = [
+                        ...item.labels.slice(0, idx),
+                        new OLabel(item.labels[idx].name, breakMarkerCode),
+                        ...item.labels.slice(idx + 1),
+                      ];
+                    }
+                  }
+                }
+              }
+            }
+
             return {
               ...state,
+              transcript,
               projectConfig: projectSettings,
               logging: {
                 ...state.logging,
