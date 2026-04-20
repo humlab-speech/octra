@@ -621,18 +621,22 @@ export class HtmlAudioMechanism extends AudioMechanism {
       }
       // Remove canplay listener first to prevent initPlayback from re-arming after pause
       this._audio.removeEventListener('canplay', this.initPlayback);
-      if (
-        this._state === PlayBackStatus.PLAYING ||
-        this._state === PlayBackStatus.PREPARE ||
-        this._state === PlayBackStatus.INITIALIZED
-      ) {
+      if (this._state === PlayBackStatus.PLAYING) {
+        // Audio is actively playing: pause it and wait for the 'pause' DOM event
+        // (fired by onPlayBackChanged) before resolving, so the audio element has
+        // fully stopped before the caller proceeds.
         this._statusRequest = PlayBackStatus.STOPPED;
         this.callBacksAfterEnded.push(() => {
           resolve();
         });
         this._audio.pause();
       } else {
-        // ignore
+        // PREPARE / INITIALIZED / PAUSED / STOPPED / ENDED:
+        // Audio element is not actively playing.  onPlayBackChanged is only
+        // registered as a listener during play(), so calling _audio.pause() here
+        // would never fire the 'pause' event (HTMLAudioElement.pause() is a no-op
+        // when already paused) and the resolve callback would hang forever.
+        // Nothing to stop — resolve immediately.
         resolve();
       }
     });
