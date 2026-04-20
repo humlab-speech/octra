@@ -36,9 +36,12 @@ async function getLibAV(): Promise<any> {
   if (libavInstance) return libavInstance;
   // Dynamic import of the libav ES module from deployed assets.
   // Using a variable to prevent esbuild from resolving the path at build time.
+  // Worker mode (default) runs WASM in a background thread, keeping the main
+  // thread responsive. The fat variant must use noworker:true due to a postMessage
+  // incompatibility in its IIFE, but the default variant supports worker mode fine.
   const libavPath = new URL('/assets/libav/libav-default.mjs', window.location.origin).href;
   const m = await import(libavPath as any);
-  libavInstance = await m.LibAV({ noworker: true });
+  libavInstance = await m.LibAV();
   return libavInstance;
 }
 
@@ -78,12 +81,18 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
   // (e.g. .wma → ASF demuxer) before falling back to content probing.
   // Strip any path component; keep only the basename.
   const filename = sourceFilename.replace(/.*[\\/]/, '') || 'input.audio';
+  console.time('[libav] total');
+  console.time('[libav] writeFile');
   await libav.writeFile(filename, new Uint8Array(buf));
+  console.timeEnd('[libav] writeFile');
 
   let fmt_ctx: any;
   let c: any, pkt: any, frame: any;
   try {
+    onStatus?.('Probing container…');
+    console.time('[libav] demux');
     const [_fmt_ctx, streams] = await libav.ff_init_demuxer_file(filename);
+    console.timeEnd('[libav] demux');
     fmt_ctx = _fmt_ctx;
 
     const audioStream = streams.find((s: any) => s.codec_type === libav.AVMEDIA_TYPE_AUDIO);
@@ -106,10 +115,16 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     );
     c = _c; pkt = _pkt; frame = _frame;
 
+    onStatus?.('Reading audio packets…');
+    console.time('[libav] readFrames');
     const [, allPackets] = await libav.ff_read_frame_multi(fmt_ctx, pkt, { limit: 64 * 1024 * 1024 });
+    console.timeEnd('[libav] readFrames');
     const packets = allPackets[audioStream.index] || [];
 
+    onStatus?.('Decoding audio frames…');
+    console.time('[libav] decode');
     const frames = await libav.ff_decode_multi(c, pkt, frame, packets, true);
+    console.timeEnd('[libav] decode');
 
     if (!frames || frames.length === 0) {
       throw new Error('libav.js: no audio frames decoded.');
@@ -144,6 +159,7 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
       offset += nb;
     }
 
+    console.timeEnd('[libav] total');
     return new AudioBufferLikeImpl(channels, sampleRate);
   } finally {
     // Always free resources, even on error, to prevent WASM memory leaks.
