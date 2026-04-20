@@ -1,7 +1,7 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
@@ -42,7 +42,6 @@ import { LoginService } from './login.service';
     AsyncPipe,
     DecimalPipe,
     TranslocoPipe,
-    RouterLink,
   ],
 })
 export class LoginComponent
