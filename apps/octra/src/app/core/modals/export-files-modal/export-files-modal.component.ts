@@ -151,8 +151,12 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
       'modals',
     );
 
+    const breakMarkerCode = this.annotationStoreService.breakMarker?.code ?? '<P>';
     for (const converter of this.converters) {
       this.exportStates.push('close');
+      if (converter.options && 'breakMarkerCode' in converter.options) {
+        converter.options.breakMarkerCode = breakMarkerCode;
+      }
     }
 
     if (this.tableConfigurator) {

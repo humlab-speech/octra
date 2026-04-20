@@ -23,6 +23,7 @@ export class TextConverter extends Converter {
     showTimestampSamples: false,
     showTimestampString: false,
     addNewLineString: false,
+    breakMarkerCode: '<P>',
   };
 
   public constructor() {
@@ -87,6 +88,11 @@ export class TextConverter extends Converter {
           const item = level.items[j] as OSegment;
           const transcript =
             item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+
+          const noTimestamps = !this.options.showTimestampString && !this.options.showTimestampSamples;
+          if (noTimestamps && transcript.trim() === this.options.breakMarkerCode) {
+            continue;
+          }
 
           result += transcript;
           if (j < level.items.length - 1) {
