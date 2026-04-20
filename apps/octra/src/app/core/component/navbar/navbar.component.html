@@ -78,24 +78,7 @@
               >
             </li>
             }
-            <li [routerLinkActive]="['active']" class="nav-item">
-              <a
-                [queryParamsHandling]="'merge'"
-                [routerLink]="['/features']"
-                class="nav-link"
-                (click)="isCollapsed = true"
-                >{{ 'g.features' | transloco }}</a
-              >
-            </li>
-            <li [routerLinkActive]="['active']" class="nav-item">
-              <a
-                [queryParamsHandling]="'merge'"
-                [routerLink]="['/news']"
-                class="nav-link"
-                (click)="isCollapsed = true"
-                >{{ 'g.news' | transloco }}</a
-              >
-            </li>
+
             <li class="nav-item">
               <a
                 class="nav-link"
@@ -109,7 +92,7 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="https://github.com/IPS-LMU/octra"
+                href="https://github.com/humlab-speech/octra"
                 target="_blank"
                 (click)="isCollapsed = true"
               >
