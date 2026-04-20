@@ -142,6 +142,8 @@ export class FileInfo extends DataInfo {
       // video
       case 'mp4':
         return 'video/mp4';
+      case 'm4v':
+        return 'video/x-m4v';
       case 'webm':
         return 'video/webm';
       case 'mkv':

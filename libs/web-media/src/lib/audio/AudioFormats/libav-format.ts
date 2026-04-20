@@ -8,6 +8,7 @@ export class LibavFormat extends AudioFormat {
     super();
     this._supportedFormats = [
       { extension: '.mp4', maxFileSize: 500_000_000 },
+      { extension: '.m4v', maxFileSize: 500_000_000 },
       { extension: '.webm', maxFileSize: 500_000_000 },
       { extension: '.mkv', maxFileSize: 500_000_000 },
       { extension: '.wma', maxFileSize: 500_000_000 },
