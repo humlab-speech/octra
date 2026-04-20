@@ -157,6 +157,12 @@ export class LocalTranscriptionService implements OnDestroy {
   ): OAnnotJSON {
     const audioDurationS = oaudiofile.duration / oaudiofile.sampleRate;
     const srtText = this.chunksToSrt(chunks, audioDurationS);
+    if (!srtText) {
+      throw new Error(
+        'Transcription produced no valid segments — all output timestamps were invalid. ' +
+        'Try disabling WebGPU in the options above and retry with WASM.',
+      );
+    }
     const srtConverter = AppInfo.converters.find((c) => c.name === 'SRT');
     if (!srtConverter) {
       throw new Error('SRT converter not found in AppInfo.converters');
@@ -182,14 +188,19 @@ export class LocalTranscriptionService implements OnDestroy {
     chunks: Array<{ timestamp: [number, number | null]; text: string }>,
     audioDurationS: number,
   ): string {
-    return (
-      chunks
-        .map(
-          (c, i) =>
-            `${i + 1}\n${this.toSrtTime(c.timestamp[0])} --> ${this.toSrtTime(c.timestamp[1] ?? audioDurationS)}\n${c.text.trim()}`,
-        )
-        .join('\n\n') + '\n'
-    );
+    let counter = 1;
+    const lines = chunks
+      .filter((c) => {
+        const start = c.timestamp[0];
+        const end = c.timestamp[1] ?? audioDurationS;
+        return end > start && c.text.trim().length > 0;
+      })
+      .map((c) => {
+        const start = c.timestamp[0];
+        const end = c.timestamp[1] ?? audioDurationS;
+        return `${counter++}\n${this.toSrtTime(start)} --> ${this.toSrtTime(end)}\n${c.text.trim()}`;
+      });
+    return lines.length > 0 ? lines.join('\n\n') + '\n' : '';
   }
 
   private toSrtTime(seconds: number): string {
