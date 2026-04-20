@@ -12,13 +12,22 @@ export class MediaResource {
   }
 
   private _arraybuffer: ArrayBuffer | undefined;
+  private _originalArraybuffer: ArrayBuffer | undefined;
 
   get arraybuffer(): ArrayBuffer | undefined {
     return this._arraybuffer;
   }
 
   set arraybuffer(value: ArrayBuffer | undefined) {
+    if (this._originalArraybuffer === undefined && this._arraybuffer !== undefined) {
+      // First external mutation — save original before WAV replacement
+      this._originalArraybuffer = this._arraybuffer;
+    }
     this._arraybuffer = value;
+  }
+
+  get originalArraybuffer(): ArrayBuffer | undefined {
+    return this._originalArraybuffer;
   }
 
   private readonly _name: string;

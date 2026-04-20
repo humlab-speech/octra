@@ -5,6 +5,7 @@ import { AudioInfo } from './audio-info';
 
 export class AudioResource extends MediaResource {
   private _info: AudioInfo;
+  private readonly _originalType: string;
 
   get info(): AudioInfo {
     return this._info;
@@ -12,6 +13,10 @@ export class AudioResource extends MediaResource {
 
   set info(value: AudioInfo) {
     this._info = value;
+  }
+
+  get originalType(): string {
+    return this._originalType;
   }
 
   constructor(
@@ -30,6 +35,7 @@ export class AudioResource extends MediaResource {
       info.sampleRate > 0
     ) {
       this._info = info;
+      this._originalType = info.type;
     } else {
       throw Error(
         'AudioResource needs a correct instance of AudioInfo as parameter',

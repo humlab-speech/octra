@@ -117,22 +117,28 @@ export class TranscrWindowComponent
   private _videoBlobUrl?: string;
 
   get isVideoFile(): boolean {
-    const mime = this.audioManager?.resource?.info?.type ?? '';
+    const mime = this.audioManager?.resource?.originalType
+                 ?? this.audioManager?.resource?.info?.type
+                 ?? '';
     return FileInfo.isVideoMimeType(mime);
   }
 
   get videoUrl(): SafeUrl | null {
-    // Prefer blob URL from arraybuffer — works for local files and avoids moov-at-end issues
-    const ab = this.audioManager?.resource?.arraybuffer;
-    const type = this.audioManager?.resource?.info?.type ?? 'video/mp4';
+    const resource = this.audioManager?.resource;
+    const originalType = resource?.originalType ?? resource?.info?.type ?? '';
+
+    if (!FileInfo.isVideoMimeType(originalType)) return null;
+
+    // Use originalArraybuffer (actual video bytes) — arraybuffer is overwritten with WAV after decode
+    const ab = resource?.originalArraybuffer ?? resource?.arraybuffer;
     if (ab) {
       if (!this._videoBlobUrl) {
-        this._videoBlobUrl = URL.createObjectURL(new Blob([ab], { type }));
+        this._videoBlobUrl = URL.createObjectURL(new Blob([ab], { type: originalType }));
       }
       return this.sanitizer.bypassSecurityTrustUrl(this._videoBlobUrl);
     }
     // Fallback: direct URL (online mode, file fetched via HTTP)
-    const url = this.audioManager?.resource?.info?.url;
+    const url = resource?.info?.url;
     return url ? this.sanitizer.bypassSecurityTrustUrl(url) : null;
   }
 
