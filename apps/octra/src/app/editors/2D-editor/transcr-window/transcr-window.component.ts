@@ -114,6 +114,7 @@ export class TranscrWindowComponent
   private readonly destroyRef = inject(DestroyRef);
   private readonly sanitizer = inject(DomSanitizer);
   private videoSyncSubscription?: Subscription;
+  private _videoBlobUrl?: string;
 
   get isVideoFile(): boolean {
     const mime = this.audioManager?.resource?.info?.type ?? '';
@@ -121,6 +122,16 @@ export class TranscrWindowComponent
   }
 
   get videoUrl(): SafeUrl | null {
+    // Prefer blob URL from arraybuffer — works for local files and avoids moov-at-end issues
+    const ab = this.audioManager?.resource?.arraybuffer;
+    const type = this.audioManager?.resource?.info?.type ?? 'video/mp4';
+    if (ab) {
+      if (!this._videoBlobUrl) {
+        this._videoBlobUrl = URL.createObjectURL(new Blob([ab], { type }));
+      }
+      return this.sanitizer.bypassSecurityTrustUrl(this._videoBlobUrl);
+    }
+    // Fallback: direct URL (online mode, file fetched via HTTP)
     const url = this.audioManager?.resource?.info?.url;
     return url ? this.sanitizer.bypassSecurityTrustUrl(url) : null;
   }
@@ -387,6 +398,13 @@ export class TranscrWindowComponent
     private activeModal: NgbActiveModal,
   ) {
     super();
+
+    this.destroyRef.onDestroy(() => {
+      if (this._videoBlobUrl) {
+        URL.revokeObjectURL(this._videoBlobUrl);
+        this._videoBlobUrl = undefined;
+      }
+    });
 
     this.subscribe(this.asrStoreService.queue$, {
       next: (queue) => {
