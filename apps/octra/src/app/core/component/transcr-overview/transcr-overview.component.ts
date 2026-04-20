@@ -173,6 +173,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
   }[] = [];
 
   public get validationFound() {
+    if (this.appStorage.useMode === 'local') return false;
     return (
       typeof validateAnnotation !== 'undefined' &&
       isFunction(validateAnnotation) &&
