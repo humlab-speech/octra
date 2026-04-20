@@ -28,8 +28,8 @@ Octra supports different editors that you can choose according to your preferenc
 ### The work views inside the application
 ![The fast Overview view allowing playback of utterances](docs/assets/visp_octra_overview.png)
 ![Revising transcriptions in the Overview](docs/assets/visp_octra_overview_edit.png)
-![Transcription and revising in the popup editor](octra/docs/assets/visp_octra_popup_editor_audio_only.png)
-![Transcription in the popup editor when a compliant video file was used](octra/docs/assets/visp_octra_popup_editor_audio_and_video.png)
+![Transcription and revising in the popup editor](docs/assets/visp_octra_popup_editor_audio_only.png)
+![Transcription in the popup editor when a compliant video file was used](docs/assets/visp_octra_popup_editor_audio_and_video.png)
 
 ### Export of transcriptions to a file on your computer
 
