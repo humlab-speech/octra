@@ -319,8 +319,34 @@
         "large": {
           "wasm": "Groß (~1,7 GB)",
           "webgpu": "Groß (~1,2 GB) — Genaueste, 2× langsamer als Mittel"
+        },
+        "openai-tiny": {
+          "wasm": "Winzig (~75 MB) — Am schnellsten, geringste Genauigkeit",
+          "webgpu": "Winzig (~75 MB, WebGPU) — Am schnellsten, geringste Genauigkeit"
+        },
+        "openai-base": {
+          "wasm": "Basis (~145 MB) — Schnell, einfache Sprache",
+          "webgpu": "Basis (~145 MB, WebGPU) — Schnell, einfache Sprache"
+        },
+        "openai-small": {
+          "wasm": "Klein (~490 MB) — Empfohlene Balance",
+          "webgpu": "Klein (~490 MB, WebGPU) — Empfohlene Balance"
+        },
+        "openai-medium": {
+          "wasm": "Mittel (~1,5 GB) — Genauer, benötigt WebGPU",
+          "webgpu": "Mittel (~1,5 GB, WebGPU) — Genauer"
+        },
+        "openai-large-v3": {
+          "wasm": "Groß v3 (~3,1 GB) — Genaueste, benötigt WebGPU",
+          "webgpu": "Groß v3 (~3,1 GB, WebGPU) — Genaueste"
+        },
+        "openai-large-v3-turbo": {
+          "wasm": "Groß v3 Turbo (~1,6 GB) — Beste/schnell, benötigt WebGPU",
+          "webgpu": "Groß v3 Turbo (~1,6 GB, WebGPU) — Beste/schnell"
         }
-      }
+      },
+      "language label": "Transkriptionssprache",
+      "swedish kb-whisper hint": "Schwedisch verwendet KB-Whisper — optimiert für schwedische Sprache."
     },
     "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln."
   },

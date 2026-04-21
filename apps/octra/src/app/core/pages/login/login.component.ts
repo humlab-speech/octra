@@ -16,7 +16,7 @@ import { SessionFile } from '../../obj/SessionFile';
 import { AudioService, SettingsService } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
-import { KB_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
+import { KB_WHISPER_MODELS, OPENAI_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
 
 function formatDuration(seconds: number): string {
@@ -172,7 +172,9 @@ I just want to let you know, that the OCTRA server is currently offline.
     const opts = this.dropzone?.transcribeOptions;
     if (opts && this.dropzone?.hasAudio && !this.dropzone?.hasAnnotation) {
       this._pendingRemoveData = removeData;
-      const modelMeta = KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
+      const modelMeta =
+        KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId) ??
+        OPENAI_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
       this.transcription = {
         active: true,
         phase: 'downloading',

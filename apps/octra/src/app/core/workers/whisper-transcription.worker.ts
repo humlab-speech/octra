@@ -24,6 +24,7 @@ export interface WorkerTranscribeMessage {
   useWebGPU: boolean;
   audioDurationS: number;
   dtype?: string;
+  language?: string;
 }
 
 export interface WorkerDownloadProgressMessage {
@@ -67,7 +68,7 @@ let loadedModelId: string | null = null;
 addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessage>) => {
   if (data.type !== 'transcribe') return;
 
-  const { modelId, audio, useWebGPU, audioDurationS, dtype } = data;
+  const { modelId, audio, useWebGPU, audioDurationS, dtype, language } = data;
 
   try {
     if (!(await isCacheAvailable())) {
@@ -146,7 +147,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
       return_timestamps: true,
       chunk_length_s: CHUNK_LENGTH_S,
       stride_length_s: STRIDE_LENGTH_S,
-      language: 'sv',
+      language: language ?? 'sv',
       task: 'transcribe',
       streamer,
     });

@@ -326,8 +326,34 @@
         "large": {
           "wasm": "Stor (~1,7 GB)",
           "webgpu": "Stor (~1,2 GB) — Mest noggrann, 2× långsammare än Medium"
+        },
+        "openai-tiny": {
+          "wasm": "Liten (~75 MB) — Snabbast, minst noggrann",
+          "webgpu": "Liten (~75 MB, WebGPU) — Snabbast, minst noggrann"
+        },
+        "openai-base": {
+          "wasm": "Bas (~145 MB) — Snabb, enkelt tal",
+          "webgpu": "Bas (~145 MB, WebGPU) — Snabb, enkelt tal"
+        },
+        "openai-small": {
+          "wasm": "Liten (~490 MB) — Rekommenderad balans",
+          "webgpu": "Liten (~490 MB, WebGPU) — Rekommenderad balans"
+        },
+        "openai-medium": {
+          "wasm": "Medium (~1,5 GB) — Mer noggrann, kräver WebGPU",
+          "webgpu": "Medium (~1,5 GB, WebGPU) — Mer noggrann"
+        },
+        "openai-large-v3": {
+          "wasm": "Stor v3 (~3,1 GB) — Mest noggrann, kräver WebGPU",
+          "webgpu": "Stor v3 (~3,1 GB, WebGPU) — Mest noggrann"
+        },
+        "openai-large-v3-turbo": {
+          "wasm": "Stor v3 Turbo (~1,6 GB) — Bäst/snabb, kräver WebGPU",
+          "webgpu": "Stor v3 Turbo (~1,6 GB, WebGPU) — Bäst/snabb"
         }
-      }
+      },
+      "language label": "Transkriptionsspråk",
+      "swedish kb-whisper hint": "Svenska använder KB-Whisper — optimerad för svensk tal."
     },
     "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session."
   },

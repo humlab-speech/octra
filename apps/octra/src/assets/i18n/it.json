@@ -226,8 +226,34 @@
         "large": {
           "wasm": "Grande (~1,7 GB)",
           "webgpu": "Grande (~1,2 GB) — Più preciso, 2× più lento di Medio"
+        },
+        "openai-tiny": {
+          "wasm": "Minuscolo (~75 MB) — Più veloce, meno accurato",
+          "webgpu": "Minuscolo (~75 MB, WebGPU) — Più veloce, meno accurato"
+        },
+        "openai-base": {
+          "wasm": "Base (~145 MB) — Veloce, discorso semplice",
+          "webgpu": "Base (~145 MB, WebGPU) — Veloce, discorso semplice"
+        },
+        "openai-small": {
+          "wasm": "Piccolo (~490 MB) — Bilanciato, raccomandato",
+          "webgpu": "Piccolo (~490 MB, WebGPU) — Bilanciato, raccomandato"
+        },
+        "openai-medium": {
+          "wasm": "Medio (~1,5 GB) — Più accurato, richiede WebGPU",
+          "webgpu": "Medio (~1,5 GB, WebGPU) — Più accurato"
+        },
+        "openai-large-v3": {
+          "wasm": "Grande v3 (~3,1 GB) — Massima accuratezza, richiede WebGPU",
+          "webgpu": "Grande v3 (~3,1 GB, WebGPU) — Massima accuratezza"
+        },
+        "openai-large-v3-turbo": {
+          "wasm": "Grande v3 Turbo (~1,6 GB) — Ottimo/veloce, richiede WebGPU",
+          "webgpu": "Grande v3 Turbo (~1,6 GB, WebGPU) — Ottimo/veloce"
         }
-      }
+      },
+      "language label": "Lingua di trascrizione",
+      "swedish kb-whisper hint": "Lo svedese utilizza KB-Whisper — ottimizzato per il parlato svedese."
     },
     "app description": "OCTRA è un'applicazione web gratuita per la trascrizione in testo normale (ortografica) di registrazioni vocali. Dispone di tre editor diversi che soddisfano esigenze differenti durante la trascrizione e permette di passare liberamente da uno all'altro nel corso di una sessione."
   },

@@ -226,8 +226,34 @@
         "large": {
           "wasm": "Groot (~1,7 GB)",
           "webgpu": "Groot (~1,2 GB) — Meest nauwkeurig, 2× langzamer dan Medium"
+        },
+        "openai-tiny": {
+          "wasm": "Minuscuul (~75 MB) — Snelste, minst nauwkeurig",
+          "webgpu": "Minuscuul (~75 MB, WebGPU) — Snelste, minst nauwkeurig"
+        },
+        "openai-base": {
+          "wasm": "Basis (~145 MB) — Snel, eenvoudige spraak",
+          "webgpu": "Basis (~145 MB, WebGPU) — Snel, eenvoudige spraak"
+        },
+        "openai-small": {
+          "wasm": "Klein (~490 MB) — Aanbevolen balans",
+          "webgpu": "Klein (~490 MB, WebGPU) — Aanbevolen balans"
+        },
+        "openai-medium": {
+          "wasm": "Medium (~1,5 GB) — Nauwkeuriger, vereist WebGPU",
+          "webgpu": "Medium (~1,5 GB, WebGPU) — Nauwkeuriger"
+        },
+        "openai-large-v3": {
+          "wasm": "Groot v3 (~3,1 GB) — Meest nauwkeurig, vereist WebGPU",
+          "webgpu": "Groot v3 (~3,1 GB, WebGPU) — Meest nauwkeurig"
+        },
+        "openai-large-v3-turbo": {
+          "wasm": "Groot v3 Turbo (~1,6 GB) — Beste/snel, vereist WebGPU",
+          "webgpu": "Groot v3 Turbo (~1,6 GB, WebGPU) — Beste/snel"
         }
-      }
+      },
+      "language label": "Transcriptietaal",
+      "swedish kb-whisper hint": "Zweeds gebruikt KB-Whisper — geoptimaliseerd voor Zweeds spraak."
     },
     "app description": "OCTRA is een gratis webapplicatie voor transcriptie van spraakopnamen in platte tekst (orthografisch). Het beschikt over drie verschillende editors die tegemoetkomen aan uiteenlopende behoeften bij het transcriberen, en u kunt er tijdens een sessie vrij tussen wisselen."
   },
