@@ -429,61 +429,63 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
         this.appStorage.useMode === 'url' ||
         !this.settingsService.projectsettings?.octra?.validationEnabled)
     ) {
-      if (
-        !this.currentLevel?.items ||
-        !this.annotationStoreService.guidelines
-      ) {
+      if (!this.currentLevel?.items) {
         this.shownSegments = [];
         this._internLevel?.clear();
+        return;
       }
 
       this.showLoading = true;
       this.cd.markForCheck();
 
-      if (this._internLevel.type === 'SEGMENT') {
-        const level = this
-          ._internLevel as OctraAnnotationSegmentLevel<OctraAnnotationSegment>;
+      try {
+        if (this._internLevel.type === 'SEGMENT') {
+          const level = this
+            ._internLevel as OctraAnnotationSegmentLevel<OctraAnnotationSegment>;
 
-        console.time('[overview] updateSegments');
-        console.log(`[overview] updateSegments: processing ${level.items.length} segments in parallel`);
+          console.time('[overview] updateSegments');
+          console.log(`[overview] updateSegments: processing ${level.items.length} segments in parallel`);
 
-        // Precompute start times and playState array before launching promises.
-        const startTimes: number[] = [];
-        let t = 0;
-        for (const seg of level.items) {
-          startTimes.push(t);
-          t = (seg as OctraAnnotationSegment).time.samples;
-        }
+          // Precompute start times and playState array before launching promises.
+          const startTimes: number[] = [];
+          let t = 0;
+          for (const seg of level.items) {
+            startTimes.push(t);
+            t = (seg as OctraAnnotationSegment).time.samples;
+          }
 
-        const levelValidation = this.annotationStoreService.validationArray.filter(
-          (a) => a.level === level.id,
-        );
+          const levelValidation = this.annotationStoreService.validationArray.filter(
+            (a) => a.level === level.id,
+          );
 
-        // Parallel: launch all rawToHTML worker jobs simultaneously instead of serially.
-        const result = await Promise.all(
-          level.items.map((segment, i) =>
-            this.getShownSegment(
-              startTimes[i],
-              (segment as OctraAnnotationSegment).time.samples,
-              i,
-              levelValidation,
-              (segment as OctraAnnotationSegment).getFirstLabelWithoutName('Speaker')?.value ?? '',
+          // Parallel: launch all rawToHTML worker jobs simultaneously instead of serially.
+          const result = await Promise.all(
+            level.items.map((segment, i) =>
+              this.getShownSegment(
+                startTimes[i],
+                (segment as OctraAnnotationSegment).time.samples,
+                i,
+                levelValidation,
+                (segment as OctraAnnotationSegment).getFirstLabelWithoutName('Speaker')?.value ?? '',
+              ),
             ),
-          ),
-        );
+          );
 
-        console.timeEnd('[overview] updateSegments');
+          console.timeEnd('[overview] updateSegments');
 
-        this.playStateSegments = level.items.map(() => ({
-          state: 'stopped' as const,
-          icon: 'bi bi-play-fill' as const,
-        }));
+          this.playStateSegments = level.items.map(() => ({
+            state: 'stopped' as const,
+            icon: 'bi bi-play-fill' as const,
+          }));
 
-        this.shownSegments = result;
+          this.shownSegments = result;
+        }
+      } catch (err) {
+        console.error('[overview] updateSegments failed:', err);
+      } finally {
+        this.showLoading = false;
+        this.validationErrors = this.readValidationErrors();
       }
-
-      this.showLoading = false;
-      this.validationErrors = this.readValidationErrors();
     }
   }
 
@@ -876,8 +878,6 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     if (this._internLevel?.items && i < this._internLevel.items.length - 1) {
       this.onMouseDown(i + 1);
     }
-    this.annotationStoreService.validateAll();
-    await this.updateSegments();
     this.cd.markForCheck();
   }
 

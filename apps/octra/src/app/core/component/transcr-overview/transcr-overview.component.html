@@ -108,7 +108,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (segment of shownSegments; track segment; let i = $index) {
+        @for (segment of shownSegments; track $index; let i = $index) {
           <tr
             #row
             class="segment-row"
