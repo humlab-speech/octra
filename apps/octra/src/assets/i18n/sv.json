@@ -251,7 +251,7 @@
     "statistics": "Statistik",
     "stop": "Stoppa",
     "submission success": "framgångsrikt överförda",
-    "supported files": "Stödda filer",
+    "supported files": "Filformat som stöds",
     "switch to": "Växla till {{editor}}",
     "terms and conditions": "Villkor",
     "text file": "Textfil",
@@ -438,7 +438,7 @@
     "supported": {
       "audio files": "Ljudfiler",
       "file formats for import": "Filformat för import",
-      "header": "Stödda filformat för lokalt läge"
+      "header": "Filformat som stöds i lokalt läge"
     },
     "transcription": {
       "delete": {
