@@ -875,14 +875,26 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
 
   async onEnterPressed(i: number) {
     await this.onTextEditorLeave(i);
+    this.cd.markForCheck();
+  }
+
+  async onShiftEnterPressed(i: number) {
+    await this.onTextEditorLeave(i);
     if (this._internLevel?.items && i < this._internLevel.items.length - 1) {
       this.onMouseDown(i + 1);
     }
     this.cd.markForCheck();
   }
 
-  async onEscapePressed(i: number) {
-    await this.onTextEditorLeave(i);
+  onEscapePressed(i: number) {
+    if (this._leavePending) return;
+    this.textEditor.state = 'inactive';
+    this.textEditor.selectedSegment = -1;
+    const chunk = this.textEditor.audioChunk;
+    this.textEditor.audioChunk = undefined;
+    if (chunk) {
+      this.audio.audiomanagers[0].removeChunk(chunk);
+    }
     this.cd.markForCheck();
   }
 
