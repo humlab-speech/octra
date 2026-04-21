@@ -181,6 +181,8 @@ export class TranscrEditorComponent
 
   public htmlValue = '';
   private initialized = false;
+  /** True once setTranscript() has written content into the Jodit DOM via rawToHTML. */
+  private _transcriptLoaded = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -447,6 +449,7 @@ export class TranscrEditorComponent
         extraButtons: [],
       };
       this.initialized = false;
+      this._transcriptLoaded = false;
       this.initToolbar();
 
       if (
@@ -1194,6 +1197,15 @@ export class TranscrEditorComponent
   }
 
   public updateRawText() {
+    if (!this._transcriptLoaded) {
+      // Jodit DOM doesn't have content yet (rawToHTML still pending or timer not elapsed).
+      // User cannot have edited anything. Use _rawText (set by setTranscript) or fall back
+      // to the transcript @Input to prevent overwriting the segment with empty string.
+      if (this._rawText === '') {
+        this._rawText = this.tidyUpRaw(this.transcript ?? '');
+      }
+      return;
+    }
     this._rawText = this.tidyUpRaw(this.getRawText());
   }
 
@@ -1437,6 +1449,7 @@ export class TranscrEditorComponent
 
       this.joditComponent.jodit.value =
         await this.annotationStoreService.rawToHTML(rawText);
+      this._transcriptLoaded = true;
       this.subscribe(
         timer(500),
         {

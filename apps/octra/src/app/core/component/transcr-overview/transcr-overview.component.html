@@ -233,7 +233,7 @@
                   'bg-highlight': playAllState.currentSegment === i,
                 }"
                 class="segment-transcript"
-                (mousedown)="onMouseDown(i)"
+                (dblclick)="onMouseDown(i)"
                 (mouseover)="onMouseOver($event, i, row, validationPopover)"
                 (focus)="onMouseOver($event, i, row, validationPopover)"
                 >
