@@ -72,7 +72,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
   {
     key: 'tiny',
     i18nKey: 'openai-tiny',
-    modelId: 'onnx-community/whisper-tiny',
+    modelId: 'onnx-community/whisper-tiny-ONNX',
     sizeMb: 75,
     requiresWebGpu: false,
     hasWebgpuVariant: true,
@@ -82,7 +82,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
   {
     key: 'base',
     i18nKey: 'openai-base',
-    modelId: 'onnx-community/whisper-base',
+    modelId: 'onnx-community/whisper-base-ONNX',
     sizeMb: 145,
     requiresWebGpu: false,
     hasWebgpuVariant: true,
@@ -102,7 +102,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
   {
     key: 'medium',
     i18nKey: 'openai-medium',
-    modelId: 'onnx-community/whisper-medium',
+    modelId: 'onnx-community/whisper-medium-ONNX',
     sizeMb: 1500,
     requiresWebGpu: true,
     hasWebgpuVariant: true,
@@ -112,7 +112,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
   {
     key: 'large-v3',
     i18nKey: 'openai-large-v3',
-    modelId: 'onnx-community/whisper-large-v3',
+    modelId: 'onnx-community/whisper-large-v3-ONNX',
     sizeMb: 3100,
     requiresWebGpu: true,
     hasWebgpuVariant: true,
