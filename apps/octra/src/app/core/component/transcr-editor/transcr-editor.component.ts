@@ -100,6 +100,7 @@ export class TranscrEditorComponent
   @Input() audiochunk?: AudioChunk;
   @Input() validationEnabled = false;
   @Output() enterKeyPressed = new EventEmitter<void>();
+  @Output() escapeKeyPressed = new EventEmitter<void>();
   @Input() externalShortcutManager?: ShortcutManager;
   // tslint:disable-next-line:no-output-on-prefix
   @Output() redoUndo = new EventEmitter<'undo' | 'redo'>();
@@ -281,6 +282,10 @@ export class TranscrEditorComponent
   onKeyDown = ($event: KeyboardEvent) => {
     if ($event.key === 'Enter' || $event.keyCode === 13) {
       this.enterKeyPressed.emit();
+      $event.preventDefault();
+      $event.stopPropagation();
+    } else if ($event.key === 'Escape' || $event.keyCode === 27) {
+      this.escapeKeyPressed.emit();
       $event.preventDefault();
       $event.stopPropagation();
     }

@@ -881,6 +881,11 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     this.cd.markForCheck();
   }
 
+  async onEscapePressed(i: number) {
+    await this.onTextEditorLeave(i);
+    this.cd.markForCheck();
+  }
+
   toggleSkipCheckbox() {
     this.playAllState.skipSilence = !this.playAllState.skipSilence;
   }
