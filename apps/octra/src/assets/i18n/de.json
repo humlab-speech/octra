@@ -321,7 +321,8 @@
           "webgpu": "Groß (~1,2 GB) — Genaueste, 2× langsamer als Mittel"
         }
       }
-    }
+    },
+    "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln."
   },
   "logout": {
     "login again": "Erneut anmelden",

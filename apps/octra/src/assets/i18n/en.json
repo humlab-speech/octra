@@ -328,7 +328,8 @@
           "webgpu": "Large (~1.2 GB) — Most accurate, 2× slower than Medium"
         }
       }
-    }
+    },
+    "app description": "OCTRA is a free web-application for plain text (orthographic) transcription of speech recordings. It has three different editors that cater for different needs when transcribing, and you may switch between them freely in a session."
   },
   "logout": {
     "login again": "Login again",

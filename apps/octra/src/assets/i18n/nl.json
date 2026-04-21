@@ -228,7 +228,8 @@
           "webgpu": "Groot (~1,2 GB) — Meest nauwkeurig, 2× langzamer dan Medium"
         }
       }
-    }
+    },
+    "app description": "OCTRA is een gratis webapplicatie voor transcriptie van spraakopnamen in platte tekst (orthografisch). Het beschikt over drie verschillende editors die tegemoetkomen aan uiteenlopende behoeften bij het transcriberen, en u kunt er tijdens een sessie vrij tussen wisselen."
   },
   "logout": {
     "login again": "Log opnieuw in",

@@ -328,7 +328,8 @@
           "webgpu": "Stor (~1,2 GB) — Mest noggrann, 2× långsammare än Medium"
         }
       }
-    }
+    },
+    "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session."
   },
   "logout": {
     "login again": "Logga in igen",
