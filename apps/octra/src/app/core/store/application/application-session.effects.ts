@@ -300,8 +300,7 @@ export class ApplicationSessionEffects {
 
           // define languages
           const languages = state.application.appConfiguration!.octra.languages;
-          const browserLang =
-            navigator.language || (navigator as any).userLanguage;
+          const browserLang = getBrowserLang() ?? '';
 
           // check if browser language is available in translations
           if (

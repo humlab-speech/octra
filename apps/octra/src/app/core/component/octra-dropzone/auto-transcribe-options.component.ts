@@ -1,11 +1,13 @@
 import {
   Component,
+  DestroyRef,
   effect,
   input,
   OnInit,
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
@@ -370,8 +372,12 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   models: KbWhisperModel[] = KB_WHISPER_MODELS;
   readonly languages = WHISPER_LANGUAGES;
   selectedLanguage = 'en';
+  private userHasOverridden = false;
 
-  constructor(private readonly transloco: TranslocoService) {
+  constructor(
+    private readonly transloco: TranslocoService,
+    private readonly destroyRef: DestroyRef,
+  ) {
     effect(() => {
       // Track signal reads so the effect re-runs when they change
       this.audioLoaded();
@@ -381,11 +387,15 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    const langCode = this.transloco.getActiveLang().split('-')[0];
-    this.selectedLanguage = WHISPER_LANGUAGES.some(l => l.code === langCode)
-      ? langCode
-      : 'en';
-    this.onLanguageChange();
+    this.applyAppLanguage(this.transloco.getActiveLang());
+
+    this.transloco.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => {
+        if (!this.userHasOverridden) {
+          this.applyAppLanguage(lang);
+        }
+      });
 
     this.isSafari.set(isSafariOrWebKit());
     try {
@@ -401,7 +411,16 @@ export class AutoTranscribeOptionsComponent implements OnInit {
     }
   }
 
-  onLanguageChange(): void {
+  private applyAppLanguage(lang: string): void {
+    const code = lang.split('-')[0];
+    this.selectedLanguage = WHISPER_LANGUAGES.some(l => l.code === code) ? code : 'en';
+    this.onLanguageChange(false);
+  }
+
+  onLanguageChange(markOverride = true): void {
+    if (markOverride) {
+      this.userHasOverridden = true;
+    }
     const currentKey = this.models.find(m => m.modelId === this.selectedModelId)?.key ?? '';
     if (this.selectedLanguage === 'sv') {
       const targetKey = OPENAI_TO_KB_KEY[currentKey] ?? DEFAULT_KB_KEY;
