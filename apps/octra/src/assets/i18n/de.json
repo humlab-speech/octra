@@ -321,28 +321,20 @@
           "webgpu": "Groß (~1,2 GB) — Genaueste, 2× langsamer als Mittel"
         },
         "openai-tiny": {
-          "wasm": "Winzig (~75 MB) — Am schnellsten, geringste Genauigkeit",
-          "webgpu": "Winzig (~75 MB, WebGPU) — Am schnellsten, geringste Genauigkeit"
-        },
-        "openai-base": {
-          "wasm": "Basis (~145 MB) — Schnell, einfache Sprache",
-          "webgpu": "Basis (~145 MB, WebGPU) — Schnell, einfache Sprache"
+          "wasm": "Winzig (~95 MB) — ~5× schneller, aber weniger genau als unser Referenzmodell (Small)",
+          "webgpu": "Winzig (~95 MB) — ~4× schneller als unser Referenzmodell (Turbo), aber am wenigsten genau"
         },
         "openai-small": {
-          "wasm": "Klein (~490 MB) — Empfohlene Balance",
-          "webgpu": "Klein (~490 MB, WebGPU) — Empfohlene Balance"
-        },
-        "openai-medium": {
-          "wasm": "Mittel (~1,5 GB) — Genauer, benötigt WebGPU",
-          "webgpu": "Mittel (~1,5 GB, WebGPU) — Genauer"
+          "wasm": "Klein (~400 MB) — Unser Referenzmodell",
+          "webgpu": "Klein (~290 MB) — 2× schneller, aber weniger genau als unser Referenzmodell (Turbo)"
         },
         "openai-large-v3": {
           "wasm": "Groß v3 (~3,1 GB) — Genaueste, benötigt WebGPU",
-          "webgpu": "Groß v3 (~3,1 GB, WebGPU) — Genaueste"
+          "webgpu": "Groß v3 (~3,1 GB) — 2× langsamer, aber oft genauer als unser Referenzmodell (Turbo)"
         },
         "openai-large-v3-turbo": {
-          "wasm": "Groß v3 Turbo (~1,6 GB) — Beste/schnell, benötigt WebGPU",
-          "webgpu": "Groß v3 Turbo (~1,6 GB, WebGPU) — Beste/schnell"
+          "wasm": "Groß v3 Turbo (~700 MB) — Schnell und genau, benötigt WebGPU",
+          "webgpu": "Groß v3 Turbo (~700 MB) — Schnell und hinreichend genau, unser gewähltes Referenzmodell"
         }
       },
       "language label": "Transkriptionssprache",

@@ -328,28 +328,20 @@
           "webgpu": "Stor (~1,2 GB) — Mest noggrann, 2× långsammare än Medium"
         },
         "openai-tiny": {
-          "wasm": "Liten (~75 MB) — Snabbast, minst noggrann",
-          "webgpu": "Liten (~75 MB, WebGPU) — Snabbast, minst noggrann"
-        },
-        "openai-base": {
-          "wasm": "Bas (~145 MB) — Snabb, enkelt tal",
-          "webgpu": "Bas (~145 MB, WebGPU) — Snabb, enkelt tal"
+          "wasm": "Liten (~95 MB) — ~5× snabbare men mindre noggrann än vår referensmodell (Small)",
+          "webgpu": "Liten (~95 MB) — ~4× snabbare än vår referensmodell (Turbo), men minst noggrann"
         },
         "openai-small": {
-          "wasm": "Liten (~490 MB) — Rekommenderad balans",
-          "webgpu": "Liten (~490 MB, WebGPU) — Rekommenderad balans"
-        },
-        "openai-medium": {
-          "wasm": "Medium (~1,5 GB) — Mer noggrann, kräver WebGPU",
-          "webgpu": "Medium (~1,5 GB, WebGPU) — Mer noggrann"
+          "wasm": "Liten (~400 MB) — Vår referensmodell",
+          "webgpu": "Liten (~290 MB) — 2× snabbare men mindre noggrann än vår referensmodell (Turbo)"
         },
         "openai-large-v3": {
           "wasm": "Stor v3 (~3,1 GB) — Mest noggrann, kräver WebGPU",
-          "webgpu": "Stor v3 (~3,1 GB, WebGPU) — Mest noggrann"
+          "webgpu": "Stor v3 (~3,1 GB) — 2× långsammare men ofta mer noggrann än vår referensmodell (Turbo)"
         },
         "openai-large-v3-turbo": {
-          "wasm": "Stor v3 Turbo (~1,6 GB) — Bäst/snabb, kräver WebGPU",
-          "webgpu": "Stor v3 Turbo (~1,6 GB, WebGPU) — Bäst/snabb"
+          "wasm": "Stor v3 Turbo (~700 MB) — Snabb och noggrann, kräver WebGPU",
+          "webgpu": "Stor v3 Turbo (~700 MB) — Snabb och rimligt noggrann, vår valda referensmodell"
         }
       },
       "language label": "Transkriptionsspråk",

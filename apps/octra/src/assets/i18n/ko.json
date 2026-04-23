@@ -228,28 +228,20 @@
           "webgpu": "대형 (~1.2 GB) — 가장 정확함, Medium보다 2배 느림"
         },
         "openai-tiny": {
-          "wasm": "작은 (~75 MB) — 가장 빠르나 정확도 낙음",
-          "webgpu": "작은 (~75 MB, WebGPU) — 가장 빠르나 정확도 낙음"
-        },
-        "openai-base": {
-          "wasm": "기본 (~145 MB) — 빠른, 단순 음성에 적합",
-          "webgpu": "기본 (~145 MB, WebGPU) — 빠른, 단순 음성에 적합"
+          "wasm": "소형 (~95 MB) — 기준 모델(Small)보다 ~5배 빠르지만 정확도 낙음",
+          "webgpu": "소형 (~95 MB) — 기준 모델(Turbo)보다 ~4배 빠르지만 정확도 가장 낙음"
         },
         "openai-small": {
-          "wasm": "소형 (~490 MB) — 관장 균형",
-          "webgpu": "소형 (~490 MB, WebGPU) — 관장 균형"
-        },
-        "openai-medium": {
-          "wasm": "중형 (~1.5 GB) — 더 정확, WebGPU 필요",
-          "webgpu": "중형 (~1.5 GB, WebGPU) — 더 정확"
+          "wasm": "소형 (~400 MB) — 기준 모델",
+          "webgpu": "소형 (~290 MB) — 기준 모델(Turbo)보다 2배 빠르지만 정확도 낙음"
         },
         "openai-large-v3": {
           "wasm": "대형 v3 (~3.1 GB) — 가장 정확, WebGPU 필요",
-          "webgpu": "대형 v3 (~3.1 GB, WebGPU) — 가장 정확"
+          "webgpu": "대형 v3 (~3.1 GB) — 2배 느리지만 기준 모델(Turbo)보다 정확도 높은 경우 많음"
         },
         "openai-large-v3-turbo": {
-          "wasm": "대형 v3 Turbo (~1.6 GB) — 최적/빠름, WebGPU 필요",
-          "webgpu": "대형 v3 Turbo (~1.6 GB, WebGPU) — 최적/빠름"
+          "wasm": "대형 v3 Turbo (~700 MB) — 빠르고 정확, WebGPU 필요",
+          "webgpu": "대형 v3 Turbo (~700 MB) — 빠르고 합리적으로 정확한 선택된 기준 모델"
         }
       },
       "language label": "트랜스크립션 언어",

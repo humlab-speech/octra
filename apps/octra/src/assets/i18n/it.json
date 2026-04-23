@@ -228,28 +228,20 @@
           "webgpu": "Grande (~1,2 GB) — Più preciso, 2× più lento di Medio"
         },
         "openai-tiny": {
-          "wasm": "Minuscolo (~75 MB) — Più veloce, meno accurato",
-          "webgpu": "Minuscolo (~75 MB, WebGPU) — Più veloce, meno accurato"
-        },
-        "openai-base": {
-          "wasm": "Base (~145 MB) — Veloce, discorso semplice",
-          "webgpu": "Base (~145 MB, WebGPU) — Veloce, discorso semplice"
+          "wasm": "Minuscolo (~95 MB) — ~5× più veloce ma meno accurato del nostro modello di riferimento (Small)",
+          "webgpu": "Minuscolo (~95 MB) — ~4× più veloce del nostro modello di riferimento (Turbo), ma il meno accurato"
         },
         "openai-small": {
-          "wasm": "Piccolo (~490 MB) — Bilanciato, raccomandato",
-          "webgpu": "Piccolo (~490 MB, WebGPU) — Bilanciato, raccomandato"
-        },
-        "openai-medium": {
-          "wasm": "Medio (~1,5 GB) — Più accurato, richiede WebGPU",
-          "webgpu": "Medio (~1,5 GB, WebGPU) — Più accurato"
+          "wasm": "Piccolo (~400 MB) — Il nostro modello di riferimento",
+          "webgpu": "Piccolo (~290 MB) — 2× più veloce ma meno accurato del nostro modello di riferimento (Turbo)"
         },
         "openai-large-v3": {
           "wasm": "Grande v3 (~3,1 GB) — Massima accuratezza, richiede WebGPU",
-          "webgpu": "Grande v3 (~3,1 GB, WebGPU) — Massima accuratezza"
+          "webgpu": "Grande v3 (~3,1 GB) — 2× più lento ma spesso più accurato del nostro modello di riferimento (Turbo)"
         },
         "openai-large-v3-turbo": {
-          "wasm": "Grande v3 Turbo (~1,6 GB) — Ottimo/veloce, richiede WebGPU",
-          "webgpu": "Grande v3 Turbo (~1,6 GB, WebGPU) — Ottimo/veloce"
+          "wasm": "Grande v3 Turbo (~700 MB) — Veloce e accurato, richiede WebGPU",
+          "webgpu": "Grande v3 Turbo (~700 MB) — Veloce e ragionevolmente accurato, il nostro modello di riferimento selezionato"
         }
       },
       "language label": "Lingua di trascrizione",

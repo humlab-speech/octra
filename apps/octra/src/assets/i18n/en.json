@@ -328,28 +328,20 @@
           "webgpu": "Large (~1.2 GB) — Most accurate, 2× slower than Medium"
         },
         "openai-tiny": {
-          "wasm": "Tiny (~75 MB) — Fastest, least accurate",
-          "webgpu": "Tiny (~75 MB, WebGPU) — Fastest, least accurate"
-        },
-        "openai-base": {
-          "wasm": "Base (~145 MB) — Fast, good for simple speech",
-          "webgpu": "Base (~145 MB, WebGPU) — Fast, good for simple speech"
+          "wasm": "Tiny (~95 MB) — ~5x faster but less accurate than our reference model (Small)",
+          "webgpu": "Tiny (~95 MB) — ~4x faster than our reference model (Turbo), but the least accurate"
         },
         "openai-small": {
-          "wasm": "Small (~490 MB) — Recommended balance",
-          "webgpu": "Small (~490 MB, WebGPU) — Recommended balance"
-        },
-        "openai-medium": {
-          "wasm": "Medium (~1.5 GB) — More accurate, needs WebGPU",
-          "webgpu": "Medium (~1.5 GB, WebGPU) — More accurate"
+          "wasm": "Small (~400 MB) — Our reference model",
+          "webgpu": "Small (~290 MB) — 2x faster but less accurate than our reference model (Turbo)"
         },
         "openai-large-v3": {
           "wasm": "Large v3 (~3.1 GB) — Most accurate, needs WebGPU",
-          "webgpu": "Large v3 (~3.1 GB, WebGPU) — Most accurate"
+          "webgpu": "Large v3 (~3.1 GB) — 2x slower but often more accurate than our reference model (Turbo)"
         },
         "openai-large-v3-turbo": {
-          "wasm": "Large v3 Turbo (~1.6 GB) — Best/fast, needs WebGPU",
-          "webgpu": "Large v3 Turbo (~1.6 GB, WebGPU) — Best/fast"
+          "wasm": "Large v3 Turbo (~700 MB) — Fast and accurate, needs WebGPU",
+          "webgpu": "Large v3 Turbo (~700 MB) — Fast and reasonably accurate, our selected reference model"
         }
       },
       "language label": "Transcription language",

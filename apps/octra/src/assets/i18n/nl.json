@@ -228,28 +228,20 @@
           "webgpu": "Groot (~1,2 GB) — Meest nauwkeurig, 2× langzamer dan Medium"
         },
         "openai-tiny": {
-          "wasm": "Minuscuul (~75 MB) — Snelste, minst nauwkeurig",
-          "webgpu": "Minuscuul (~75 MB, WebGPU) — Snelste, minst nauwkeurig"
-        },
-        "openai-base": {
-          "wasm": "Basis (~145 MB) — Snel, eenvoudige spraak",
-          "webgpu": "Basis (~145 MB, WebGPU) — Snel, eenvoudige spraak"
+          "wasm": "Minuscuul (~95 MB) — ~5× sneller maar minder nauwkeurig dan ons referentiemodel (Small)",
+          "webgpu": "Minuscuul (~95 MB) — ~4× sneller dan ons referentiemodel (Turbo), maar het minst nauwkeurig"
         },
         "openai-small": {
-          "wasm": "Klein (~490 MB) — Aanbevolen balans",
-          "webgpu": "Klein (~490 MB, WebGPU) — Aanbevolen balans"
-        },
-        "openai-medium": {
-          "wasm": "Medium (~1,5 GB) — Nauwkeuriger, vereist WebGPU",
-          "webgpu": "Medium (~1,5 GB, WebGPU) — Nauwkeuriger"
+          "wasm": "Klein (~400 MB) — Ons referentiemodel",
+          "webgpu": "Klein (~290 MB) — 2× sneller maar minder nauwkeurig dan ons referentiemodel (Turbo)"
         },
         "openai-large-v3": {
           "wasm": "Groot v3 (~3,1 GB) — Meest nauwkeurig, vereist WebGPU",
-          "webgpu": "Groot v3 (~3,1 GB, WebGPU) — Meest nauwkeurig"
+          "webgpu": "Groot v3 (~3,1 GB) — 2× trager maar vaak nauwkeuriger dan ons referentiemodel (Turbo)"
         },
         "openai-large-v3-turbo": {
-          "wasm": "Groot v3 Turbo (~1,6 GB) — Beste/snel, vereist WebGPU",
-          "webgpu": "Groot v3 Turbo (~1,6 GB, WebGPU) — Beste/snel"
+          "wasm": "Groot v3 Turbo (~700 MB) — Snel en nauwkeurig, vereist WebGPU",
+          "webgpu": "Groot v3 Turbo (~700 MB) — Snel en redelijk nauwkeurig, ons geselecteerde referentiemodel"
         }
       },
       "language label": "Transcriptietaal",

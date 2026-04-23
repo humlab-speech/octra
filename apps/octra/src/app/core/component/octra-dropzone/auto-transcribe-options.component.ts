@@ -9,7 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 
 export interface KbWhisperModel {
@@ -73,17 +73,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
     key: 'tiny',
     i18nKey: 'openai-tiny',
     modelId: 'onnx-community/whisper-tiny-ONNX',
-    sizeMb: 75,
-    requiresWebGpu: false,
-    hasWebgpuVariant: true,
-    dtypeWasm: 'q4',
-    dtypeWebgpu: 'q4',
-  },
-  {
-    key: 'base',
-    i18nKey: 'openai-base',
-    modelId: 'onnx-community/whisper-base-ONNX',
-    sizeMb: 145,
+    sizeMb: 95,
     requiresWebGpu: false,
     hasWebgpuVariant: true,
     dtypeWasm: 'q4',
@@ -93,17 +83,17 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
     key: 'small',
     i18nKey: 'openai-small',
     modelId: 'onnx-community/whisper-small',
-    sizeMb: 490,
+    sizeMb: 290,
     requiresWebGpu: false,
     hasWebgpuVariant: true,
     dtypeWasm: 'q4',
     dtypeWebgpu: 'q4',
   },
   {
-    key: 'medium',
-    i18nKey: 'openai-medium',
-    modelId: 'onnx-community/whisper-medium-ONNX',
-    sizeMb: 1500,
+    key: 'large-v3-turbo',
+    i18nKey: 'openai-large-v3-turbo',
+    modelId: 'onnx-community/whisper-large-v3-turbo',
+    sizeMb: 700,
     requiresWebGpu: true,
     hasWebgpuVariant: true,
     dtypeWasm: 'q4',
@@ -113,17 +103,7 @@ export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
     key: 'large-v3',
     i18nKey: 'openai-large-v3',
     modelId: 'onnx-community/whisper-large-v3-ONNX',
-    sizeMb: 3100,
-    requiresWebGpu: true,
-    hasWebgpuVariant: true,
-    dtypeWasm: 'q4',
-    dtypeWebgpu: 'q4',
-  },
-  {
-    key: 'large-v3-turbo',
-    i18nKey: 'openai-large-v3-turbo',
-    modelId: 'onnx-community/whisper-large-v3-turbo',
-    sizeMb: 1600,
+    sizeMb: 1200,
     requiresWebGpu: true,
     hasWebgpuVariant: true,
     dtypeWasm: 'q4',
@@ -389,9 +369,9 @@ export class AutoTranscribeOptionsComponent implements OnInit {
 
   models: KbWhisperModel[] = KB_WHISPER_MODELS;
   readonly languages = WHISPER_LANGUAGES;
-  selectedLanguage = 'sv';
+  selectedLanguage = 'en';
 
-  constructor() {
+  constructor(private readonly transloco: TranslocoService) {
     effect(() => {
       // Track signal reads so the effect re-runs when they change
       this.audioLoaded();
@@ -401,6 +381,12 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    const langCode = this.transloco.getActiveLang().split('-')[0];
+    this.selectedLanguage = WHISPER_LANGUAGES.some(l => l.code === langCode)
+      ? langCode
+      : 'en';
+    this.onLanguageChange();
+
     this.isSafari.set(isSafariOrWebKit());
     try {
       const nav = navigator as Navigator & {

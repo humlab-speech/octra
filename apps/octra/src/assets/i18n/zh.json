@@ -228,28 +228,20 @@
           "webgpu": "大型（约 1.2 GB）— 最精确，比中型慢 2 倍"
         },
         "openai-tiny": {
-          "wasm": "微型 (~75 MB) — 最快，准确度最低",
-          "webgpu": "微型 (~75 MB, WebGPU) — 最快，准确度最低"
-        },
-        "openai-base": {
-          "wasm": "基本型 (~145 MB) — 快速，适合简单语音",
-          "webgpu": "基本型 (~145 MB, WebGPU) — 快速，适合简单语音"
+          "wasm": "微型 (~95 MB) — 比参考模型 (Small) 快纥5倍，但准确度较低",
+          "webgpu": "微型 (~95 MB) — 比参考模型 (Turbo) 快纥4倍，但准确度最低"
         },
         "openai-small": {
-          "wasm": "小型 (~490 MB) — 推荐的平衡选择",
-          "webgpu": "小型 (~490 MB, WebGPU) — 推荐的平衡选择"
-        },
-        "openai-medium": {
-          "wasm": "中型 (~1.5 GB) — 更准确，需要 WebGPU",
-          "webgpu": "中型 (~1.5 GB, WebGPU) — 更准确"
+          "wasm": "小型 (~400 MB) — 我们的参考模型",
+          "webgpu": "小型 (~290 MB) — 比参考模型 (Turbo) 加2倍，但准确度较低"
         },
         "openai-large-v3": {
           "wasm": "大型 v3 (~3.1 GB) — 最准确，需要 WebGPU",
-          "webgpu": "大型 v3 (~3.1 GB, WebGPU) — 最准确"
+          "webgpu": "大型 v3 (~3.1 GB) — 慢 2倍，但通常比参考模型 (Turbo) 更准确"
         },
         "openai-large-v3-turbo": {
-          "wasm": "大型 v3 Turbo (~1.6 GB) — 最佳/快速，需要 WebGPU",
-          "webgpu": "大型 v3 Turbo (~1.6 GB, WebGPU) — 最佳/快速"
+          "wasm": "大型 v3 Turbo (~700 MB) — 快速且准确，需要 WebGPU",
+          "webgpu": "大型 v3 Turbo (~700 MB) — 快速且准确度适中，我们选定的参考模型"
         }
       },
       "language label": "转录语言",
