@@ -69,6 +69,27 @@ import * as fromUser from './app/core/store/user/user.reducer';
 import { environment } from './environments/environment';
 import { provideServiceWorker } from '@angular/service-worker';
 
+// Strip unknown query params before Angular router initializes.
+// Matomo and other trackers inject params (pk_vid, link_addon, etc.) that
+// confuse Angular's router and cause NG04002 errors.
+(function stripUnknownQueryParams() {
+  const KNOWN_PARAMS = new Set([
+    'audio_url', 'audio_name', 'audio_type', 'auto_playback',
+    'aType', 'host', 'transcript', 'readonly', 'embedded', 'bottomNav',
+  ]);
+  const url = new URL(window.location.href);
+  let dirty = false;
+  for (const key of [...url.searchParams.keys()]) {
+    if (!KNOWN_PARAMS.has(key)) {
+      url.searchParams.delete(key);
+      dirty = true;
+    }
+  }
+  if (dirty) {
+    history.replaceState(null, '', url.toString());
+  }
+})();
+
 bootstrapApplication(AppComponent, {
   providers: [
     // Routing

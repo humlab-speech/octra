@@ -63,7 +63,8 @@ export const APP_INITIALIZED_GUARD: CanActivateFn = (
         routingService.navigate(
           'guard app init, to load',
           ['/load'],
-          AppInfo.queryParamsHandling,
+          undefined,
+          null, // don't merge unknown params into the /load redirect
         );
         console.log('APP_INITIALIZED_GUARD: Navigation to /load initiated');
       } else {

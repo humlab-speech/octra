@@ -84,4 +84,5 @@ export const APP_ROUTES: Routes = [
         './core/pages/intern/visp-task/visp-task.component'
       ).then((m) => m.VispTaskComponent),
   },
+  { path: '**', redirectTo: '' },
 ];
