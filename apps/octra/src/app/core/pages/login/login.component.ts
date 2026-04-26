@@ -18,8 +18,11 @@ import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
 import { KB_WHISPER_MODELS, OPENAI_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
-import { LocalTranslationService, TranslationEvent } from '../../shared/service/local-translation.service';
-import { OAnnotJSON } from '@octra/annotation';
+import { LocalTranslationService, TranslationEvent, TranslationOptions } from '../../shared/service/local-translation.service';
+import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
+import type { OAnnotJSON } from '@octra/annotation';
+
+type TranslationPhase = 'idle' | 'downloading' | 'translating' | 'finalizing';
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -92,11 +95,10 @@ export class LoginComponent
   private _transcriptionSub: Subscription | null = null;
   private _translationSub: Subscription | null = null;
   private _pendingRemoveData = false;
-  private _pendingAnnotJson: OAnnotJSON | null = null;
 
   translation: {
     active: boolean;
-    phase: 'downloading' | 'translating' | 'finalizing' | 'idle';
+    phase: TranslationPhase;
     downloadLoaded: number;
     downloadTotal: number;
     downloadFile: string;
@@ -218,7 +220,7 @@ I just want to let you know, that the OCTRA server is currently offline.
     this.proceedWithLogin(removeData);
   };
 
-  private _startTranscription(opts: import('../../shared/service/local-transcription.service').TranscriptionOptions): void {
+  private _startTranscription(opts: TranscriptionOptions): void {
     const modelMeta =
       KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId) ??
       OPENAI_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
@@ -283,7 +285,6 @@ I just want to let you know, that the OCTRA server is currently offline.
 
   private _startTranslation(annotJson: OAnnotJSON): void {
     const trOpts = this.dropzone!.translateOptions!;
-    this._pendingAnnotJson = annotJson;
     this.translation = {
       active: true,
       phase: 'downloading',

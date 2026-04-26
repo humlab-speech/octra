@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   effect,
   input,
@@ -18,41 +19,13 @@ import {
   TranslationOptions,
 } from '../../shared/service/local-translation.service';
 
-/** HY-MT 1.5 1.8B target/source language list. Confirm against model card on
- * first integration; treat as a starting set. Codes are BCP-47 base codes. */
-export const HYMT_LANGUAGES: { code: string }[] = [
-  { code: 'en' },
-  { code: 'de' },
-  { code: 'fr' },
-  { code: 'es' },
-  { code: 'it' },
-  { code: 'pt' },
-  { code: 'nl' },
-  { code: 'sv' },
-  { code: 'da' },
-  { code: 'no' },
-  { code: 'fi' },
-  { code: 'pl' },
-  { code: 'cs' },
-  { code: 'sk' },
-  { code: 'hu' },
-  { code: 'ro' },
-  { code: 'bg' },
-  { code: 'el' },
-  { code: 'tr' },
-  { code: 'ru' },
-  { code: 'uk' },
-  { code: 'ar' },
-  { code: 'he' },
-  { code: 'fa' },
-  { code: 'hi' },
-  { code: 'zh' },
-  { code: 'ja' },
-  { code: 'ko' },
-  { code: 'vi' },
-  { code: 'id' },
-  { code: 'th' },
+export const HYMT_LANGUAGES: readonly string[] = [
+  'en', 'de', 'fr', 'es', 'it', 'pt', 'nl', 'sv', 'da', 'no',
+  'fi', 'pl', 'cs', 'sk', 'hu', 'ro', 'bg', 'el', 'tr', 'ru',
+  'uk', 'ar', 'he', 'fa', 'hi', 'zh', 'ja', 'ko', 'vi', 'id', 'th',
 ];
+
+const HYMT_DEFAULT_DTYPE = 'q4';
 
 @Component({
   selector: 'octra-auto-translate-options',
@@ -154,7 +127,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
   readonly hasWebGpu = signal(false);
   readonly isSafari = signal(false);
 
-  /** Two-way ngModel proxy that syncs into the `enabled` signal. */
   get enabledModel(): boolean {
     return this.enabled();
   }
@@ -162,24 +134,24 @@ export class AutoTranslateOptionsComponent implements OnInit {
     this.enabled.set(v);
   }
 
-  readonly languages = HYMT_LANGUAGES.map((l) => ({
-    ...l,
-    label: getEnglishLanguageLabel(l.code),
+  readonly languages = HYMT_LANGUAGES.map((code) => ({
+    code,
+    label: getEnglishLanguageLabel(code),
   }));
 
   sourceLanguage = 'en';
   targetLanguage = 'de';
-  private userOverroddeSource = false;
+  private userOverrodeSource = false;
 
-  visible = (): boolean =>
-    this.annotationAlreadyLoaded() || this.transcribeWillRun();
+  readonly visible = computed(
+    () => this.annotationAlreadyLoaded() || this.transcribeWillRun(),
+  );
 
   constructor(
     private readonly transloco: TranslocoService,
     private readonly destroyRef: DestroyRef,
   ) {
     effect(() => {
-      // re-emit when visibility inputs change
       this.annotationAlreadyLoaded();
       this.transcribeWillRun();
       this.emitChange();
@@ -187,7 +159,7 @@ export class AutoTranslateOptionsComponent implements OnInit {
 
     effect(() => {
       const hint = this.sourceLanguageHint();
-      if (hint && !this.userOverroddeSource) {
+      if (hint && !this.userOverrodeSource) {
         this.applySourceHint(hint);
       }
     });
@@ -201,7 +173,7 @@ export class AutoTranslateOptionsComponent implements OnInit {
     this.transloco.langChanges$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lang) => {
-        if (!this.userOverroddeSource && !this.sourceLanguageHint()) {
+        if (!this.userOverrodeSource && !this.sourceLanguageHint()) {
           this.applySourceHint(lang);
         }
       });
@@ -222,15 +194,13 @@ export class AutoTranslateOptionsComponent implements OnInit {
 
   private applySourceHint(hint: string): void {
     const code = hint.split('-')[0].toLowerCase();
-    this.sourceLanguage = HYMT_LANGUAGES.some((l) => l.code === code)
-      ? code
-      : 'en';
+    this.sourceLanguage = HYMT_LANGUAGES.includes(code) ? code : 'en';
     this.targetLanguage = this.sourceLanguage === 'en' ? 'de' : 'en';
     this.emitChange();
   }
 
   onEnabledChange(): void {
-    this.userOverroddeSource = false;
+    this.userOverrodeSource = false;
     this.emitChange();
   }
 
@@ -246,7 +216,7 @@ export class AutoTranslateOptionsComponent implements OnInit {
     this.optionsChange.emit({
       modelId: HYMT_DEFAULT_MODEL_ID,
       useWebGPU: this.hasWebGpu(),
-      dtype: 'q4',
+      dtype: HYMT_DEFAULT_DTYPE,
       sourceLanguage: this.sourceLanguage,
       targetLanguage: this.targetLanguage,
     });

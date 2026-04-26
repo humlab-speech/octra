@@ -23,18 +23,8 @@ export function formatLanguageLabel(
   const base = code.split('-')[0].toLowerCase();
   const cleanedFallback = stripTrailingParens(fallbackDescription ?? '');
 
-  let english: string | undefined;
-  let intlNative: string | undefined;
-
-  try {
-    const DisplayNames = (Intl as any).DisplayNames;
-    if (typeof DisplayNames === 'function') {
-      english = new DisplayNames(['en'], { type: 'language' }).of(base);
-      intlNative = new DisplayNames([base], { type: 'language' }).of(base);
-    }
-  } catch {
-    /* ignore — fall through to fallback */
-  }
+  let english = lookupDisplayName(base, 'en');
+  let intlNative = lookupDisplayName(base, base);
 
   english = english ? stripTrailingParens(english) : cleanedFallback;
   intlNative = intlNative ? stripTrailingParens(intlNative) : undefined;
@@ -59,6 +49,21 @@ export function formatLanguageLabel(
 
 function stripTrailingParens(value: string): string {
   return value.replace(/\s*\([^)]*\)\s*$/g, '').trim();
+}
+
+function lookupDisplayName(base: string, locale: string): string | undefined {
+  try {
+    const DisplayNames = (Intl as unknown as { DisplayNames?: unknown })
+      .DisplayNames as
+      | { new (locales: string[], opts: { type: string }): { of(c: string): string | undefined } }
+      | undefined;
+    if (typeof DisplayNames === 'function') {
+      return new DisplayNames([locale], { type: 'language' }).of(base);
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
 }
 
 /**
@@ -97,41 +102,17 @@ function baseCode(code?: string): string | undefined {
   return base || undefined;
 }
 
-/**
- * Returns `<English name> (<base code>)`. Used by the translation
- * options selector where labels are intentionally English-only so the
- * dropdown stays readable for any UI language.
- */
 export function getEnglishLanguageLabel(code: string): string {
   const base = baseCode(code);
   if (!base) return code;
-  let english: string | undefined;
-  try {
-    const DisplayNames = (Intl as unknown as { DisplayNames?: unknown })
-      .DisplayNames as { new (locales: string[], opts: { type: string }): { of(c: string): string | undefined } } | undefined;
-    if (typeof DisplayNames === 'function') {
-      english = new DisplayNames(['en'], { type: 'language' }).of(base);
-    }
-  } catch {
-    /* ignore */
-  }
-  english = english?.replace(/\s*\([^)]*\)\s*$/g, '').trim();
-  return english ? `${english} (${base})` : base;
+  const english = lookupDisplayName(base, 'en');
+  const cleaned = english ? stripTrailingParens(english) : undefined;
+  return cleaned ? `${cleaned} (${base})` : base;
 }
 
-/**
- * Reverse lookup of an endonym (native language name) to its base
- * language code. Case-insensitive. Returns `undefined` when no entry
- * matches — best-effort hint only, callers must handle the missing
- * case.
- */
 export function endonymToLanguageCode(name: string): string | undefined {
   if (!name) return undefined;
-  const target = name.trim().toLowerCase();
-  for (const [code, native] of Object.entries(NATIVE_LANGUAGE_NAMES)) {
-    if (native.toLowerCase() === target) return code;
-  }
-  return undefined;
+  return ENDONYM_TO_CODE.get(name.trim().toLowerCase());
 }
 
 /**
@@ -244,3 +225,10 @@ const NATIVE_LANGUAGE_NAMES: Record<string, string> = {
   yue: '粵語',
   zh: '中文',
 };
+
+const ENDONYM_TO_CODE: ReadonlyMap<string, string> = new Map(
+  Object.entries(NATIVE_LANGUAGE_NAMES).map(([code, native]) => [
+    native.toLowerCase(),
+    code,
+  ]),
+);

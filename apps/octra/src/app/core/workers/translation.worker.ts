@@ -1,6 +1,5 @@
 /// <reference lib="webworker" />
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { env, pipeline } from '@huggingface/transformers';
 
 if (env.backends.onnx.wasm) {
