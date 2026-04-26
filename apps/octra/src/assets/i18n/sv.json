@@ -304,6 +304,7 @@
       "model cached after download": "Modellen sparas i webbläsarens cache efter första nedladdningen.",
       "phase": {
         "downloading": "Hämtar översättningsmodell…",
+        "initializing": "Initierar modell på GPU — kan ta upp till en minut…",
         "translating": "Översätter segment…",
         "finalizing": "Översättningen klar — förbereder editorn…"
       }

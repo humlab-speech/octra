@@ -297,6 +297,7 @@
       "model cached after download": "Das Modell wird nach dem ersten Download zwischengespeichert.",
       "phase": {
         "downloading": "Übersetzungsmodell wird geladen…",
+        "initializing": "Modell wird auf der GPU initialisiert — das kann bis zu einer Minute dauern…",
         "translating": "Segmente werden übersetzt…",
         "finalizing": "Übersetzung abgeschlossen — Editor wird vorbereitet…"
       }

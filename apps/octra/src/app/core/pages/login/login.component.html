@@ -263,6 +263,18 @@
                           <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
                         }
                       </div>
+                    } @else if (translation.phase === 'initializing') {
+                      <div>
+                        <strong>{{ 'login.translation.phase.initializing' | transloco }}</strong>
+                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <div class="progress mt-2" style="height: 14px">
+                          <div
+                            class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: 100%"
+                          ></div>
+                        </div>
+                      </div>
                     } @else if (translation.phase === 'finalizing') {
                       <div>
                         <strong>{{ 'login.translation.phase.finalizing' | transloco }}</strong>

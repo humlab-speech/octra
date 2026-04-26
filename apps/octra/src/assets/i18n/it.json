@@ -204,6 +204,7 @@
       "model cached after download": "Model will be cached after first download.",
       "phase": {
         "downloading": "Downloading translation model…",
+        "initializing": "Loading model on GPU — this can take up to a minute…",
         "translating": "Translating segments…",
         "finalizing": "Translation complete — preparing editor…"
       }

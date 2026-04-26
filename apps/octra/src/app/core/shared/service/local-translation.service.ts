@@ -20,6 +20,10 @@ export interface TranslationDownloadProgress {
   file: string;
 }
 
+export interface TranslationModelInit {
+  type: 'model-init';
+}
+
 export interface TranslationStart {
   type: 'translate-start';
   total: number;
@@ -43,6 +47,7 @@ export interface TranslationError {
 
 export type TranslationEvent =
   | TranslationDownloadProgress
+  | TranslationModelInit
   | TranslationStart
   | TranslationSegmentProgress
   | TranslationResult

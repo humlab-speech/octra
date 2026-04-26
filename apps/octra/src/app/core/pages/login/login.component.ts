@@ -22,7 +22,14 @@ import { LocalTranslationService, TranslationEvent, TranslationOptions } from '.
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import type { OAnnotJSON } from '@octra/annotation';
 
-type TranslationPhase = 'idle' | 'downloading' | 'translating' | 'finalizing';
+type TranslationPhase =
+  | 'idle'
+  | 'downloading'
+  | 'initializing'
+  | 'translating'
+  | 'finalizing';
+
+const TRANSLATION_STALL_MS = 60_000;
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -122,6 +129,7 @@ export class LoginComponent
 
   private _translationElapsedIntervalId: ReturnType<typeof setInterval> | null = null;
   private _translationStartTime = 0;
+  private _translationStallTimerId: ReturnType<typeof setTimeout> | null = null;
 
   state: {
     online: {
@@ -296,12 +304,14 @@ I just want to let you know, that the OCTRA server is currently offline.
       error: null,
       usedWebGPU: trOpts.useWebGPU,
     };
+    this._armTranslationStallTimer();
     this._translationSub = this.localTranslationService
       .translate(annotJson, trOpts)
       .subscribe({
         next: (event: TranslationEvent) => this.onTranslationEvent(event),
         error: (err: Error) => {
           this._clearTranslationElapsed();
+          this._clearTranslationStallTimer();
           this.translation.error = err.message;
           this.translation.active = false;
         },
@@ -309,11 +319,14 @@ I just want to let you know, that the OCTRA server is currently offline.
   }
 
   private onTranslationEvent(event: TranslationEvent): void {
+    this._armTranslationStallTimer();
     if (event.type === 'download-progress') {
       this.translation.phase = 'downloading';
       this.translation.downloadLoaded = event.loaded;
       this.translation.downloadTotal = event.total;
       this.translation.downloadFile = event.file;
+    } else if (event.type === 'model-init') {
+      this.translation.phase = 'initializing';
     } else if (event.type === 'translate-start') {
       this.translation.phase = 'translating';
       this.translation.segmentTotal = event.total;
@@ -328,11 +341,30 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.translation.segmentTotal = event.total;
     } else if (event.type === 'result') {
       this._clearTranslationElapsed();
+      this._clearTranslationStallTimer();
       this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
       this.translation.active = false;
       this.translation.phase = 'finalizing';
       this._translationSub = null;
       this.proceedWithLogin(false);
+    }
+  }
+
+  private _armTranslationStallTimer(): void {
+    this._clearTranslationStallTimer();
+    this._translationStallTimerId = setTimeout(() => {
+      if (!this.translation.active) {
+        return;
+      }
+      this.translation.error =
+        'Translation stalled — no progress for 60 seconds. Check your connection or cancel and retry. (The model may also still be initializing on a slow GPU.)';
+    }, TRANSLATION_STALL_MS);
+  }
+
+  private _clearTranslationStallTimer(): void {
+    if (this._translationStallTimerId !== null) {
+      clearTimeout(this._translationStallTimerId);
+      this._translationStallTimerId = null;
     }
   }
 
@@ -345,6 +377,7 @@ I just want to let you know, that the OCTRA server is currently offline.
 
   cancelTranslation(): void {
     this._clearTranslationElapsed();
+    this._clearTranslationStallTimer();
     this.localTranslationService.cancel();
     this._translationSub?.unsubscribe();
     this._translationSub = null;

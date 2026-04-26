@@ -38,6 +38,10 @@ export interface TWorkerDownloadProgressMessage {
   file: string;
 }
 
+export interface TWorkerModelInitMessage {
+  type: 'model-init';
+}
+
 export interface TWorkerStartMessage {
   type: 'translate-start';
   total: number;
@@ -61,6 +65,7 @@ export interface TWorkerErrorMessage {
 
 export type TWorkerOutMessage =
   | TWorkerDownloadProgressMessage
+  | TWorkerModelInitMessage
   | TWorkerStartMessage
   | TWorkerSegmentProgressMessage
   | TWorkerResultMessage
@@ -87,29 +92,46 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranslateMessage
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pipelineFn = pipeline as any;
       const fileProgress = new Map<string, { loaded: number; total: number }>();
+      let initSignaled = false;
+      const emitAggregateProgress = (file: string) => {
+        let totalLoaded = 0;
+        let totalSize = 0;
+        for (const fp of fileProgress.values()) {
+          totalLoaded += fp.loaded;
+          totalSize += fp.total;
+        }
+        const msg: TWorkerDownloadProgressMessage = {
+          type: 'download-progress',
+          loaded: totalLoaded,
+          total: totalSize,
+          file,
+        };
+        postMessage(msg);
+      };
+
       translator = await pipelineFn('translation', modelId, {
         device: useWebGPU ? 'webgpu' : 'wasm',
         dtype: dtype ?? 'q4',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         progress_callback: (progress: any) => {
+          const file: string = progress?.file ?? '';
           if (progress?.status === 'progress' && progress.loaded !== undefined) {
-            fileProgress.set(progress.file ?? '', {
+            fileProgress.set(file, {
               loaded: progress.loaded,
               total: progress.total ?? 0,
             });
-            let totalLoaded = 0;
-            let totalSize = 0;
-            for (const fp of fileProgress.values()) {
-              totalLoaded += fp.loaded;
-              totalSize += fp.total;
+            emitAggregateProgress(file);
+          } else if (progress?.status === 'done' && file) {
+            const fp = fileProgress.get(file);
+            if (fp && fp.total > 0) {
+              fp.loaded = fp.total;
+              emitAggregateProgress(file);
             }
-            const msg: TWorkerDownloadProgressMessage = {
-              type: 'download-progress',
-              loaded: totalLoaded,
-              total: totalSize,
-              file: progress.file ?? '',
-            };
-            postMessage(msg);
+            if (!initSignaled) {
+              initSignaled = true;
+              const msg: TWorkerModelInitMessage = { type: 'model-init' };
+              postMessage(msg);
+            }
           }
         },
       });
