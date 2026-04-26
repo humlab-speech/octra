@@ -298,11 +298,10 @@
       "enable label": "Översätt transkriptionen lokalt",
       "from": "Från",
       "to": "Till",
-      "download size": "Vid första körning laddas NLLB-200 distilled-600M-modellen (~600 MB) ner och cachas i webbläsaren.",
+      "download size": "Vid första körning laddas NLLB-200 distilled-600M-modellen (~1,25 GB, q4f16) ner och cachas i webbläsaren.",
       "time warning": "Översättningen körs lokalt och kan ta flera minuter beroende på transkriptionens längd.",
-      "no webgpu": "WebGPU saknas — översättningen körs med WASM (långsammare).",
+      "webgpu required": "Lokal översättning kräver WebGPU. Din webbläsare har ingen WebGPU-adapter, så översättningen är inaktiverad. Pröva Chrome eller Edge på en stationär dator med modern GPU.",
       "model cached after download": "Modellen sparas i webbläsarens cache efter första nedladdningen.",
-      "safari warning": "Lokal översättning är inte tillgänglig i Safari — använd en annan webbläsare.",
       "phase": {
         "downloading": "Hämtar översättningsmodell…",
         "translating": "Översätter segment…",

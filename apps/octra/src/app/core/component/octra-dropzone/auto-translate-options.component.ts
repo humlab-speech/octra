@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { getEnglishLanguageLabel } from '@octra/utilities';
-import { isSafariOrWebKit } from '@octra/web-media';
 import {
   HYMT_DEFAULT_MODEL_ID,
   TranslationOptions,
@@ -25,7 +24,7 @@ export const HYMT_LANGUAGES: readonly string[] = [
   'uk', 'ar', 'he', 'fa', 'hi', 'zh', 'ja', 'ko', 'vi', 'id', 'th',
 ];
 
-const HYMT_DEFAULT_DTYPE = 'q4';
+const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
 
 @Component({
   selector: 'octra-auto-translate-options',
@@ -34,10 +33,10 @@ const HYMT_DEFAULT_DTYPE = 'q4';
   template: `
     @if (visible()) {
       <div class="auto-translate-options mt-2 p-2 border rounded">
-        @if (isSafari()) {
+        @if (!hasWebGpu()) {
           <div class="alert alert-warning mb-2">
             <i class="bi bi-exclamation-triangle"></i>
-            {{ 'login.translation.safari warning' | transloco }}
+            {{ 'login.translation.webgpu required' | transloco }}
           </div>
         }
         <div class="form-check mb-1">
@@ -47,7 +46,7 @@ const HYMT_DEFAULT_DTYPE = 'q4';
             id="autoTranslateCheck"
             [(ngModel)]="enabledModel"
             (ngModelChange)="onEnabledChange()"
-            [disabled]="isSafari()"
+            [disabled]="!hasWebGpu()"
           />
           <label class="form-check-label" for="autoTranslateCheck">
             {{ 'login.translation.enable label' | transloco }}
@@ -62,7 +61,7 @@ const HYMT_DEFAULT_DTYPE = 'q4';
           {{ 'login.translation.time warning' | transloco }}
         </small>
 
-        @if (enabled()) {
+        @if (enabled() && hasWebGpu()) {
           <div class="mb-2">
             <label for="translateFrom" class="form-label form-label-sm mb-1">
               {{ 'login.translation.from' | transloco }}
@@ -94,12 +93,6 @@ const HYMT_DEFAULT_DTYPE = 'q4';
             </select>
           </div>
 
-          @if (!hasWebGpu()) {
-            <small class="text-muted d-block">
-              <i class="bi bi-exclamation-triangle"></i>
-              {{ 'login.translation.no webgpu' | transloco }}
-            </small>
-          }
           <small class="text-muted mt-1 d-block">
             <i class="bi bi-info-circle"></i>
             {{ 'login.translation.model cached after download' | transloco }}
@@ -125,7 +118,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
 
   readonly enabled = signal(false);
   readonly hasWebGpu = signal(false);
-  readonly isSafari = signal(false);
 
   get enabledModel(): boolean {
     return this.enabled();
@@ -178,7 +170,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
         }
       });
 
-    this.isSafari.set(isSafariOrWebKit());
     try {
       const nav = navigator as Navigator & {
         gpu?: { requestAdapter(): Promise<unknown> | null };
@@ -205,7 +196,7 @@ export class AutoTranslateOptionsComponent implements OnInit {
   }
 
   emitChange(): void {
-    if (!this.visible() || !this.enabled()) {
+    if (!this.visible() || !this.enabled() || !this.hasWebGpu()) {
       this.optionsChange.emit(null);
       return;
     }
@@ -215,8 +206,8 @@ export class AutoTranslateOptionsComponent implements OnInit {
     }
     this.optionsChange.emit({
       modelId: HYMT_DEFAULT_MODEL_ID,
-      useWebGPU: this.hasWebGpu(),
-      dtype: HYMT_DEFAULT_DTYPE,
+      useWebGPU: true,
+      dtype: TRANSLATION_DTYPE_WEBGPU,
       sourceLanguage: this.sourceLanguage,
       targetLanguage: this.targetLanguage,
     });

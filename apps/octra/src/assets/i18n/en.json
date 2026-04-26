@@ -298,11 +298,10 @@
       "enable label": "Translate transcript locally",
       "from": "From",
       "to": "To",
-      "download size": "First run downloads the NLLB-200 distilled-600M model (~600 MB). Cached after.",
+      "download size": "First run downloads the NLLB-200 distilled-600M model (~1.25 GB, q4f16). Cached after.",
       "time warning": "Translation runs locally and may take several minutes depending on transcript length.",
-      "no webgpu": "WebGPU not detected — translation will run on WASM (slower).",
+      "webgpu required": "Local translation requires WebGPU. Your browser does not expose a WebGPU adapter, so translation is disabled. Try Chrome or Edge on a desktop with a recent GPU.",
       "model cached after download": "Model will be cached after first download.",
-      "safari warning": "Local translation is not available in Safari — please use a different browser.",
       "phase": {
         "downloading": "Downloading translation model…",
         "translating": "Translating segments…",

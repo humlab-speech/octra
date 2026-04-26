@@ -291,11 +291,10 @@
       "enable label": "Transkript lokal übersetzen",
       "from": "Von",
       "to": "Nach",
-      "download size": "Beim ersten Aufruf wird das NLLB-200 distilled-600M Modell (~600 MB) heruntergeladen und danach im Browser zwischengespeichert.",
+      "download size": "Beim ersten Aufruf wird das NLLB-200 distilled-600M Modell (~1,25 GB, q4f16) heruntergeladen und danach im Browser zwischengespeichert.",
       "time warning": "Die Übersetzung läuft lokal und kann je nach Länge des Transkripts mehrere Minuten dauern.",
-      "no webgpu": "Kein WebGPU verfügbar — Übersetzung läuft mit WASM (langsamer).",
+      "webgpu required": "Lokale Übersetzung erfordert WebGPU. Ihr Browser stellt keinen WebGPU-Adapter bereit, daher ist die Übersetzung deaktiviert. Versuchen Sie Chrome oder Edge auf einem Desktop mit aktueller GPU.",
       "model cached after download": "Das Modell wird nach dem ersten Download zwischengespeichert.",
-      "safari warning": "Lokale Übersetzung ist in Safari nicht verfügbar — bitte verwenden Sie einen anderen Browser.",
       "phase": {
         "downloading": "Übersetzungsmodell wird geladen…",
         "translating": "Segmente werden übersetzt…",
