@@ -56,7 +56,9 @@ export interface TranslationOptions {
   targetLanguage: string;
 }
 
-export const HYMT_DEFAULT_MODEL_ID = 'onnx-community/HY-MT1.5-1.8B-ONNX';
+export const TRANSLATION_DEFAULT_MODEL_ID = 'Xenova/nllb-200-distilled-600M';
+/** @deprecated use {@link TRANSLATION_DEFAULT_MODEL_ID} */
+export const HYMT_DEFAULT_MODEL_ID = TRANSLATION_DEFAULT_MODEL_ID;
 
 @Injectable({ providedIn: 'root' })
 export class LocalTranslationService implements OnDestroy {

@@ -157,7 +157,7 @@
                   ></octra-dropzone>
                 </div>
 
-                @if (transcription.active || transcription.error || transcription.phase === 'finalizing') {
+                @if ((transcription.active || transcription.error || transcription.phase === 'finalizing') && !translation.active && !translation.error) {
                   <div class="transcription-progress mt-3 p-3 border rounded bg-light">
                     @if (transcription.phase === 'downloading') {
                       <div>

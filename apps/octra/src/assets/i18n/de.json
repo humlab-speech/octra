@@ -291,7 +291,7 @@
       "enable label": "Transkript lokal übersetzen",
       "from": "Von",
       "to": "Nach",
-      "download size": "Beim ersten Aufruf wird das HY-MT 1.8B Modell (~1,1 GB, Q4) heruntergeladen und danach im Browser zwischengespeichert.",
+      "download size": "Beim ersten Aufruf wird das NLLB-200 distilled-600M Modell (~600 MB) heruntergeladen und danach im Browser zwischengespeichert.",
       "time warning": "Die Übersetzung läuft lokal und kann je nach Länge des Transkripts mehrere Minuten dauern.",
       "no webgpu": "Kein WebGPU verfügbar — Übersetzung läuft mit WASM (langsamer).",
       "model cached after download": "Das Modell wird nach dem ersten Download zwischengespeichert.",

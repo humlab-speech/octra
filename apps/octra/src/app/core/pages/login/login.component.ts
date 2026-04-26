@@ -269,15 +269,14 @@ I just want to let you know, that the OCTRA server is currently offline.
     } else if (event.type === 'result') {
       this._clearElapsedInterval();
       this.transcription.active = false;
-      this.transcription.phase = 'finalizing';
       this._transcriptionSub = null;
       const trOpts = this.dropzone?.translateOptions;
       if (trOpts) {
+        this.transcription.phase = 'idle';
         this._startTranslation(event.annotJson);
       } else {
+        this.transcription.phase = 'finalizing';
         this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
-        // Always pass removeData=false: the annotation parameter already causes the
-        // reducer to replace the transcript, so the DELETE confirmation modal is not needed.
         this.proceedWithLogin(false);
       }
     }

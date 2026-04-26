@@ -298,7 +298,7 @@
       "enable label": "Translate transcript locally",
       "from": "From",
       "to": "To",
-      "download size": "First run downloads the HY-MT 1.8B model (~1.1 GB, Q4). Cached after.",
+      "download size": "First run downloads the NLLB-200 distilled-600M model (~600 MB). Cached after.",
       "time warning": "Translation runs locally and may take several minutes depending on transcript length.",
       "no webgpu": "WebGPU not detected — translation will run on WASM (slower).",
       "model cached after download": "Model will be cached after first download.",

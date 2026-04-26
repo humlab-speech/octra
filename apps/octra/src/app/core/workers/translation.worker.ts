@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 
 import { env, pipeline } from '@huggingface/transformers';
+import { toFloresCode } from './flores-codes';
 
 if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = '/assets/ort/';
@@ -131,8 +132,8 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranslateMessage
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const out: any = await (translator as any)(text, {
-          src_lang: srcLang,
-          tgt_lang: tgtLang,
+          src_lang: toFloresCode(srcLang),
+          tgt_lang: toFloresCode(tgtLang),
         });
         const first = Array.isArray(out) ? out[0] : out;
         const translatedText: string =
