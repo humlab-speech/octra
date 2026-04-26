@@ -118,9 +118,25 @@
 </octra-drop-zone>
 
 @if (showAutoTranscribe) {
-  <octra-auto-transcribe-options
-    [audioLoaded]="hasAudio"
-    [annotationAlreadyLoaded]="hasAnnotation"
-    (optionsChange)="onTranscribeOptionsChange($event)"
-  ></octra-auto-transcribe-options>
+  <div class="row g-2">
+    @if (!hasAnnotation) {
+      <div class="col">
+        <octra-auto-transcribe-options
+          [audioLoaded]="hasAudio"
+          [annotationAlreadyLoaded]="hasAnnotation"
+          (optionsChange)="onTranscribeOptionsChange($event)"
+        ></octra-auto-transcribe-options>
+      </div>
+    }
+    @if (hasAnnotation || transcribeOptions !== null) {
+      <div class="col">
+        <octra-auto-translate-options
+          [annotationAlreadyLoaded]="hasAnnotation"
+          [transcribeWillRun]="transcribeOptions !== null"
+          [sourceLanguageHint]="transcribeOptions?.language ?? annotationSourceLangCode"
+          (optionsChange)="onTranslateOptionsChange($event)"
+        ></octra-auto-translate-options>
+      </div>
+    }
+  </div>
 }

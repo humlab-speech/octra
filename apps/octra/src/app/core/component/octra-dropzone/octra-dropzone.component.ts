@@ -12,10 +12,13 @@ import { OctraModalService } from '../../modals/octra-modal.service';
 import { SupportedFilesModalComponent } from '../../modals/supportedfiles-modal/supportedfiles-modal.component';
 import { FileProgress } from '../../obj/objects';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
+import { TranslationOptions } from '../../shared/service/local-translation.service';
 import { DefaultComponent } from '../default.component';
 import { DropZoneComponent } from '../drop-zone';
 import { DropZoneComponent as DropZoneComponent_1 } from '../drop-zone/drop-zone.component';
 import { AutoTranscribeOptionsComponent } from './auto-transcribe-options.component';
+import { AutoTranslateOptionsComponent } from './auto-translate-options.component';
+import { endonymToLanguageCode } from '@octra/utilities';
 import {
   DropzoneStatistics,
   OctraDropzoneService,
@@ -33,6 +36,7 @@ import {
     OctraUtilitiesModule,
     TranslocoPipe,
     AutoTranscribeOptionsComponent,
+    AutoTranslateOptionsComponent,
   ],
 })
 export class OctraDropzoneComponent extends DefaultComponent {
@@ -40,9 +44,22 @@ export class OctraDropzoneComponent extends DefaultComponent {
   @Input() height = '250px';
   @Input() showAutoTranscribe = false;
   transcribeOptions: TranscriptionOptions | null = null;
+  translateOptions: TranslationOptions | null = null;
 
   onTranscribeOptionsChange(opts: TranscriptionOptions | null): void {
     this.transcribeOptions = opts;
+  }
+
+  onTranslateOptionsChange(opts: TranslationOptions | null): void {
+    this.translateOptions = opts;
+  }
+
+  /** Best-effort: derive a BCP-47 base code from the loaded annotation's
+   * first level name (which we set to the language endonym). Returns
+   * undefined when no match — the translate component falls back. */
+  get annotationSourceLangCode(): string | undefined {
+    const name = this.octraDropzoneService.oannotation?.levels?.[0]?.name;
+    return name ? endonymToLanguageCode(name) : undefined;
   }
 
   setAnnotationFromAnnotJson(annotJson: import('@octra/annotation').OAnnotJSON): void {

@@ -194,6 +194,21 @@
     "online mode data warning": "Er zijn lokale gegevens beschikbaar die in de lokale modus zijn gemaakt. Als u verder wilt gaan in de online modus, worden deze gegevens overschreven.",
     "online mode description": "In de online modus krijg je automatisch audiobestanden voor transcriptie.",
     "online mode disabled": "De onlinemodus is momenteel inactief.",
+    "translation": {
+      "enable label": "Translate transcript locally",
+      "from": "From",
+      "to": "To",
+      "download size": "First run downloads the HY-MT 1.8B model (~1.1 GB, Q4). Cached after.",
+      "time warning": "Translation runs locally and may take several minutes depending on transcript length.",
+      "no webgpu": "WebGPU not detected — translation will run on WASM (slower).",
+      "model cached after download": "Model will be cached after first download.",
+      "safari warning": "Local translation is not available in Safari — please use a different browser.",
+      "phase": {
+        "downloading": "Downloading translation model…",
+        "translating": "Translating segments…",
+        "finalizing": "Translation complete — preparing editor…"
+      }
+    },
     "auto-transcription": {
       "downloading model": "Model wordt gedownload…",
       "transcription complete": "Transcriptie voltooid — editor wordt voorbereid…",

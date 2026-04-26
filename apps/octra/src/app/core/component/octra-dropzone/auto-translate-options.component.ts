@@ -1,0 +1,254 @@
+import {
+  Component,
+  DestroyRef,
+  effect,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { getEnglishLanguageLabel } from '@octra/utilities';
+import { isSafariOrWebKit } from '@octra/web-media';
+import {
+  HYMT_DEFAULT_MODEL_ID,
+  TranslationOptions,
+} from '../../shared/service/local-translation.service';
+
+/** HY-MT 1.5 1.8B target/source language list. Confirm against model card on
+ * first integration; treat as a starting set. Codes are BCP-47 base codes. */
+export const HYMT_LANGUAGES: { code: string }[] = [
+  { code: 'en' },
+  { code: 'de' },
+  { code: 'fr' },
+  { code: 'es' },
+  { code: 'it' },
+  { code: 'pt' },
+  { code: 'nl' },
+  { code: 'sv' },
+  { code: 'da' },
+  { code: 'no' },
+  { code: 'fi' },
+  { code: 'pl' },
+  { code: 'cs' },
+  { code: 'sk' },
+  { code: 'hu' },
+  { code: 'ro' },
+  { code: 'bg' },
+  { code: 'el' },
+  { code: 'tr' },
+  { code: 'ru' },
+  { code: 'uk' },
+  { code: 'ar' },
+  { code: 'he' },
+  { code: 'fa' },
+  { code: 'hi' },
+  { code: 'zh' },
+  { code: 'ja' },
+  { code: 'ko' },
+  { code: 'vi' },
+  { code: 'id' },
+  { code: 'th' },
+];
+
+@Component({
+  selector: 'octra-auto-translate-options',
+  standalone: true,
+  imports: [FormsModule, NgbTooltipModule, TranslocoPipe],
+  template: `
+    @if (visible()) {
+      <div class="auto-translate-options mt-2 p-2 border rounded">
+        @if (isSafari()) {
+          <div class="alert alert-warning mb-2">
+            <i class="bi bi-exclamation-triangle"></i>
+            {{ 'login.translation.safari warning' | transloco }}
+          </div>
+        }
+        <div class="form-check mb-1">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="autoTranslateCheck"
+            [(ngModel)]="enabledModel"
+            (ngModelChange)="onEnabledChange()"
+            [disabled]="isSafari()"
+          />
+          <label class="form-check-label" for="autoTranslateCheck">
+            {{ 'login.translation.enable label' | transloco }}
+          </label>
+        </div>
+        <small class="text-muted d-block mb-2">
+          <i class="bi bi-cloud-download"></i>
+          {{ 'login.translation.download size' | transloco }}
+        </small>
+        <small class="text-muted d-block mb-2">
+          <i class="bi bi-clock-history"></i>
+          {{ 'login.translation.time warning' | transloco }}
+        </small>
+
+        @if (enabled()) {
+          <div class="mb-2">
+            <label for="translateFrom" class="form-label form-label-sm mb-1">
+              {{ 'login.translation.from' | transloco }}
+            </label>
+            <select
+              class="form-select form-select-sm"
+              id="translateFrom"
+              [(ngModel)]="sourceLanguage"
+              (ngModelChange)="emitChange()"
+            >
+              @for (lang of languages; track lang.code) {
+                <option [value]="lang.code">{{ lang.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="translateTo" class="form-label form-label-sm mb-1">
+              {{ 'login.translation.to' | transloco }}
+            </label>
+            <select
+              class="form-select form-select-sm"
+              id="translateTo"
+              [(ngModel)]="targetLanguage"
+              (ngModelChange)="emitChange()"
+            >
+              @for (lang of languages; track lang.code) {
+                <option [value]="lang.code">{{ lang.label }}</option>
+              }
+            </select>
+          </div>
+
+          @if (!hasWebGpu()) {
+            <small class="text-muted d-block">
+              <i class="bi bi-exclamation-triangle"></i>
+              {{ 'login.translation.no webgpu' | transloco }}
+            </small>
+          }
+          <small class="text-muted mt-1 d-block">
+            <i class="bi bi-info-circle"></i>
+            {{ 'login.translation.model cached after download' | transloco }}
+          </small>
+        }
+      </div>
+    }
+  `,
+  styles: [
+    `
+      .auto-translate-options {
+        background-color: var(--octra-surface-background);
+        font-size: 0.9rem;
+      }
+    `,
+  ],
+})
+export class AutoTranslateOptionsComponent implements OnInit {
+  readonly annotationAlreadyLoaded = input<boolean>(false);
+  readonly transcribeWillRun = input<boolean>(false);
+  readonly sourceLanguageHint = input<string | undefined>(undefined);
+  readonly optionsChange = output<TranslationOptions | null>();
+
+  readonly enabled = signal(false);
+  readonly hasWebGpu = signal(false);
+  readonly isSafari = signal(false);
+
+  /** Two-way ngModel proxy that syncs into the `enabled` signal. */
+  get enabledModel(): boolean {
+    return this.enabled();
+  }
+  set enabledModel(v: boolean) {
+    this.enabled.set(v);
+  }
+
+  readonly languages = HYMT_LANGUAGES.map((l) => ({
+    ...l,
+    label: getEnglishLanguageLabel(l.code),
+  }));
+
+  sourceLanguage = 'en';
+  targetLanguage = 'de';
+  private userOverroddeSource = false;
+
+  visible = (): boolean =>
+    this.annotationAlreadyLoaded() || this.transcribeWillRun();
+
+  constructor(
+    private readonly transloco: TranslocoService,
+    private readonly destroyRef: DestroyRef,
+  ) {
+    effect(() => {
+      // re-emit when visibility inputs change
+      this.annotationAlreadyLoaded();
+      this.transcribeWillRun();
+      this.emitChange();
+    });
+
+    effect(() => {
+      const hint = this.sourceLanguageHint();
+      if (hint && !this.userOverroddeSource) {
+        this.applySourceHint(hint);
+      }
+    });
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.applySourceHint(
+      this.sourceLanguageHint() ?? this.transloco.getActiveLang(),
+    );
+
+    this.transloco.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((lang) => {
+        if (!this.userOverroddeSource && !this.sourceLanguageHint()) {
+          this.applySourceHint(lang);
+        }
+      });
+
+    this.isSafari.set(isSafariOrWebKit());
+    try {
+      const nav = navigator as Navigator & {
+        gpu?: { requestAdapter(): Promise<unknown> | null };
+      };
+      if (nav.gpu) {
+        const adapter = await nav.gpu.requestAdapter();
+        this.hasWebGpu.set(!!adapter);
+      }
+    } catch {
+      this.hasWebGpu.set(false);
+    }
+  }
+
+  private applySourceHint(hint: string): void {
+    const code = hint.split('-')[0].toLowerCase();
+    this.sourceLanguage = HYMT_LANGUAGES.some((l) => l.code === code)
+      ? code
+      : 'en';
+    this.targetLanguage = this.sourceLanguage === 'en' ? 'de' : 'en';
+    this.emitChange();
+  }
+
+  onEnabledChange(): void {
+    this.userOverroddeSource = false;
+    this.emitChange();
+  }
+
+  emitChange(): void {
+    if (!this.visible() || !this.enabled()) {
+      this.optionsChange.emit(null);
+      return;
+    }
+    if (this.sourceLanguage === this.targetLanguage) {
+      this.optionsChange.emit(null);
+      return;
+    }
+    this.optionsChange.emit({
+      modelId: HYMT_DEFAULT_MODEL_ID,
+      useWebGPU: this.hasWebGpu(),
+      dtype: 'q4',
+      sourceLanguage: this.sourceLanguage,
+      targetLanguage: this.targetLanguage,
+    });
+  }
+}

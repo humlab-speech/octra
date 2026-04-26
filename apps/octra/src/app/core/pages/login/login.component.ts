@@ -18,6 +18,8 @@ import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
 import { KB_WHISPER_MODELS, OPENAI_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
+import { LocalTranslationService, TranslationEvent } from '../../shared/service/local-translation.service';
+import { OAnnotJSON } from '@octra/annotation';
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -88,7 +90,36 @@ export class LoginComponent
   readonly formatDuration = formatDuration;
 
   private _transcriptionSub: Subscription | null = null;
+  private _translationSub: Subscription | null = null;
   private _pendingRemoveData = false;
+  private _pendingAnnotJson: OAnnotJSON | null = null;
+
+  translation: {
+    active: boolean;
+    phase: 'downloading' | 'translating' | 'finalizing' | 'idle';
+    downloadLoaded: number;
+    downloadTotal: number;
+    downloadFile: string;
+    elapsedMs: number;
+    segmentIndex: number;
+    segmentTotal: number;
+    error: string | null;
+    usedWebGPU: boolean;
+  } = {
+    active: false,
+    phase: 'idle',
+    downloadLoaded: 0,
+    downloadTotal: 0,
+    downloadFile: '',
+    elapsedMs: 0,
+    segmentIndex: 0,
+    segmentTotal: 0,
+    error: null,
+    usedWebGPU: false,
+  };
+
+  private _translationElapsedIntervalId: ReturnType<typeof setInterval> | null = null;
+  private _translationStartTime = 0;
 
   state: {
     online: {
@@ -140,6 +171,7 @@ export class LoginComponent
     public authStoreService: AuthenticationStoreService,
     protected compatibilityService: CompatibilityService,
     private localTranscriptionService: LocalTranscriptionService,
+    private localTranslationService: LocalTranslationService,
     private route: ActivatedRoute,
   ) {
     super();
@@ -170,38 +202,50 @@ I just want to let you know, that the OCTRA server is currently offline.
 
   onOfflineSubmit = (removeData: boolean) => {
     const opts = this.dropzone?.transcribeOptions;
+    const trOpts = this.dropzone?.translateOptions;
+    this._pendingRemoveData = removeData;
+
     if (opts && this.dropzone?.hasAudio && !this.dropzone?.hasAnnotation) {
-      this._pendingRemoveData = removeData;
-      const modelMeta =
-        KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId) ??
-        OPENAI_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
-      this.transcription = {
-        active: true,
-        phase: 'downloading',
-        downloadLoaded: 0,
-        downloadTotal: 0,
-        downloadExpectedBytes: (modelMeta?.sizeMb ?? 0) * 1024 * 1024,
-        downloadFile: '',
-        elapsedMs: 0,
-        audioDurationS: 0,
-        segmentEndS: 0,
-        error: null,
-        usedWebGPU: opts.useWebGPU,
-      };
-      this._transcriptionSub = this.localTranscriptionService
-        .transcribe(this.dropzone.audioManager, this.dropzone.oaudiofile, opts)
-        .subscribe({
-          next: (event: TranscriptionEvent) => this.onTranscriptionEvent(event),
-          error: (err: Error) => {
-            this._clearElapsedInterval();
-            this.transcription.error = err.message;
-            this.transcription.active = false;
-          },
-        });
-    } else {
-      this.proceedWithLogin(removeData);
+      this._startTranscription(opts);
+      return;
     }
+
+    if (trOpts && this.dropzone?.hasAnnotation && this.dropzone?.oannotation) {
+      this._startTranslation(this.dropzone.oannotation);
+      return;
+    }
+
+    this.proceedWithLogin(removeData);
   };
+
+  private _startTranscription(opts: import('../../shared/service/local-transcription.service').TranscriptionOptions): void {
+    const modelMeta =
+      KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId) ??
+      OPENAI_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
+    this.transcription = {
+      active: true,
+      phase: 'downloading',
+      downloadLoaded: 0,
+      downloadTotal: 0,
+      downloadExpectedBytes: (modelMeta?.sizeMb ?? 0) * 1024 * 1024,
+      downloadFile: '',
+      elapsedMs: 0,
+      audioDurationS: 0,
+      segmentEndS: 0,
+      error: null,
+      usedWebGPU: opts.useWebGPU,
+    };
+    this._transcriptionSub = this.localTranscriptionService
+      .transcribe(this.dropzone!.audioManager, this.dropzone!.oaudiofile, opts)
+      .subscribe({
+        next: (event: TranscriptionEvent) => this.onTranscriptionEvent(event),
+        error: (err: Error) => {
+          this._clearElapsedInterval();
+          this.transcription.error = err.message;
+          this.transcription.active = false;
+        },
+      });
+  }
 
   private onTranscriptionEvent(event: TranscriptionEvent): void {
     if (event.type === 'download-progress') {
@@ -222,13 +266,98 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.transcription.segmentEndS = event.segmentEndS;
     } else if (event.type === 'result') {
       this._clearElapsedInterval();
-      this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
       this.transcription.active = false;
       this.transcription.phase = 'finalizing';
       this._transcriptionSub = null;
-      // Always pass removeData=false: the annotation parameter already causes the
-      // reducer to replace the transcript, so the DELETE confirmation modal is not needed.
+      const trOpts = this.dropzone?.translateOptions;
+      if (trOpts) {
+        this._startTranslation(event.annotJson);
+      } else {
+        this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
+        // Always pass removeData=false: the annotation parameter already causes the
+        // reducer to replace the transcript, so the DELETE confirmation modal is not needed.
+        this.proceedWithLogin(false);
+      }
+    }
+  }
+
+  private _startTranslation(annotJson: OAnnotJSON): void {
+    const trOpts = this.dropzone!.translateOptions!;
+    this._pendingAnnotJson = annotJson;
+    this.translation = {
+      active: true,
+      phase: 'downloading',
+      downloadLoaded: 0,
+      downloadTotal: 0,
+      downloadFile: '',
+      elapsedMs: 0,
+      segmentIndex: 0,
+      segmentTotal: 0,
+      error: null,
+      usedWebGPU: trOpts.useWebGPU,
+    };
+    this._translationSub = this.localTranslationService
+      .translate(annotJson, trOpts)
+      .subscribe({
+        next: (event: TranslationEvent) => this.onTranslationEvent(event),
+        error: (err: Error) => {
+          this._clearTranslationElapsed();
+          this.translation.error = err.message;
+          this.translation.active = false;
+        },
+      });
+  }
+
+  private onTranslationEvent(event: TranslationEvent): void {
+    if (event.type === 'download-progress') {
+      this.translation.phase = 'downloading';
+      this.translation.downloadLoaded = event.loaded;
+      this.translation.downloadTotal = event.total;
+      this.translation.downloadFile = event.file;
+    } else if (event.type === 'translate-start') {
+      this.translation.phase = 'translating';
+      this.translation.segmentTotal = event.total;
+      this.translation.segmentIndex = 0;
+      this.translation.elapsedMs = 0;
+      this._translationStartTime = Date.now();
+      this._translationElapsedIntervalId = setInterval(() => {
+        this.translation.elapsedMs = Date.now() - this._translationStartTime;
+      }, 1000);
+    } else if (event.type === 'segment-progress') {
+      this.translation.segmentIndex = event.index;
+      this.translation.segmentTotal = event.total;
+    } else if (event.type === 'result') {
+      this._clearTranslationElapsed();
+      this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
+      this.translation.active = false;
+      this.translation.phase = 'finalizing';
+      this._translationSub = null;
       this.proceedWithLogin(false);
+    }
+  }
+
+  private _clearTranslationElapsed(): void {
+    if (this._translationElapsedIntervalId !== null) {
+      clearInterval(this._translationElapsedIntervalId);
+      this._translationElapsedIntervalId = null;
+    }
+  }
+
+  cancelTranslation(): void {
+    this._clearTranslationElapsed();
+    this.localTranslationService.cancel();
+    this._translationSub?.unsubscribe();
+    this._translationSub = null;
+    this.translation.active = false;
+    this.translation.phase = 'idle';
+  }
+
+  dismissTranslationError(): void {
+    if (this.translation.active) {
+      this.cancelTranslation();
+    } else {
+      this._clearTranslationElapsed();
+      this.translation.error = null;
     }
   }
 

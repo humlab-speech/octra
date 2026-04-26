@@ -237,11 +237,78 @@
                     </small>
                   </div>
                 }
+                @if (translation.active || translation.error || translation.phase === 'finalizing') {
+                  <div class="translation-progress mt-3 p-3 border rounded bg-light">
+                    @if (translation.phase === 'downloading') {
+                      <div>
+                        <strong>{{ 'login.translation.phase.downloading' | transloco }}</strong>
+                        @if (translation.downloadFile) {
+                          <div class="text-muted small">{{ translation.downloadFile }}</div>
+                        }
+                        @if (translation.downloadTotal > 0) {
+                          <div class="progress mt-1" style="height: 18px">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              [style.width]="(translation.downloadLoaded / translation.downloadTotal * 100) + '%'"
+                            >
+                              {{ (translation.downloadLoaded / translation.downloadTotal * 100) | number:'1.0-0' }}%
+                            </div>
+                          </div>
+                          <small class="text-muted">
+                            {{ (translation.downloadLoaded / 1048576) | number:'1.0-0' }} MB
+                            / {{ (translation.downloadTotal / 1048576) | number:'1.0-0' }} MB
+                          </small>
+                        } @else {
+                          <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
+                        }
+                      </div>
+                    } @else if (translation.phase === 'finalizing') {
+                      <div>
+                        <strong>{{ 'login.translation.phase.finalizing' | transloco }}</strong>
+                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                      </div>
+                    } @else if (translation.phase === 'translating') {
+                      <div>
+                        <strong>{{ 'login.translation.phase.translating' | transloco }}</strong>
+                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        @if (translation.segmentTotal > 0) {
+                          <div class="progress mt-2" style="height: 14px">
+                            <div
+                              class="progress-bar bg-success"
+                              role="progressbar"
+                              [style.width]="(translation.segmentIndex / translation.segmentTotal * 100) + '%'"
+                            ></div>
+                          </div>
+                          <small class="text-muted">
+                            {{ translation.segmentIndex }} / {{ translation.segmentTotal }}
+                            &nbsp;·&nbsp; {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(translation.elapsedMs / 1000) }}
+                          </small>
+                        }
+                      </div>
+                    }
+
+                    @if (translation.error) {
+                      <div class="alert alert-danger mt-2 py-1 mb-0 small">
+                        {{ translation.error }}
+                      </div>
+                    }
+
+                    <button
+                      class="btn btn-sm btn-outline-secondary mt-2"
+                      type="button"
+                      (click)="dismissTranslationError()"
+                    >
+                      {{ translation.active ? ('login.auto-transcription.cancel' | transloco) : ('login.auto-transcription.dismiss' | transloco) }}
+                    </button>
+                  </div>
+                }
                 @if (dropzone.statistics && dropzone.statistics.new === 0) {
                   <button
                     (click)="onOfflineSubmit(false)"
                     [disabled]="
                       transcription.active ||
+                      translation.active ||
                       dropzone.files.length === 0 ||
                       !dropzone.statistics ||
                       dropzone.statistics.invalid > 0 ||
@@ -259,6 +326,7 @@
                     (click)="onOfflineSubmit(true)"
                     [disabled]="
                       transcription.active ||
+                      translation.active ||
                       dropzone.files.length === 0 ||
                       !dropzone.statistics ||
                       dropzone.statistics.invalid > 0 ||

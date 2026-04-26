@@ -98,6 +98,43 @@ function baseCode(code?: string): string | undefined {
 }
 
 /**
+ * Returns `<English name> (<base code>)`. Used by the translation
+ * options selector where labels are intentionally English-only so the
+ * dropdown stays readable for any UI language.
+ */
+export function getEnglishLanguageLabel(code: string): string {
+  const base = baseCode(code);
+  if (!base) return code;
+  let english: string | undefined;
+  try {
+    const DisplayNames = (Intl as unknown as { DisplayNames?: unknown })
+      .DisplayNames as { new (locales: string[], opts: { type: string }): { of(c: string): string | undefined } } | undefined;
+    if (typeof DisplayNames === 'function') {
+      english = new DisplayNames(['en'], { type: 'language' }).of(base);
+    }
+  } catch {
+    /* ignore */
+  }
+  english = english?.replace(/\s*\([^)]*\)\s*$/g, '').trim();
+  return english ? `${english} (${base})` : base;
+}
+
+/**
+ * Reverse lookup of an endonym (native language name) to its base
+ * language code. Case-insensitive. Returns `undefined` when no entry
+ * matches — best-effort hint only, callers must handle the missing
+ * case.
+ */
+export function endonymToLanguageCode(name: string): string | undefined {
+  if (!name) return undefined;
+  const target = name.trim().toLowerCase();
+  for (const [code, native] of Object.entries(NATIVE_LANGUAGE_NAMES)) {
+    if (native.toLowerCase() === target) return code;
+  }
+  return undefined;
+}
+
+/**
  * Native (endonym) names by ISO-639-1/2 base code. Covers languages
  * commonly offered by BAS / Whisper ASR providers. English is omitted on
  * purpose so it falls through to the `native === english` collapse.

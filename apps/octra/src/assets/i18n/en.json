@@ -294,6 +294,21 @@
     "online mode data warning": "There is local data available that was created in local mode. If you want to continue in online mode this data will be overwritten.",
     "online mode description": "In online mode you automatically get audio files for transcription.",
     "online mode disabled": "Online mode is currently inactive. Please use OCTRA locally.",
+    "translation": {
+      "enable label": "Translate transcript locally",
+      "from": "From",
+      "to": "To",
+      "download size": "First run downloads the HY-MT 1.8B model (~1.1 GB, Q4). Cached after.",
+      "time warning": "Translation runs locally and may take several minutes depending on transcript length.",
+      "no webgpu": "WebGPU not detected — translation will run on WASM (slower).",
+      "model cached after download": "Model will be cached after first download.",
+      "safari warning": "Local translation is not available in Safari — please use a different browser.",
+      "phase": {
+        "downloading": "Downloading translation model…",
+        "translating": "Translating segments…",
+        "finalizing": "Translation complete — preparing editor…"
+      }
+    },
     "auto-transcription": {
       "downloading model": "Downloading model…",
       "transcription complete": "Transcription complete — preparing editor…",

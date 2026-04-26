@@ -194,6 +194,21 @@
     "online mode data warning": "此处有使用本地模式穿件的本地数据。如果你想使用在线模式继续，此处的数据会被覆盖。",
     "online mode description": "在线模式中，你自动获取要标注的音频文件。",
     "online mode disabled": "在线模式当前不可用。请使用本地OCTRA。",
+    "translation": {
+      "enable label": "Translate transcript locally",
+      "from": "From",
+      "to": "To",
+      "download size": "First run downloads the HY-MT 1.8B model (~1.1 GB, Q4). Cached after.",
+      "time warning": "Translation runs locally and may take several minutes depending on transcript length.",
+      "no webgpu": "WebGPU not detected — translation will run on WASM (slower).",
+      "model cached after download": "Model will be cached after first download.",
+      "safari warning": "Local translation is not available in Safari — please use a different browser.",
+      "phase": {
+        "downloading": "Downloading translation model…",
+        "translating": "Translating segments…",
+        "finalizing": "Translation complete — preparing editor…"
+      }
+    },
     "auto-transcription": {
       "downloading model": "正在下载模型…",
       "transcription complete": "转录完成 — 正在准备编辑器…",
