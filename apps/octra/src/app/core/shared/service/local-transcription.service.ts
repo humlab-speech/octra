@@ -1,5 +1,6 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { IFile, OAnnotJSON } from '@octra/annotation';
+import { pickInitialLevelName } from '@octra/utilities';
 import { OAudiofile } from '@octra/media';
 import { AudioManager, resampleChannels } from '@octra/web-media';
 import { Observable, Subject } from 'rxjs';
@@ -96,7 +97,7 @@ export class LocalTranscriptionService implements OnDestroy {
       this.ngZone.run(() => {
         if (data.type === 'result') {
           try {
-            const annotJson = this.chunksToAnnotJson(data.chunks, oaudiofile);
+            const annotJson = this.chunksToAnnotJson(data.chunks, oaudiofile, options);
             subject.next({ type: 'result', annotJson });
             subject.complete();
           } catch (err: unknown) {
@@ -156,6 +157,7 @@ export class LocalTranscriptionService implements OnDestroy {
   private chunksToAnnotJson(
     chunks: Array<{ timestamp: [number, number | null]; text: string }>,
     oaudiofile: OAudiofile,
+    options: TranscriptionOptions,
   ): OAnnotJSON {
     const audioDurationS = oaudiofile.duration / oaudiofile.sampleRate;
     const srtText = this.chunksToSrt(chunks, audioDurationS);
@@ -182,6 +184,20 @@ export class LocalTranscriptionService implements OnDestroy {
       throw new Error(
         result?.error ?? 'SRT import returned no annotation',
       );
+    }
+
+    const levelName = pickInitialLevelName({ asrLanguage: options.language });
+    for (const level of result.annotjson.levels ?? []) {
+      if (level.name === 'OCTRA_1') {
+        level.name = levelName;
+      }
+      for (const item of (level as { items?: { labels?: { name: string }[] }[] }).items ?? []) {
+        for (const label of item.labels ?? []) {
+          if (label.name === 'OCTRA_1') {
+            label.name = levelName;
+          }
+        }
+      }
     }
     return result.annotjson;
   }

@@ -26,6 +26,7 @@ import { OctraAPIService } from '@octra/ngx-octra-api';
 import {
   extractFileNameFromURL,
   hasProperty,
+  pickInitialLevelName,
   SubscriptionManager,
 } from '@octra/utilities';
 import {
@@ -1592,6 +1593,10 @@ export class AnnotationEffects {
   private loadSegments(modeState: AnnotationState, rootState: RootState) {
     try {
       let feedback: FeedBackForm | undefined = undefined;
+      const levelName = pickInitialLevelName({
+        asrLanguage: rootState.asr.settings?.selectedASRLanguage,
+        uiLanguage: this.transloco.getActiveLang(),
+      });
       if (
         modeState.transcript.levels === undefined ||
         modeState.transcript.levels.length === 0
@@ -1646,18 +1651,19 @@ export class AnnotationEffects {
           }
 
           if (newAnnotation.levels.length === 0) {
-            const level = newAnnotation.createSegmentLevel('OCTRA_1');
+            const level = newAnnotation.createSegmentLevel(levelName);
             level.items.push(
               newAnnotation.createSegment(
                 this.audio.audioManager.resource.info.duration,
                 [
-                  new OLabel('OCTRA_1', ''), // empty transcript
+                  new OLabel(levelName, ''), // empty transcript
                 ],
               ),
             );
             newAnnotation.addLevel(level);
             newAnnotation.changeLevelIndex(0);
           } else {
+            renamePlaceholderLevels(newAnnotation, levelName);
             const currentLevelIndex =
               modeState.previousCurrentLevel === undefined ||
               modeState.previousCurrentLevel === null ||
@@ -1673,12 +1679,12 @@ export class AnnotationEffects {
         } else {
           // not URL oder ONLINE MODE, Annotation is null
 
-          const level = newAnnotation.createSegmentLevel('OCTRA_1');
+          const level = newAnnotation.createSegmentLevel(levelName);
           level.items.push(
             newAnnotation.createSegment(
               this.audio.audioManager.resource.info.duration,
               [
-                new OLabel('OCTRA_1', ''), // empty transcript
+                new OLabel(levelName, ''), // empty transcript
               ],
             ),
           );
@@ -1932,4 +1938,23 @@ export class AnnotationEffects {
     private appStorage: AppStorageService,
     private transloco: TranslocoService,
   ) {}
+}
+
+function renamePlaceholderLevels(
+  annotation: { levels?: { name: string; items?: { labels?: { name: string }[] }[] }[] },
+  newName: string,
+): void {
+  const placeholder = 'OCTRA_1';
+  for (const level of annotation.levels ?? []) {
+    if (level.name === placeholder) {
+      level.name = newName;
+    }
+    for (const item of level.items ?? []) {
+      for (const label of item.labels ?? []) {
+        if (label.name === placeholder) {
+          label.name = newName;
+        }
+      }
+    }
+  }
 }
