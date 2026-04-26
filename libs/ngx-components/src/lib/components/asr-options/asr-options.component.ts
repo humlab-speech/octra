@@ -97,11 +97,13 @@ export class AsrOptionsComponent
         value: string;
         providersOnly?: string[];
         description: string;
+        label: string;
       }[];
       filtered: {
         value: string;
         providersOnly?: string[];
         description: string;
+        label: string;
       }[];
       selected: string;
     };
@@ -110,11 +112,13 @@ export class AsrOptionsComponent
         value: string;
         providersOnly?: string[];
         description: string;
+        label: string;
       }[];
       filtered: {
         value: string;
         providersOnly?: string[];
         description: string;
+        label: string;
       }[];
       selected: string;
     };
@@ -285,10 +289,12 @@ export class AsrOptionsComponent
     dropdown?: NgbDropdown,
     emit?: boolean,
   ) {
+    const needle = value.toLowerCase();
     this.fields[type].filtered = this.fields[type].languages.filter(
       (a) =>
-        a.description.toLowerCase().includes(value.toLowerCase()) ||
-        a.value.toLowerCase().includes(value.toLowerCase()),
+        a.description.toLowerCase().includes(needle) ||
+        a.label.toLowerCase().includes(needle) ||
+        a.value.toLowerCase().includes(needle),
     );
     dropdown?.open();
 

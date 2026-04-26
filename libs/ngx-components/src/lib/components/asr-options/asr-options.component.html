@@ -45,7 +45,7 @@
                 ngbDropdownItem
                 (click)="selectLanguage(language.value, 'asr')"
               >
-                <a class="dropdown-item">{{ language.description }}</a>
+                <a class="dropdown-item">{{ language.label }}</a>
               </li>
             }
             @if (fields.asr.filtered.length === 0) {
@@ -280,7 +280,7 @@
                 ngbDropdownItem
                 (click)="selectLanguage(language.value, 'maus', true)"
               >
-                <a class="dropdown-item">{{ language.description }}</a>
+                <a class="dropdown-item">{{ language.label }}</a>
               </li>
             }
             @if (fields.maus.filtered.length === 0) {

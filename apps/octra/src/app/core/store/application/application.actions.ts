@@ -49,10 +49,12 @@ export class ApplicationActions {
           value: string;
           providersOnly?: string[];
           description: string;
+          label: string;
         }[];
         mausLanguages: {
           value: string;
           description: string;
+          label: string;
         }[];
       }>(),
       fail: props<{

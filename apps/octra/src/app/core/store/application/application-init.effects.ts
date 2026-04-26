@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { uniqueHTTPRequest } from '@octra/ngx-utilities';
-import { isNumber } from '@octra/utilities';
+import { formatLanguageLabel, isNumber } from '@octra/utilities';
 import { findElements, getAttr } from '@octra/web-media';
 import { DateTime } from 'luxon';
 import {
@@ -336,17 +336,23 @@ export class ApplicationInitEffects {
                           asrLanguages: asrLanguages
                             ?.filter((a) => a.ParameterValue.Description !== '')
                             .map((a) => {
+                              const cleanedDescription =
+                                a.ParameterValue.Description.replace(
+                                  / *\([^)]*\) *$/g,
+                                  '',
+                                );
                               const result: {
                                 value: string;
                                 providersOnly?: string[];
                                 description: string;
+                                label: string;
                               } = {
                                 value: a.ParameterValue.Value,
-                                description:
-                                  a.ParameterValue.Description.replace(
-                                    / *\([^)]*\) *$/g,
-                                    '',
-                                  ),
+                                description: cleanedDescription,
+                                label: formatLanguageLabel(
+                                  a.ParameterValue.Value,
+                                  cleanedDescription,
+                                ),
                               };
 
                               const matches = / *\(([^)]*)\) *$/g.exec(
@@ -411,6 +417,10 @@ export class ApplicationInitEffects {
                             .map((a) => ({
                               value: a.ParameterValue.Value,
                               description: a.ParameterValue.Description,
+                              label: formatLanguageLabel(
+                                a.ParameterValue.Value,
+                                a.ParameterValue.Description,
+                              ),
                             })),
                         }),
                       );

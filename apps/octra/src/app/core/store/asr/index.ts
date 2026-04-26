@@ -64,10 +64,12 @@ export interface ASRState {
     value: string;
     providersOnly?: string[];
     description: string;
+    label: string;
   }[];
   mausLanguages?: {
     value: string;
     description: string;
+    label: string;
   }[];
   asrAuthCode?: string;
   isEnabled?: boolean;

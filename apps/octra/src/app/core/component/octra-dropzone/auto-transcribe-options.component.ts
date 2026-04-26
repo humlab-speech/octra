@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
+import { formatLanguageLabel } from '@octra/utilities';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 
@@ -280,7 +281,7 @@ const DEFAULT_KB_KEY = 'medium';
                 (ngModelChange)="onLanguageChange()"
               >
                 @for (lang of languages; track lang.code) {
-                  <option [value]="lang.code">{{ lang.name }} ({{ lang.code }})</option>
+                  <option [value]="lang.code">{{ lang.label }}</option>
                 }
               </select>
             </div>
@@ -370,7 +371,10 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   readonly isSafari = signal(false);
 
   models: KbWhisperModel[] = KB_WHISPER_MODELS;
-  readonly languages = WHISPER_LANGUAGES;
+  readonly languages = WHISPER_LANGUAGES.map((l) => ({
+    ...l,
+    label: formatLanguageLabel(l.code, l.name),
+  }));
   selectedLanguage = 'en';
   private userHasOverridden = false;
 
