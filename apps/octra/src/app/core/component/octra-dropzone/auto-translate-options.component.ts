@@ -54,7 +54,8 @@ export const HYMT_LANGUAGES: readonly string[] = [
               class="form-select form-select-sm"
               id="translateFrom"
               [(ngModel)]="sourceLanguage"
-              (ngModelChange)="onPairChange()"
+              (ngModelChange)="onSourceChange()"
+              [disabled]="sourceDisabled()"
             >
               @for (lang of languages; track lang.code) {
                 <option [value]="lang.code">{{ lang.label }}</option>
@@ -69,28 +70,16 @@ export const HYMT_LANGUAGES: readonly string[] = [
               class="form-select form-select-sm"
               id="translateTo"
               [(ngModel)]="targetLanguage"
-              (ngModelChange)="onPairChange()"
+              (ngModelChange)="onTargetChange()"
+              [disabled]="targetProbing()"
             >
-              @for (lang of languages; track lang.code) {
+              @if (targetProbing()) {
+                <option value="">{{ 'login.translation.path probing' | transloco }}</option>
+              }
+              @for (lang of targetOptions(); track lang.code) {
                 <option [value]="lang.code">{{ lang.label }}</option>
               }
             </select>
-          </div>
-
-          <div
-            class="form-check mb-2"
-            [ngbTooltip]="'login.translation.use multilingual help' | transloco"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              id="useMultilingualCheck"
-              [(ngModel)]="useMultilingualModel"
-              (ngModelChange)="onPairChange()"
-            />
-            <label class="form-check-label" for="useMultilingualCheck">
-              {{ 'login.translation.use multilingual label' | transloco }}
-            </label>
           </div>
 
           <div
@@ -119,12 +108,6 @@ export const HYMT_LANGUAGES: readonly string[] = [
             <small class="text-muted d-block mb-1">
               <i class="bi bi-arrow-left-right"></i>
               {{ 'login.translation.path pivot' | transloco }} —
-              {{ formatBytes(estimatedBytes()) }}
-            </small>
-          } @else if (availabilityKind() === 'multilingual') {
-            <small class="text-muted d-block mb-1">
-              <i class="bi bi-globe"></i>
-              {{ 'login.translation.path multilingual' | transloco }} —
               {{ formatBytes(estimatedBytes()) }}
             </small>
           } @else if (availabilityKind() === 'unavailable') {
@@ -179,12 +162,17 @@ export class AutoTranslateOptionsComponent implements OnInit {
   sourceLanguage = 'en';
   targetLanguage = 'de';
   readonly skipBrowserCache = signal(false);
-  readonly useMultilingual = signal(false);
 
   readonly availabilityKind = signal<
-    'direct' | 'pivot' | 'multilingual' | 'unavailable' | 'probing' | 'idle'
+    'direct' | 'pivot' | 'unavailable' | 'probing' | 'idle'
   >('idle');
   readonly estimatedBytes = signal(0);
+
+  readonly targetOptions = signal<
+    Array<{ code: string; label: string; path: 'direct' | 'pivot' }>
+  >([]);
+  readonly targetProbing = signal(false);
+  private targetProbeSeq = 0;
 
   get skipBrowserCacheModel(): boolean {
     return this.skipBrowserCache();
@@ -192,18 +180,14 @@ export class AutoTranslateOptionsComponent implements OnInit {
   set skipBrowserCacheModel(v: boolean) {
     this.skipBrowserCache.set(v);
   }
-  get useMultilingualModel(): boolean {
-    return this.useMultilingual();
-  }
-  set useMultilingualModel(v: boolean) {
-    this.useMultilingual.set(v);
-  }
   private userOverrodeSource = false;
   private probeSeq = 0;
 
   readonly visible = computed(
     () => this.annotationAlreadyLoaded() || this.transcribeWillRun(),
   );
+
+  readonly sourceDisabled = computed(() => this.transcribeWillRun());
 
   constructor(
     private readonly transloco: TranslocoService,
@@ -238,19 +222,62 @@ export class AutoTranslateOptionsComponent implements OnInit {
       });
   }
 
+  private async refreshTargetLanguages(): Promise<void> {
+    if (!this.visible() || !this.enabled()) {
+      this.targetOptions.set([]);
+      this.targetProbing.set(false);
+      return;
+    }
+    const seq = ++this.targetProbeSeq;
+    this.targetProbing.set(true);
+    this.targetOptions.set([]);
+
+    const reachable = await this.translationService.resolveReachableTargets(
+      this.sourceLanguage,
+      HYMT_LANGUAGES,
+    );
+    if (seq !== this.targetProbeSeq) return;
+
+    const pivotSuffix = this.transloco.translate(
+      'login.translation.path pivot suffix',
+    );
+    const newOptions = HYMT_LANGUAGES.filter((code) => reachable.has(code)).map(
+      (code) => ({
+        code,
+        label:
+          getEnglishLanguageLabel(code) +
+          (reachable.get(code) === 'pivot' ? pivotSuffix : ''),
+        path: reachable.get(code)!,
+      }),
+    );
+
+    this.targetProbing.set(false);
+    this.targetOptions.set(newOptions);
+
+    if (!reachable.has(this.targetLanguage)) {
+      this.targetLanguage = newOptions[0]?.code ?? '';
+    }
+    void this.refreshAvailability();
+  }
+
   private applySourceHint(hint: string): void {
     const code = hint.split('-')[0].toLowerCase();
     this.sourceLanguage = HYMT_LANGUAGES.includes(code) ? code : 'en';
     this.targetLanguage = this.sourceLanguage === 'en' ? 'de' : 'en';
-    this.onPairChange();
+    void this.refreshTargetLanguages();
   }
 
   onEnabledChange(): void {
     this.userOverrodeSource = false;
-    this.onPairChange();
+    void this.refreshTargetLanguages();
   }
 
-  onPairChange(): void {
+  onSourceChange(): void {
+    this.userOverrodeSource = true;
+    void this.refreshTargetLanguages();
+  }
+
+  onTargetChange(): void {
     void this.refreshAvailability();
   }
 
@@ -273,7 +300,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
       await this.translationService.resolveAvailability(
         this.sourceLanguage,
         this.targetLanguage,
-        this.useMultilingual(),
       );
     if (seq !== this.probeSeq) return;
     this.availabilityKind.set(a.kind);
@@ -307,7 +333,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
     this.optionsChange.emit({
       sourceLanguage: this.sourceLanguage,
       targetLanguage: this.targetLanguage,
-      useMultilingual: this.useMultilingual(),
       skipBrowserCache: this.skipBrowserCache(),
     });
   }

@@ -5,7 +5,7 @@ import {
   OSegment,
   OSegmentLevel,
 } from '@octra/annotation';
-import { pickInitialLevelName } from '@octra/utilities';
+import { getEnglishLanguageLabel, pickInitialLevelName } from '@octra/utilities';
 import { Observable, Subject } from 'rxjs';
 import type {
   PlanStage,
@@ -58,14 +58,12 @@ export type TranslationEvent =
 export interface TranslationOptions {
   sourceLanguage: string;
   targetLanguage: string;
-  useMultilingual?: boolean;
   skipBrowserCache?: boolean;
 }
 
 export type TranslationAvailability =
   | { kind: 'direct'; modelId: string; estimatedBytes: number }
   | { kind: 'pivot'; legA: string; legB: string; estimatedBytes: number }
-  | { kind: 'multilingual'; modelId: string; estimatedBytes: number }
   | { kind: 'unavailable'; reason: string };
 
 export const TRANSLATION_REQUIRED_BYTES = 200_000_000;
@@ -87,17 +85,9 @@ export class LocalTranslationService implements OnDestroy {
   async resolveAvailability(
     sourceLanguage: string,
     targetLanguage: string,
-    useMultilingual: boolean,
   ): Promise<TranslationAvailability> {
     if (sourceLanguage === targetLanguage) {
       return { kind: 'unavailable', reason: 'source and target are the same' };
-    }
-    if (useMultilingual) {
-      return {
-        kind: 'multilingual',
-        modelId: MULTILINGUAL_MODEL_ID,
-        estimatedBytes: MULTILINGUAL_BYTES,
-      };
     }
     const direct = opusMtId(sourceLanguage, targetLanguage);
     if (await this.probeModel(direct)) {
@@ -118,8 +108,41 @@ export class LocalTranslationService implements OnDestroy {
     }
     return {
       kind: 'unavailable',
-      reason: `No local opus-mt path for ${sourceLanguage}\u2192${targetLanguage}. Enable the multilingual model.`,
+      reason: `No local opus-mt path for ${sourceLanguage}\u2192${targetLanguage}.`,
     };
+  }
+
+  async resolveReachableTargets(
+    src: string,
+    candidates: readonly string[],
+  ): Promise<Map<string, 'direct' | 'pivot'>> {
+    const results = new Map<string, 'direct' | 'pivot'>();
+    const targets = candidates.filter((c) => c !== src);
+
+    await Promise.all(
+      targets.map(async (tgt) => {
+        if (await this.probeModel(opusMtId(src, tgt))) {
+          results.set(tgt, 'direct');
+        }
+      }),
+    );
+
+    if (src !== 'en') {
+      const canSrcToEn = await this.probeModel(opusMtId(src, 'en'));
+      if (canSrcToEn) {
+        await Promise.all(
+          targets
+            .filter((tgt) => tgt !== 'en' && !results.has(tgt))
+            .map(async (tgt) => {
+              if (await this.probeModel(opusMtId('en', tgt))) {
+                results.set(tgt, 'pivot');
+              }
+            }),
+        );
+      }
+    }
+
+    return results;
   }
 
   private probeModel(modelId: string): Promise<boolean> {
@@ -171,7 +194,6 @@ export class LocalTranslationService implements OnDestroy {
       const availability = await this.resolveAvailability(
         options.sourceLanguage,
         options.targetLanguage,
-        options.useMultilingual === true,
       );
       if (availability.kind === 'unavailable') {
         this.ngZone.run(() => {
@@ -303,30 +325,54 @@ export class LocalTranslationService implements OnDestroy {
     translated: TranslationSegment[],
     options: TranslationOptions,
   ): OAnnotJSON {
-    const levelName = pickInitialLevelName({
-      asrLanguage: options.targetLanguage,
-    });
+    const sourceLevelName = getEnglishLanguageLabel(options.sourceLanguage);
+    const targetLevelName = getEnglishLanguageLabel(options.targetLanguage);
+
     const usedNames = new Set(annotJson.levels.map((l) => l.name));
-    let unique = levelName;
+
+    let uniqueSourceName = sourceLevelName;
     let counter = 2;
-    while (usedNames.has(unique)) {
-      unique = `${levelName} (${counter++})`;
+    while (usedNames.has(uniqueSourceName)) {
+      uniqueSourceName = `${sourceLevelName} (${counter++})`;
+    }
+    usedNames.add(uniqueSourceName);
+
+    let uniqueTargetName = targetLevelName;
+    counter = 2;
+    while (usedNames.has(uniqueTargetName)) {
+      uniqueTargetName = `${targetLevelName} (${counter++})`;
     }
 
-    const newItems = sourceLevel.items.map((item, idx) => {
+    const sourceItems = sourceLevel.items.map((item, idx) => {
+      const label = item.labels?.[0];
+      return new OSegment(
+        idx + 1,
+        item.sampleStart,
+        item.sampleDur,
+        label ? [new OLabel(uniqueSourceName, label.value)] : [],
+      );
+    });
+
+    const targetItems = sourceLevel.items.map((item, idx) => {
       const tr = translated.find((t) => t.id === idx);
       const text = tr?.text ?? '';
       return new OSegment(
         idx + 1,
         item.sampleStart,
         item.sampleDur,
-        [new OLabel(unique, text)],
+        [new OLabel(uniqueTargetName, text)],
       );
     });
-    const newLevel = new OSegmentLevel<OSegment>(unique, newItems);
+
+    const sourceLevel_ = new OSegmentLevel<OSegment>(uniqueSourceName, sourceItems);
+    const targetLevel = new OSegmentLevel<OSegment>(uniqueTargetName, targetItems);
+
     const mergedLevels = [
-      ...(annotJson.levels ?? []).map((l) => l.serialize()),
-      newLevel.serialize(),
+      sourceLevel_.serialize(),
+      ...(annotJson.levels ?? [])
+        .filter((l) => l.name !== sourceLevel.name)
+        .map((l) => l.serialize()),
+      targetLevel.serialize(),
     ];
     const mergedLinks = (annotJson.links ?? []).map((l) => l.serialize());
     return new OAnnotJSON(
@@ -367,17 +413,10 @@ function buildPlanFromAvailability(
     };
     return { stages: [stage] };
   }
-  if (a.kind === 'pivot') {
-    return {
-      stages: [
-        { modelId: a.legA, family: 'opus-mt', srcLang: src, tgtLang: 'en' },
-        { modelId: a.legB, family: 'opus-mt', srcLang: 'en', tgtLang: tgt },
-      ],
-    };
-  }
   return {
     stages: [
-      { modelId: a.modelId, family: 'm2m100', srcLang: src, tgtLang: tgt },
+      { modelId: a.legA, family: 'opus-mt', srcLang: src, tgtLang: 'en' },
+      { modelId: a.legB, family: 'opus-mt', srcLang: 'en', tgtLang: tgt },
     ],
   };
 }
