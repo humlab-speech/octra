@@ -362,10 +362,19 @@
         "openai-large-v3-turbo": {
           "wasm": "Large v3 Turbo (~700 MB) — Fast and accurate, needs WebGPU",
           "webgpu": "Large v3 Turbo (~700 MB) — Fast and reasonably accurate, our selected reference model"
-        }
+        },
+        "fi-tiny": { "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish", "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish" },
+        "fi-medium": { "wasm": "Medium (~712 MB) — More accurate, fine-tuned for Finnish", "webgpu": "Medium (~712 MB) — More accurate, fine-tuned for Finnish" },
+        "fi-large": { "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Finnish", "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Finnish" },
+        "nb-tiny": { "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian", "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian" },
+        "nb-small": { "wasm": "Small (~324 MB) — More accurate, fine-tuned for Norwegian", "webgpu": "Small (~324 MB) — More accurate, fine-tuned for Norwegian" },
+        "nb-medium": { "wasm": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian", "webgpu": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian" },
+        "nb-large": { "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian", "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian" }
       },
       "language label": "Transcription language",
-      "swedish kb-whisper hint": "Swedish uses KB-Whisper — optimised for Swedish speech."
+      "swedish kb-whisper hint": "Swedish uses KB-Whisper — optimised for Swedish speech.",
+      "finnish fine-tuned hint": "Finnish uses a fine-tuned model — optimised for Finnish speech.",
+      "norwegian fine-tuned hint": "Norwegian uses a fine-tuned model — optimised for Norwegian speech."
     },
     "app description": "OCTRA is a free web-application for plain text (orthographic) transcription of speech recordings. It has three different editors that cater for different needs when transcribing, and you may switch between them freely in a session.",
     "funding support and development": "Funding support and development",

@@ -71,6 +71,82 @@ export const KB_WHISPER_MODELS: KbWhisperModel[] = [
   },
 ];
 
+export const FINNISH_WHISPER_MODELS: KbWhisperModel[] = [
+  {
+    key: 'tiny',
+    i18nKey: 'fi-tiny',
+    modelId: 'FredrikKarlssonSpeech/whisper-tiny-finnish-onnx',
+    sizeMb: 108,
+    requiresWebGpu: false,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    key: 'medium',
+    i18nKey: 'fi-medium',
+    modelId: 'FredrikKarlssonSpeech/whisper-medium-finnish-onnx',
+    sizeMb: 712,
+    requiresWebGpu: true,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    key: 'large',
+    i18nKey: 'fi-large',
+    modelId: 'FredrikKarlssonSpeech/whisper-large-finnish-v3-onnx',
+    sizeMb: 2035,
+    requiresWebGpu: true,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+];
+
+export const NORWEGIAN_WHISPER_MODELS: KbWhisperModel[] = [
+  {
+    key: 'tiny',
+    i18nKey: 'nb-tiny',
+    modelId: 'FredrikKarlssonSpeech/nb-whisper-tiny-onnx',
+    sizeMb: 108,
+    requiresWebGpu: false,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    key: 'small',
+    i18nKey: 'nb-small',
+    modelId: 'FredrikKarlssonSpeech/nb-whisper-small-onnx',
+    sizeMb: 324,
+    requiresWebGpu: false,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    key: 'medium',
+    i18nKey: 'nb-medium',
+    modelId: 'FredrikKarlssonSpeech/nb-whisper-medium-onnx',
+    sizeMb: 712,
+    requiresWebGpu: true,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+  {
+    key: 'large',
+    i18nKey: 'nb-large',
+    modelId: 'FredrikKarlssonSpeech/nb-whisper-large-onnx',
+    sizeMb: 2035,
+    requiresWebGpu: true,
+    hasWebgpuVariant: true,
+    dtypeWasm: 'q4',
+    dtypeWebgpu: 'q4',
+  },
+];
+
 export const OPENAI_WHISPER_MODELS: KbWhisperModel[] = [
   {
     key: 'tiny',
@@ -232,6 +308,17 @@ const OPENAI_TO_KB_KEY: Record<string, string> = {
 const DEFAULT_OPENAI_KEY = 'small';
 const DEFAULT_KB_KEY = 'medium';
 
+function getModelsForLanguage(lang: string): KbWhisperModel[] {
+  if (lang === 'sv') return KB_WHISPER_MODELS;
+  if (lang === 'fi') return FINNISH_WHISPER_MODELS;
+  if (lang === 'no' || lang === 'nn') return NORWEGIAN_WHISPER_MODELS;
+  return OPENAI_WHISPER_MODELS;
+}
+
+const DEFAULT_KEY_FOR_FAMILY: Record<string, string> = {
+  sv: 'medium', fi: 'medium', no: 'medium', nn: 'medium',
+};
+
 
 @Component({
   selector: 'octra-auto-transcribe-options',
@@ -330,6 +417,18 @@ const DEFAULT_KB_KEY = 'medium';
                 {{ 'login.auto-transcription.swedish kb-whisper hint' | transloco }}
               </small>
             }
+            @if (selectedLanguage === 'fi') {
+              <small class="text-muted d-block mt-1">
+                <i class="bi bi-info-circle"></i>
+                {{ 'login.auto-transcription.finnish fine-tuned hint' | transloco }}
+              </small>
+            }
+            @if (selectedLanguage === 'no' || selectedLanguage === 'nn') {
+              <small class="text-muted d-block mt-1">
+                <i class="bi bi-info-circle"></i>
+                {{ 'login.auto-transcription.norwegian fine-tuned hint' | transloco }}
+              </small>
+            }
 
             @if (!hasWebGpu()) {
               <small class="text-muted">
@@ -426,21 +525,18 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.userHasOverridden = true;
     }
     const currentKey = this.models.find(m => m.modelId === this.selectedModelId)?.key ?? '';
-    if (this.selectedLanguage === 'sv') {
-      const targetKey = OPENAI_TO_KB_KEY[currentKey] ?? DEFAULT_KB_KEY;
-      this.models = KB_WHISPER_MODELS;
-      this.selectedModelId = (
-        KB_WHISPER_MODELS.find(m => m.key === targetKey) ??
-        KB_WHISPER_MODELS.find(m => m.key === DEFAULT_KB_KEY)!
-      ).modelId;
-    } else {
-      const targetKey = KB_TO_OPENAI_KEY[currentKey] ?? DEFAULT_OPENAI_KEY;
-      this.models = OPENAI_WHISPER_MODELS;
-      this.selectedModelId = (
-        OPENAI_WHISPER_MODELS.find(m => m.key === targetKey) ??
-        OPENAI_WHISPER_MODELS.find(m => m.key === DEFAULT_OPENAI_KEY)!
-      ).modelId;
-    }
+    const newModels = getModelsForLanguage(this.selectedLanguage);
+    const defaultKey = DEFAULT_KEY_FOR_FAMILY[this.selectedLanguage] ?? DEFAULT_OPENAI_KEY;
+    // Normalize OpenAI variant keys to canonical tier names
+    const canonicalKey =
+      KB_TO_OPENAI_KEY[currentKey] ?? // handles KB→canonical if switching from sv
+      OPENAI_TO_KB_KEY[currentKey] ?? // handles openai→canonical
+      currentKey; // already canonical (fi/nb models)
+    this.models = newModels;
+    this.selectedModelId = (
+      newModels.find(m => m.key === canonicalKey) ??
+      newModels.find(m => m.key === defaultKey)!
+    ).modelId;
     this.emitChange();
   }
 

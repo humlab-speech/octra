@@ -265,7 +265,9 @@
         }
       },
       "language label": "Transcriptietaal",
-      "swedish kb-whisper hint": "Zweeds gebruikt KB-Whisper — geoptimaliseerd voor Zweeds spraak."
+      "swedish kb-whisper hint": "Zweeds gebruikt KB-Whisper — geoptimaliseerd voor Zweeds spraak.",
+      "finnish fine-tuned hint": "Fins gebruikt een fijngestemd model — geoptimaliseerd voor Finse spraak.",
+      "norwegian fine-tuned hint": "Noors gebruikt een fijngestemd model — geoptimaliseerd voor Noorse spraak."
     },
     "app description": "OCTRA is een gratis webapplicatie voor transcriptie van spraakopnamen in platte tekst (orthografisch). Het beschikt over drie verschillende editors die tegemoetkomen aan uiteenlopende behoeften bij het transcriberen, en u kunt er tijdens een sessie vrij tussen wisselen.",
     "funding support and development": "Financiële ondersteuning en ontwikkeling",
