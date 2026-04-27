@@ -5,6 +5,8 @@ import { OAudiofile } from '@octra/media';
 import { AudioManager, resampleChannels } from '@octra/web-media';
 import { Observable, Subject } from 'rxjs';
 import { AppInfo } from '../../../app.info';
+import { SpeakerTurn } from './local-diarization.service';
+import { finalizeTranscriptionAnnotJson } from './local-transcription-finalization';
 import type {
   WorkerOutMessage,
   WorkerTranscribeMessage,
@@ -49,6 +51,7 @@ export interface TranscriptionOptions {
   useWebGPU: boolean;
   dtype?: string;
   language?: string;
+  speakerTurns?: SpeakerTurn[];
 }
 
 const WHISPER_SAMPLE_RATE = 16000;
@@ -186,20 +189,7 @@ export class LocalTranscriptionService implements OnDestroy {
       );
     }
 
-    const levelName = pickInitialLevelName({ asrLanguage: options.language });
-    for (const level of result.annotjson.levels ?? []) {
-      if (level.name === 'OCTRA_1') {
-        level.name = levelName;
-      }
-      for (const item of (level as { items?: { labels?: { name: string }[] }[] }).items ?? []) {
-        for (const label of item.labels ?? []) {
-          if (label.name === 'OCTRA_1') {
-            label.name = levelName;
-          }
-        }
-      }
-    }
-    return result.annotjson;
+    return finalizeTranscriptionAnnotJson(result.annotjson, options);
   }
 
   private chunksToSrt(
