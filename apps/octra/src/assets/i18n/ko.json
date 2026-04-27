@@ -267,7 +267,9 @@
       "language label": "트랜스크립션 언어",
       "swedish kb-whisper hint": "스웨덴어는 KB-Whisper를 사용합니다 — 스웨덴어 음성에 최적화됨."
     },
-    "app description": "OCTRA는 음성 녹음을 일반 텍스트(정자법)로 전사하기 위한 무료 웹 애플리케이션입니다. 전사 시 다양한 요구에 맞는 세 가지 편집기를 제공하며, 세션 중에 자유롭게 전환할 수 있습니다."
+    "app description": "OCTRA는 음성 녹음을 일반 텍스트(정자법)로 전사하기 위한 무료 웹 애플리케이션입니다. 전사 시 다양한 요구에 맞는 세 가지 편집기를 제공하며, 세션 중에 자유롭게 전환할 수 있습니다.",
+    "funding support and development": "재정 지원 및 개발",
+    "groups that developed the language models": "언어 모델을 개발한 그룹"
   },
   "logout": {
     "login again": "다시 로그인",

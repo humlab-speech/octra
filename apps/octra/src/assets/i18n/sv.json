@@ -367,7 +367,9 @@
       "language label": "Transkriptionsspråk",
       "swedish kb-whisper hint": "Svenska använder KB-Whisper — optimerad för svensk tal."
     },
-    "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session."
+    "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session.",
+    "funding support and development": "Finansiell stöd och utveckling",
+    "groups that developed the language models": "Grupper som utvecklade språkmodellerna"
   },
   "logout": {
     "login again": "Logga in igen",

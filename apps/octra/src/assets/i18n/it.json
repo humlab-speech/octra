@@ -267,7 +267,9 @@
       "language label": "Lingua di trascrizione",
       "swedish kb-whisper hint": "Lo svedese utilizza KB-Whisper — ottimizzato per il parlato svedese."
     },
-    "app description": "OCTRA è un'applicazione web gratuita per la trascrizione in testo normale (ortografica) di registrazioni vocali. Dispone di tre editor diversi che soddisfano esigenze differenti durante la trascrizione e permette di passare liberamente da uno all'altro nel corso di una sessione."
+    "app description": "OCTRA è un'applicazione web gratuita per la trascrizione in testo normale (ortografica) di registrazioni vocali. Dispone di tre editor diversi che soddisfano esigenze differenti durante la trascrizione e permette di passare liberamente da uno all'altro nel corso di una sessione.",
+    "funding support and development": "Finanziamenti e sviluppo",
+    "groups that developed the language models": "Gruppi che hanno sviluppato i modelli linguistici"
   },
   "logout": {
     "login again": "Ripeti l'accesso",

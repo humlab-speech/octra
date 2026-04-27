@@ -360,7 +360,9 @@
       "language label": "Transkriptionssprache",
       "swedish kb-whisper hint": "Schwedisch verwendet KB-Whisper — optimiert für schwedische Sprache."
     },
-    "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln."
+    "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln.",
+    "funding support and development": "Finanzielle Unterstützung und Entwicklung",
+    "groups that developed the language models": "Gruppen, die die Sprachmodelle entwickelt haben"
   },
   "logout": {
     "login again": "Erneut anmelden",
