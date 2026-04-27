@@ -29,7 +29,8 @@ type TranslationPhase =
   | 'translating'
   | 'finalizing';
 
-const TRANSLATION_STALL_MS = 60_000;
+const TRANSLATION_DOWNLOAD_STALL_MS = 30_000;
+const TRANSLATION_INIT_STALL_MS = 60_000;
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -113,7 +114,6 @@ export class LoginComponent
     segmentIndex: number;
     segmentTotal: number;
     error: string | null;
-    usedWebGPU: boolean;
   } = {
     active: false,
     phase: 'idle',
@@ -124,7 +124,6 @@ export class LoginComponent
     segmentIndex: 0,
     segmentTotal: 0,
     error: null,
-    usedWebGPU: false,
   };
 
   private _translationElapsedIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -302,7 +301,6 @@ I just want to let you know, that the OCTRA server is currently offline.
       segmentIndex: 0,
       segmentTotal: 0,
       error: null,
-      usedWebGPU: trOpts.useWebGPU,
     };
     this._armTranslationStallTimer();
     this._translationSub = this.localTranslationService
@@ -314,12 +312,12 @@ I just want to let you know, that the OCTRA server is currently offline.
           this._clearTranslationStallTimer();
           this.translation.error = err.message;
           this.translation.active = false;
+          this.translation.phase = 'idle';
         },
       });
   }
 
   private onTranslationEvent(event: TranslationEvent): void {
-    this._armTranslationStallTimer();
     if (event.type === 'download-progress') {
       this.translation.phase = 'downloading';
       this.translation.downloadLoaded = event.loaded;
@@ -347,18 +345,29 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.translation.phase = 'finalizing';
       this._translationSub = null;
       this.proceedWithLogin(false);
+      return;
     }
+    this._armTranslationStallTimer();
   }
 
   private _armTranslationStallTimer(): void {
     this._clearTranslationStallTimer();
+    const phase = this.translation.phase;
+    const budget =
+      phase === 'initializing' || phase === 'translating'
+        ? TRANSLATION_INIT_STALL_MS
+        : TRANSLATION_DOWNLOAD_STALL_MS;
     this._translationStallTimerId = setTimeout(() => {
       if (!this.translation.active) {
         return;
       }
       this.translation.error =
-        'Translation stalled — no progress for 60 seconds. Check your connection or cancel and retry. (The model may also still be initializing on a slow GPU.)';
-    }, TRANSLATION_STALL_MS);
+        phase === 'initializing'
+          ? 'Model load stalled. Try refreshing the page.'
+          : phase === 'translating'
+            ? 'Translation stalled — no progress for 60 seconds. Cancel and retry.'
+            : 'Download stalled — likely a browser storage limit. Cancel and retry with "Skip browser cache" enabled.';
+    }, budget);
   }
 
   private _clearTranslationStallTimer(): void {

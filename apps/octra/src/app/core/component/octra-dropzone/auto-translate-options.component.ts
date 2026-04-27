@@ -14,7 +14,8 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { getEnglishLanguageLabel } from '@octra/utilities';
 import {
-  HYMT_DEFAULT_MODEL_ID,
+  LocalTranslationService,
+  TranslationAvailability,
   TranslationOptions,
 } from '../../shared/service/local-translation.service';
 
@@ -24,8 +25,6 @@ export const HYMT_LANGUAGES: readonly string[] = [
   'uk', 'ar', 'he', 'fa', 'hi', 'zh', 'ja', 'ko', 'vi', 'id', 'th',
 ];
 
-const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
-
 @Component({
   selector: 'octra-auto-translate-options',
   standalone: true,
@@ -33,12 +32,6 @@ const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
   template: `
     @if (visible()) {
       <div class="auto-translate-options mt-2 p-2 border rounded">
-        @if (!hasWebGpu()) {
-          <div class="alert alert-warning mb-2">
-            <i class="bi bi-exclamation-triangle"></i>
-            {{ 'login.translation.webgpu required' | transloco }}
-          </div>
-        }
         <div class="form-check mb-1">
           <input
             class="form-check-input"
@@ -46,22 +39,13 @@ const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
             id="autoTranslateCheck"
             [(ngModel)]="enabledModel"
             (ngModelChange)="onEnabledChange()"
-            [disabled]="!hasWebGpu()"
           />
           <label class="form-check-label" for="autoTranslateCheck">
             {{ 'login.translation.enable label' | transloco }}
           </label>
         </div>
-        <small class="text-muted d-block mb-2">
-          <i class="bi bi-cloud-download"></i>
-          {{ 'login.translation.download size' | transloco }}
-        </small>
-        <small class="text-muted d-block mb-2">
-          <i class="bi bi-clock-history"></i>
-          {{ 'login.translation.time warning' | transloco }}
-        </small>
 
-        @if (enabled() && hasWebGpu()) {
+        @if (enabled()) {
           <div class="mb-2">
             <label for="translateFrom" class="form-label form-label-sm mb-1">
               {{ 'login.translation.from' | transloco }}
@@ -70,7 +54,7 @@ const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
               class="form-select form-select-sm"
               id="translateFrom"
               [(ngModel)]="sourceLanguage"
-              (ngModelChange)="emitChange()"
+              (ngModelChange)="onPairChange()"
             >
               @for (lang of languages; track lang.code) {
                 <option [value]="lang.code">{{ lang.label }}</option>
@@ -85,13 +69,75 @@ const TRANSLATION_DTYPE_WEBGPU = 'q4f16';
               class="form-select form-select-sm"
               id="translateTo"
               [(ngModel)]="targetLanguage"
-              (ngModelChange)="emitChange()"
+              (ngModelChange)="onPairChange()"
             >
               @for (lang of languages; track lang.code) {
                 <option [value]="lang.code">{{ lang.label }}</option>
               }
             </select>
           </div>
+
+          <div
+            class="form-check mb-2"
+            [ngbTooltip]="'login.translation.use multilingual help' | transloco"
+          >
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="useMultilingualCheck"
+              [(ngModel)]="useMultilingualModel"
+              (ngModelChange)="onPairChange()"
+            />
+            <label class="form-check-label" for="useMultilingualCheck">
+              {{ 'login.translation.use multilingual label' | transloco }}
+            </label>
+          </div>
+
+          <div
+            class="form-check mb-2"
+            [ngbTooltip]="'login.translation.skip cache help' | transloco"
+          >
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="skipBrowserCacheCheck"
+              [(ngModel)]="skipBrowserCacheModel"
+              (ngModelChange)="emitChange()"
+            />
+            <label class="form-check-label" for="skipBrowserCacheCheck">
+              {{ 'login.translation.skip cache label' | transloco }}
+            </label>
+          </div>
+
+          @if (availabilityKind() === 'direct') {
+            <small class="text-muted d-block mb-1">
+              <i class="bi bi-cloud-download"></i>
+              {{ 'login.translation.path direct' | transloco }} —
+              {{ formatBytes(estimatedBytes()) }}
+            </small>
+          } @else if (availabilityKind() === 'pivot') {
+            <small class="text-muted d-block mb-1">
+              <i class="bi bi-arrow-left-right"></i>
+              {{ 'login.translation.path pivot' | transloco }} —
+              {{ formatBytes(estimatedBytes()) }}
+            </small>
+          } @else if (availabilityKind() === 'multilingual') {
+            <small class="text-muted d-block mb-1">
+              <i class="bi bi-globe"></i>
+              {{ 'login.translation.path multilingual' | transloco }} —
+              {{ formatBytes(estimatedBytes()) }}
+            </small>
+          } @else if (availabilityKind() === 'unavailable') {
+            <small class="text-danger d-block mb-1">
+              <i class="bi bi-exclamation-triangle"></i>
+              {{ 'login.translation.path unavailable' | transloco }}
+            </small>
+          } @else if (availabilityKind() === 'probing') {
+            <small class="text-muted d-block mb-1">
+              <i class="bi bi-hourglass-split"></i>
+              {{ 'login.translation.path probing' | transloco }}
+            </small>
+          }
 
           <small class="text-muted mt-1 d-block">
             <i class="bi bi-info-circle"></i>
@@ -117,7 +163,6 @@ export class AutoTranslateOptionsComponent implements OnInit {
   readonly optionsChange = output<TranslationOptions | null>();
 
   readonly enabled = signal(false);
-  readonly hasWebGpu = signal(false);
 
   get enabledModel(): boolean {
     return this.enabled();
@@ -133,7 +178,28 @@ export class AutoTranslateOptionsComponent implements OnInit {
 
   sourceLanguage = 'en';
   targetLanguage = 'de';
+  readonly skipBrowserCache = signal(false);
+  readonly useMultilingual = signal(false);
+
+  readonly availabilityKind = signal<
+    'direct' | 'pivot' | 'multilingual' | 'unavailable' | 'probing' | 'idle'
+  >('idle');
+  readonly estimatedBytes = signal(0);
+
+  get skipBrowserCacheModel(): boolean {
+    return this.skipBrowserCache();
+  }
+  set skipBrowserCacheModel(v: boolean) {
+    this.skipBrowserCache.set(v);
+  }
+  get useMultilingualModel(): boolean {
+    return this.useMultilingual();
+  }
+  set useMultilingualModel(v: boolean) {
+    this.useMultilingual.set(v);
+  }
   private userOverrodeSource = false;
+  private probeSeq = 0;
 
   readonly visible = computed(
     () => this.annotationAlreadyLoaded() || this.transcribeWillRun(),
@@ -142,6 +208,7 @@ export class AutoTranslateOptionsComponent implements OnInit {
   constructor(
     private readonly transloco: TranslocoService,
     private readonly destroyRef: DestroyRef,
+    private readonly translationService: LocalTranslationService,
   ) {
     effect(() => {
       this.annotationAlreadyLoaded();
@@ -169,34 +236,59 @@ export class AutoTranslateOptionsComponent implements OnInit {
           this.applySourceHint(lang);
         }
       });
-
-    try {
-      const nav = navigator as Navigator & {
-        gpu?: { requestAdapter(): Promise<unknown> | null };
-      };
-      if (nav.gpu) {
-        const adapter = await nav.gpu.requestAdapter();
-        this.hasWebGpu.set(!!adapter);
-      }
-    } catch {
-      this.hasWebGpu.set(false);
-    }
   }
 
   private applySourceHint(hint: string): void {
     const code = hint.split('-')[0].toLowerCase();
     this.sourceLanguage = HYMT_LANGUAGES.includes(code) ? code : 'en';
     this.targetLanguage = this.sourceLanguage === 'en' ? 'de' : 'en';
-    this.emitChange();
+    this.onPairChange();
   }
 
   onEnabledChange(): void {
     this.userOverrodeSource = false;
+    this.onPairChange();
+  }
+
+  onPairChange(): void {
+    void this.refreshAvailability();
+  }
+
+  private async refreshAvailability(): Promise<void> {
+    if (!this.visible() || !this.enabled()) {
+      this.availabilityKind.set('idle');
+      this.estimatedBytes.set(0);
+      this.optionsChange.emit(null);
+      return;
+    }
+    if (this.sourceLanguage === this.targetLanguage) {
+      this.availabilityKind.set('unavailable');
+      this.estimatedBytes.set(0);
+      this.optionsChange.emit(null);
+      return;
+    }
+    const seq = ++this.probeSeq;
+    this.availabilityKind.set('probing');
+    const a: TranslationAvailability =
+      await this.translationService.resolveAvailability(
+        this.sourceLanguage,
+        this.targetLanguage,
+        this.useMultilingual(),
+      );
+    if (seq !== this.probeSeq) return;
+    this.availabilityKind.set(a.kind);
+    this.estimatedBytes.set(
+      a.kind === 'unavailable' ? 0 : a.estimatedBytes,
+    );
+    if (a.kind === 'unavailable') {
+      this.optionsChange.emit(null);
+      return;
+    }
     this.emitChange();
   }
 
   emitChange(): void {
-    if (!this.visible() || !this.enabled() || !this.hasWebGpu()) {
+    if (!this.visible() || !this.enabled()) {
       this.optionsChange.emit(null);
       return;
     }
@@ -204,12 +296,24 @@ export class AutoTranslateOptionsComponent implements OnInit {
       this.optionsChange.emit(null);
       return;
     }
+    if (
+      this.availabilityKind() === 'unavailable' ||
+      this.availabilityKind() === 'idle' ||
+      this.availabilityKind() === 'probing'
+    ) {
+      this.optionsChange.emit(null);
+      return;
+    }
     this.optionsChange.emit({
-      modelId: HYMT_DEFAULT_MODEL_ID,
-      useWebGPU: true,
-      dtype: TRANSLATION_DTYPE_WEBGPU,
       sourceLanguage: this.sourceLanguage,
       targetLanguage: this.targetLanguage,
+      useMultilingual: this.useMultilingual(),
+      skipBrowserCache: this.skipBrowserCache(),
     });
+  }
+
+  formatBytes(bytes: number): string {
+    if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(2)} GB`;
+    return `${(bytes / 1e6).toFixed(0)} MB`;
   }
 }

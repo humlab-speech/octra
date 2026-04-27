@@ -40,3 +40,14 @@ export function toFloresCode(code: string): string {
   const base = code.split('-')[0].toLowerCase();
   return BCP47_TO_FLORES[base] ?? code;
 }
+
+/**
+ * Pick the right language tag for a given translation model.
+ * NLLB → Flores-200 codes (eng_Latn …). m2m100 / opus-mt → ISO-639-1.
+ */
+export function toModelLangCode(modelId: string, code: string): string {
+  if (/nllb/i.test(modelId)) {
+    return toFloresCode(code);
+  }
+  return code.split('-')[0].toLowerCase();
+}
