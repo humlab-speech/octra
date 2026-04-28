@@ -21,7 +21,7 @@ export function applySpeakerTurnsToAnnotJson(
   const speakerLabelMap = new Map<string, string>();
   let nextSpeakerNumber = 1;
 
-  for (const item of sourceLevel.items) {
+  const newItems = sourceLevel.items.map((item) => {
     const startS = item.sampleStart / annotJson.sampleRate;
     const endS = (item.sampleStart + item.sampleDur) / annotJson.sampleRate;
     const overlapBySpeaker = new Map<string, number>();
@@ -39,7 +39,7 @@ export function applySpeakerTurnsToAnnotJson(
 
     const dominantSpeaker = [...overlapBySpeaker.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
     if (!dominantSpeaker) {
-      continue;
+      return item;
     }
 
     if (!speakerLabelMap.has(dominantSpeaker)) {
@@ -49,16 +49,30 @@ export function applySpeakerTurnsToAnnotJson(
     const normalizedSpeaker = speakerLabelMap.get(dominantSpeaker)!;
     const existingIndex = item.labels.findIndex((label) => label.name === 'Speaker');
 
-    if (existingIndex > -1) {
-      item.labels = [
-        ...item.labels.slice(0, existingIndex),
-        new OLabel('Speaker', normalizedSpeaker),
-        ...item.labels.slice(existingIndex + 1),
-      ];
-    } else {
-      item.labels = [...item.labels, new OLabel('Speaker', normalizedSpeaker)];
-    }
-  }
+    const newLabels =
+      existingIndex > -1
+        ? [
+            ...item.labels.slice(0, existingIndex),
+            new OLabel('Speaker', normalizedSpeaker),
+            ...item.labels.slice(existingIndex + 1),
+          ]
+        : [...item.labels, new OLabel('Speaker', normalizedSpeaker)];
 
-  return annotJson;
+    return new OSegment(item.id, item.sampleStart, item.sampleDur, newLabels);
+  });
+
+  const newLevel = new OSegmentLevel(sourceLevel.name, newItems);
+  const newLevels = annotJson.levels.map((level) =>
+    level === sourceLevel ? newLevel : level,
+  );
+
+  const result = new OAnnotJSON(
+    annotJson.annotates,
+    annotJson.name,
+    annotJson.sampleRate,
+    undefined,
+    annotJson.links,
+  );
+  result.levels = newLevels;
+  return result;
 }
