@@ -367,7 +367,9 @@
       "language label": "Transkriptionsspråk",
       "swedish kb-whisper hint": "Svenska använder KB-Whisper — optimerad för svensk tal.",
       "finnish fine-tuned hint": "Finska använder en finjusterad modell — optimerad för finskt tal.",
-      "norwegian fine-tuned hint": "Norska använder en finjusterad modell — optimerad för norskt tal."
+      "norwegian fine-tuned hint": "Norska använder en finjusterad modell — optimerad för norskt tal.",
+      "diarizingLabel": "Identifierar talare…",
+      "initializing speaker segmentation": "Talarsegmenteringsmodellen laddas"
     },
     "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session.",
     "funding support and development": "Finansiell stöd och utveckling",

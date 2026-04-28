@@ -323,6 +323,8 @@
       "webgpu tip": "Tip: disable <strong>WebGPU</strong> in the options above and retry with WASM — slower but more stable.",
       "cancel": "Cancel",
       "dismiss": "Dismiss",
+      "diarizingLabel": "Identifying speakers…",
+      "initializing speaker segmentation": "Loading speaker segmentation model",
       "model cached": "Model will be cached for future sessions.",
       "safari warning": "Automatic transcription is not available for the Safari web browser. The models we need to download to your computer are large and currently trigger a tab reload in Safari, with loss of data as a result. Please try a different browser if you wanted to use the automatic transcription feature.",
       "auto-transcribe label": "Auto-transcribe with Whisper",

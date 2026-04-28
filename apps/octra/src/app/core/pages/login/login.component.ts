@@ -6,7 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
 import { FileSize, getFileSize } from '@octra/utilities';
-import { filter, firstValueFrom, Observable, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Observable, Subscription, tap } from 'rxjs';
 import { AuthenticationComponent } from '../../component/authentication-component/authentication-component.component';
 import { DefaultComponent } from '../../component/default.component';
 import { MaintenanceBannerComponent } from '../../component/maintenance/maintenance-banner/maint-banner.component';
@@ -87,7 +87,7 @@ export class LoginComponent
 
   transcription: {
     active: boolean;
-    phase: 'downloading' | 'transcribing' | 'finalizing' | 'idle';
+    phase: 'downloading' | 'transcribing' | 'diarizing' | 'finalizing' | 'idle';
     downloadLoaded: number;
     downloadTotal: number;
     downloadExpectedBytes: number;
@@ -311,6 +311,10 @@ I just want to let you know, that the OCTRA server is currently offline.
     const opts = this.dropzone?.transcribeOptions;
     const diarizationEnabled = !!opts?.diarization;
 
+    if (diarizationEnabled) {
+      this.transcription.phase = 'diarizing';
+    }
+
     const segmented = await applyOptionalSpeakerSegmentation({
       annotJson,
       diarizationEnabled,
@@ -325,6 +329,13 @@ I just want to let you know, that the OCTRA server is currently offline.
             this.dropzone!.audioManager,
             diarizationOptions,
           ).pipe(
+            tap((event: DiarizationEvent) => {
+              if (event.type === 'download-progress') {
+                this.transcription.downloadLoaded = event.loaded;
+                this.transcription.downloadTotal = event.total;
+                this.transcription.downloadFile = event.file;
+              }
+            }),
             filter(
               (event: DiarizationEvent): event is Extract<DiarizationEvent, { type: 'result' }> =>
                 event.type === 'result',
