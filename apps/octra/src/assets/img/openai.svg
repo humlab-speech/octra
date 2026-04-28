@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="openai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10a37f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a7f64;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="58" fill="#ffffff" stroke="#10a37f" stroke-width="2"/>
+  <path d="M 60 30 Q 75 35 75 50 Q 75 60 70 65 L 50 65 Q 45 60 45 50 Q 45 35 60 30" fill="#10a37f" opacity="0.8"/>
+  <path d="M 60 70 Q 45 65 45 50 Q 45 65 50 75 L 70 75 Q 75 65 75 50 Q 75 65 60 70" fill="#10a37f" opacity="0.6"/>
+  <circle cx="60" cy="60" r="15" fill="none" stroke="#10a37f" stroke-width="1.5" opacity="0.4"/>
+</svg>
