@@ -5,6 +5,9 @@ import { IntArray } from './AudioFormats';
 import { AudioInfo } from './audio-info';
 import { WavWriter } from './binary';
 
+declare const AudioContext: any;
+type AudioBuffer = any;
+
 export class AudioCutter {
   private status: 'running' | 'stopRequested' | 'stopped' = 'stopped';
   public onaudiocut = new Subject<{
@@ -281,7 +284,7 @@ export class AudioCutter {
             const context = new AudioContext();
             context
               .decodeAudioData(buffer)
-              .then((audioBuffer) => {
+              .then((audioBuffer: AudioBuffer) => {
                 channelData = selectedChannels.map((i) =>
                   audioBuffer.getChannelData(i),
                 );
@@ -290,7 +293,7 @@ export class AudioCutter {
                   wavWriter.writeAsync([channelData![i]], sampleRate),
                 );
               })
-              .then((promises) => {
+              .then((promises: Promise<ArrayBuffer>[]) => {
                 Promise.all(promises)
                   .then((files) => {
                     resolve(

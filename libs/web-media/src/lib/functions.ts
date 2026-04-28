@@ -3,6 +3,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { AudioFormat } from './audio/AudioFormats';
 import { AudioInfo } from './audio/audio-info';
 
+declare const window: any;
+declare const document: any;
+declare const screen: any;
+type HTMLElement = any;
+
 export async function readFileContents<T>(
   file: File,
   method: 'text' | 'binary' | 'arraybuffer',

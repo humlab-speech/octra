@@ -1,6 +1,31 @@
 import { DataInfo } from './data-info';
 import { FileInfo } from './file-info';
 
+interface FileSystemEntry {
+  readonly isFile: boolean;
+  readonly isDirectory: boolean;
+  readonly name: string;
+  readonly fullPath: string;
+}
+
+interface FileSystemFileEntry extends FileSystemEntry {
+  file(
+    successCallback: (file: File) => void,
+    errorCallback?: (error: DOMException) => void,
+  ): void;
+}
+
+interface FileSystemDirectoryReader {
+  readEntries(
+    successCallback: (entries: FileSystemEntry[]) => void,
+    errorCallback?: (error: DOMException) => void,
+  ): void;
+}
+
+interface FileSystemDirectoryEntry extends FileSystemEntry {
+  createReader(): FileSystemDirectoryReader;
+}
+
 export class DirectoryInfo extends DataInfo {
   private readonly _path: string;
 

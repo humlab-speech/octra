@@ -71,6 +71,15 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
   const { modelId, audio, useWebGPU, audioDurationS, dtype, language } = data;
 
   try {
+    console.info('[octra:whisper-worker] received message', {
+      modelId,
+      useWebGPU,
+      dtype,
+      language,
+      audioDurationS,
+      audioSamples: audio.length,
+    });
+
     if (!(await isCacheAvailable())) {
       env.useBrowserCache = false;
     }
@@ -82,6 +91,11 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pipelineFn = pipeline as any;
       const fileProgress = new Map<string, { loaded: number; total: number }>();
+      console.info('[octra:whisper-worker] loading pipeline', {
+        modelId,
+        device: useWebGPU ? 'webgpu' : 'wasm',
+        dtype,
+      });
       transcriber = await pipelineFn('automatic-speech-recognition', modelId, {
         device: useWebGPU ? 'webgpu' : 'wasm',
         ...(dtype ? { dtype } : {}),
@@ -106,6 +120,12 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
             postMessage(msg);
           }
         },
+      });
+
+      console.info('[octra:whisper-worker] pipeline ready', {
+        modelId,
+        device: useWebGPU ? 'webgpu' : 'wasm',
+        dtype,
       });
 
       loadedModelId = modelId;
@@ -143,6 +163,12 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    console.info('[octra:whisper-worker] starting inference', {
+      modelId,
+      chunkLengthS: CHUNK_LENGTH_S,
+      strideLengthS: STRIDE_LENGTH_S,
+      language: language ?? 'sv',
+    });
     const result: any = await (transcriber as any)(audio, {
       return_timestamps: true,
       chunk_length_s: CHUNK_LENGTH_S,
@@ -158,6 +184,14 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
     self.close(); // release WASM heap immediately
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
+    console.error('[octra:whisper-worker] failure', {
+      stage: loadedModelId === modelId ? 'inference-or-postload' : 'load',
+      modelId,
+      device: useWebGPU ? 'webgpu' : 'wasm',
+      dtype,
+      language,
+      error: message,
+    });
     const msg: WorkerErrorMessage = { type: 'error', message };
     postMessage(msg);
     self.close();

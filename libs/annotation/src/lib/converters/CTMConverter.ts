@@ -131,7 +131,7 @@ export class CTMConverter extends Converter {
       for (let i = 0; i < lines.length; i++) {
         if (lines[i] !== '') {
           const columns: string[] = lines[i].split(' ');
-          length = 0;
+          let length = 0;
           if (isNaN(Number(columns[2]))) {
             return {
               error: `Parsing error at line ${i + 1} column 3`,

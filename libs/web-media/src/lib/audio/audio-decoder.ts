@@ -10,6 +10,7 @@ import { AudioInfo, calculateChannelDataFactor } from './audio-info';
 import { AudioFormat, IntArray, WavFormat } from './AudioFormats';
 
 declare let window: unknown;
+type AudioContext = any;
 
 /***
  * The AudioDecoder is used as a replacement for the Web Audio API decoding and makes use of web workers.

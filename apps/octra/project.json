@@ -71,8 +71,8 @@
           }
         ],
         "styles": [
-          "node_modules/video.js/dist/video-js.min.css",
-          "node_modules/jodit/es2021/jodit.min.css",
+          "video.js/dist/video-js.min.css",
+          "jodit/es2021/jodit.min.css",
           "apps/octra/src/styles.scss"
         ],
         "scripts": [

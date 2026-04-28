@@ -19,6 +19,7 @@ import { AppInfo } from '../../../app.info';
 import { ImportOptionsModalComponent } from '../../modals/import-options-modal/import-options-modal.component';
 import { OctraModalService } from '../../modals/octra-modal.service';
 import { FileProgress } from '../../obj/objects';
+import { SpeakerTurn, applySpeakerTurnsToAnnotJson } from '../../shared/service/local-diarization.service';
 import { LoginMode, RootState } from '../../store';
 import { LoginModeActions } from '../../store/login-mode';
 
@@ -47,6 +48,14 @@ export class OctraDropzoneService {
 
   setAnnotationFromAnnotJson(annotJson: OAnnotJSON): void {
     this._oannotation = annotJson;
+  }
+
+  applySpeakerTurnsToAnnotation(turns: SpeakerTurn[]): void {
+    if (!this._oannotation || turns.length === 0) {
+      return;
+    }
+
+    this._oannotation = applySpeakerTurnsToAnnotJson(this._oannotation, turns);
   }
   get oldFiles(): {
     name: string;

@@ -5,6 +5,13 @@ import { OAudiofile } from '@octra/media';
 import { AudioManager, resampleChannels } from '@octra/web-media';
 import { Observable, Subject } from 'rxjs';
 import { AppInfo } from '../../../app.info';
+import { SpeakerTurn } from './local-diarization.service';
+import {
+  classifyTranscriptionWorkerError,
+  transcriptionFriendlyError,
+} from './local-transcription-errors';
+import { finalizeTranscriptionAnnotJson } from './local-transcription-finalization';
+import { DiarizationOptions } from './local-diarization-runtime.service';
 import type {
   WorkerOutMessage,
   WorkerTranscribeMessage,
@@ -32,6 +39,11 @@ export interface TranscriptionResult {
   annotJson: OAnnotJSON;
 }
 
+export interface TranscriptionBackendFallback {
+  type: 'backend-fallback';
+  backend: 'wasm';
+}
+
 export interface TranscriptionError {
   type: 'error';
   message: string;
@@ -41,6 +53,7 @@ export type TranscriptionEvent =
   | TranscriptionDownloadProgress
   | TranscriptionStart
   | TranscriptionSegmentProgress
+  | TranscriptionBackendFallback
   | TranscriptionResult
   | TranscriptionError;
 
@@ -49,6 +62,8 @@ export interface TranscriptionOptions {
   useWebGPU: boolean;
   dtype?: string;
   language?: string;
+  diarization?: DiarizationOptions;
+  speakerTurns?: SpeakerTurn[];
 }
 
 const WHISPER_SAMPLE_RATE = 16000;
@@ -87,6 +102,29 @@ export class LocalTranscriptionService implements OnDestroy {
 
     const audioDurationS = mono.length / WHISPER_SAMPLE_RATE;
 
+    this.startWorker(subject, mono, oaudiofile, options, audioDurationS, false);
+
+    return subject.asObservable();
+  }
+
+  private startWorker(
+    subject: Subject<TranscriptionEvent>,
+    mono: Float32Array,
+    oaudiofile: OAudiofile,
+    options: TranscriptionOptions,
+    audioDurationS: number,
+    hasRetriedToWasm: boolean,
+  ): void {
+
+    console.info('[octra:transcription] posting worker message', {
+      modelId: options.modelId,
+      useWebGPU: options.useWebGPU,
+      dtype: options.dtype,
+      language: options.language,
+      audioDurationS,
+      diarizationEnabled: !!options.diarization,
+    });
+
     const worker = new Worker(
       new URL('../../workers/whisper-transcription.worker', import.meta.url),
       { type: 'module' },
@@ -105,7 +143,41 @@ export class LocalTranscriptionService implements OnDestroy {
           }
           this.cleanup();
         } else if (data.type === 'error') {
-          subject.error(new Error(this.friendlyError(data.message, options.useWebGPU)));
+          const errorInfo = classifyTranscriptionWorkerError(data.message, options.useWebGPU);
+          if (errorInfo.shouldFallbackToWasm && options.useWebGPU && !hasRetriedToWasm) {
+            console.warn(
+              '[octra:transcription] retrying with WASM after WebGPU backend load failure',
+              {
+                raw: data.message,
+                modelId: options.modelId,
+                language: options.language,
+              },
+            );
+            subject.next({ type: 'backend-fallback', backend: 'wasm' });
+            this.cleanup(false);
+            this.startWorker(
+              subject,
+              mono,
+              oaudiofile,
+              {
+                ...options,
+                useWebGPU: false,
+              },
+              audioDurationS,
+              true,
+            );
+            return;
+          }
+          console.error('[octra:transcription] worker error', {
+            raw: data.message,
+            friendly: transcriptionFriendlyError(data.message, options.useWebGPU),
+            modelId: options.modelId,
+            useWebGPU: options.useWebGPU,
+            dtype: options.dtype,
+            language: options.language,
+            diarizationEnabled: !!options.diarization,
+          });
+          subject.error(new Error(transcriptionFriendlyError(data.message, options.useWebGPU)));
           this.cleanup();
         } else {
           subject.next(data);
@@ -115,7 +187,16 @@ export class LocalTranscriptionService implements OnDestroy {
 
     worker.onerror = (err) => {
       this.ngZone.run(() => {
-        subject.error(new Error(this.friendlyError(err.message ?? '', options.useWebGPU)));
+        console.error('[octra:transcription] worker onerror', {
+          raw: err.message ?? '',
+          friendly: transcriptionFriendlyError(err.message ?? '', options.useWebGPU),
+          modelId: options.modelId,
+          useWebGPU: options.useWebGPU,
+          dtype: options.dtype,
+          language: options.language,
+          diarizationEnabled: !!options.diarization,
+        });
+        subject.error(new Error(transcriptionFriendlyError(err.message ?? '', options.useWebGPU)));
         this.cleanup();
       });
     };
@@ -130,8 +211,6 @@ export class LocalTranscriptionService implements OnDestroy {
       ...(options.language ? { language: options.language } : {}),
     };
     worker.postMessage(message, [mono.buffer]);
-
-    return subject.asObservable();
   }
 
   cancel(): void {
@@ -144,14 +223,16 @@ export class LocalTranscriptionService implements OnDestroy {
     this.cancel();
   }
 
-  private cleanup(): void {
+  private cleanup(completeSubject = true): void {
     const w = this.worker;
     this.worker = null;
     w?.terminate(); // free WASM heap on every exit path
-    if (this.subject && !this.subject.closed) {
+    if (completeSubject && this.subject && !this.subject.closed) {
       this.subject.complete();
     }
-    this.subject = null;
+    if (completeSubject) {
+      this.subject = null;
+    }
   }
 
   private chunksToAnnotJson(
@@ -186,20 +267,7 @@ export class LocalTranscriptionService implements OnDestroy {
       );
     }
 
-    const levelName = pickInitialLevelName({ asrLanguage: options.language });
-    for (const level of result.annotjson.levels ?? []) {
-      if (level.name === 'OCTRA_1') {
-        level.name = levelName;
-      }
-      for (const item of (level as { items?: { labels?: { name: string }[] }[] }).items ?? []) {
-        for (const label of item.labels ?? []) {
-          if (label.name === 'OCTRA_1') {
-            label.name = levelName;
-          }
-        }
-      }
-    }
-    return result.annotjson;
+    return finalizeTranscriptionAnnotJson(result.annotjson, options);
   }
 
   private chunksToSrt(
@@ -233,21 +301,4 @@ export class LocalTranscriptionService implements OnDestroy {
     return n.toString().padStart(2, '0');
   }
 
-  private friendlyError(raw: string, usedWebGPU: boolean): string {
-    const lower = raw.toLowerCase();
-    const isGpuError =
-      lower.includes('device') ||
-      lower.includes('gpu') ||
-      lower.includes('webgpu') ||
-      lower.includes('out of memory') ||
-      lower.includes('oom');
-    if (usedWebGPU && isGpuError) {
-      return (
-        'WebGPU error: the GPU ran out of memory or lost its connection ' +
-        '(common with large models or after the display sleeps). ' +
-        'Try disabling WebGPU in the transcription options and run with WASM instead.'
-      );
-    }
-    return raw;
-  }
 }

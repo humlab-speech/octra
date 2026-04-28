@@ -6,7 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
 import { FileSize, getFileSize } from '@octra/utilities';
-import { Observable, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Observable, Subscription, tap } from 'rxjs';
 import { AuthenticationComponent } from '../../component/authentication-component/authentication-component.component';
 import { DefaultComponent } from '../../component/default.component';
 import { MaintenanceBannerComponent } from '../../component/maintenance/maintenance-banner/maint-banner.component';
@@ -21,6 +21,13 @@ import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/serv
 import { LocalTranslationService, TranslationEvent, TranslationOptions } from '../../shared/service/local-translation.service';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import type { OAnnotJSON } from '@octra/annotation';
+import {
+  DiarizationEvent,
+  DIARIZATION_DEFAULT_MODEL_ID,
+  LocalDiarizationRuntimeService,
+} from '../../shared/service/local-diarization-runtime.service';
+import { LOCAL_DIARIZATION_WORKER_FACTORY } from '../../shared/service/local-diarization-worker.token';
+import { applyOptionalSpeakerSegmentation } from './local-offline-transcription.helpers';
 
 type TranslationPhase =
   | 'idle'
@@ -46,7 +53,16 @@ import { LoginService } from './login.service';
   selector: 'octra-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [LoginService],
+  providers: [
+    LoginService,
+    {
+      provide: LOCAL_DIARIZATION_WORKER_FACTORY,
+      useValue: () =>
+        new Worker(new URL('../../workers/pyannote-diarization.worker', import.meta.url), {
+          type: 'module',
+        }),
+    },
+  ],
   imports: [
     MaintenanceBannerComponent,
     AuthenticationComponent,
@@ -71,7 +87,7 @@ export class LoginComponent
 
   transcription: {
     active: boolean;
-    phase: 'downloading' | 'transcribing' | 'finalizing' | 'idle';
+    phase: 'downloading' | 'transcribing' | 'diarizing' | 'finalizing' | 'idle';
     downloadLoaded: number;
     downloadTotal: number;
     downloadExpectedBytes: number;
@@ -94,6 +110,8 @@ export class LoginComponent
     error: null,
     usedWebGPU: false,
   };
+
+  diarizationWarning: string | null = null;
 
   private _elapsedIntervalId: ReturnType<typeof setInterval> | null = null;
   private _transcriptionStartTime = 0;
@@ -180,6 +198,7 @@ export class LoginComponent
     public authStoreService: AuthenticationStoreService,
     protected compatibilityService: CompatibilityService,
     private localTranscriptionService: LocalTranscriptionService,
+    private localDiarizationRuntimeService: LocalDiarizationRuntimeService,
     private localTranslationService: LocalTranslationService,
     private route: ActivatedRoute,
   ) {
@@ -228,6 +247,7 @@ I just want to let you know, that the OCTRA server is currently offline.
   };
 
   private _startTranscription(opts: TranscriptionOptions): void {
+    this.diarizationWarning = null;
     const modelMeta =
       KB_WHISPER_MODELS.find((m) => m.modelId === opts.modelId) ??
       OPENAI_WHISPER_MODELS.find((m) => m.modelId === opts.modelId);
@@ -273,19 +293,70 @@ I just want to let you know, that the OCTRA server is currently offline.
       }, 1000);
     } else if (event.type === 'segment-progress') {
       this.transcription.segmentEndS = event.segmentEndS;
+    } else if (event.type === 'backend-fallback') {
+      this.transcription.usedWebGPU = false;
+      this.transcription.phase = 'downloading';
+      this.transcription.downloadLoaded = 0;
+      this.transcription.downloadTotal = 0;
+      this.transcription.downloadFile = 'Retrying with WASM after WebGPU startup failure';
     } else if (event.type === 'result') {
       this._clearElapsedInterval();
-      this.transcription.active = false;
       this._transcriptionSub = null;
-      const trOpts = this.dropzone?.translateOptions;
-      if (trOpts) {
-        this.transcription.phase = 'idle';
-        this._startTranslation(event.annotJson);
-      } else {
-        this.transcription.phase = 'finalizing';
-        this.dropzone?.setAnnotationFromAnnotJson(event.annotJson);
-        this.proceedWithLogin(false);
-      }
+      this.transcription.phase = 'finalizing';
+      void this.handleCompletedTranscription(event.annotJson);
+    }
+  }
+
+  private async handleCompletedTranscription(annotJson: OAnnotJSON): Promise<void> {
+    const opts = this.dropzone?.transcribeOptions;
+    const diarizationEnabled = !!opts?.diarization;
+
+    if (diarizationEnabled) {
+      this.transcription.phase = 'diarizing';
+    }
+
+    const segmented = await applyOptionalSpeakerSegmentation({
+      annotJson,
+      diarizationEnabled,
+      runDiarization: async () => {
+        const diarizationOptions = opts?.diarization ?? {
+          modelId: DIARIZATION_DEFAULT_MODEL_ID,
+          useWebGPU: false,
+        };
+
+        const result = await firstValueFrom(
+          this.localDiarizationRuntimeService.diarize(
+            this.dropzone!.audioManager,
+            diarizationOptions,
+          ).pipe(
+            tap((event: DiarizationEvent) => {
+              if (event.type === 'download-progress') {
+                this.transcription.downloadLoaded = event.loaded;
+                this.transcription.downloadTotal = event.total;
+                this.transcription.downloadFile = event.file;
+              }
+            }),
+            filter(
+              (event: DiarizationEvent): event is Extract<DiarizationEvent, { type: 'result' }> =>
+                event.type === 'result',
+            ),
+          ),
+        );
+
+        return result.turns;
+      },
+    });
+
+    this.diarizationWarning = segmented.warning;
+    this.transcription.active = false;
+
+    const trOpts = this.dropzone?.translateOptions;
+    if (trOpts) {
+      this.transcription.phase = 'idle';
+      this._startTranslation(segmented.annotJson);
+    } else {
+      this.dropzone?.setAnnotationFromAnnotJson(segmented.annotJson);
+      this.proceedWithLogin(false);
     }
   }
 
@@ -413,6 +484,7 @@ I just want to let you know, that the OCTRA server is currently offline.
   cancelTranscription(): void {
     this._clearElapsedInterval();
     this.localTranscriptionService.cancel();
+    this.localDiarizationRuntimeService.cancel();
     this._transcriptionSub?.unsubscribe();
     this._transcriptionSub = null;
     this.transcription.active = false;
