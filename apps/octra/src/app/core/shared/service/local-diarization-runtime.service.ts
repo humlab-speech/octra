@@ -57,7 +57,7 @@ export const DIARIZATION_DEFAULT_MODEL_ID = 'onnx-community/pyannote-segmentatio
 
 const DIARIZATION_SAMPLE_RATE = 16000;
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class LocalDiarizationRuntimeService implements OnDestroy {
   private worker: Worker | null = null;
   private subject: Subject<DiarizationEvent> | null = null;

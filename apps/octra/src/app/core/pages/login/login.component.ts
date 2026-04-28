@@ -55,6 +55,7 @@ import { LoginService } from './login.service';
   styleUrls: ['./login.component.scss'],
   providers: [
     LoginService,
+    LocalDiarizationRuntimeService,
     {
       provide: LOCAL_DIARIZATION_WORKER_FACTORY,
       useValue: () =>
@@ -231,6 +232,7 @@ I just want to let you know, that the OCTRA server is currently offline.
   onOfflineSubmit = (removeData: boolean) => {
     const opts = this.dropzone?.transcribeOptions;
     const trOpts = this.dropzone?.translateOptions;
+    console.log('[LoginComponent.onOfflineSubmit] transcribeOptions:', opts);
     this._pendingRemoveData = removeData;
 
     if (opts && this.dropzone?.hasAudio && !this.dropzone?.hasAnnotation) {
@@ -348,6 +350,9 @@ I just want to let you know, that the OCTRA server is currently offline.
     });
 
     this.diarizationWarning = segmented.warning;
+    if (this.diarizationWarning) {
+      console.error('[diarization]', this.diarizationWarning);
+    }
     this.transcription.active = false;
 
     const trOpts = this.dropzone?.translateOptions;
