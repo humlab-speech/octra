@@ -40,6 +40,12 @@ export interface DiarizationOptions {
   modelId: string;
   useWebGPU: boolean;
   dtype?: DiarizationDType;
+  numSpeakers?: number;
+  minSpeakers?: number;
+  maxSpeakers?: number;
+  mergeGapS?: number;
+  minTurnS?: number;
+  minConfidence?: number;
 }
 
 export type DiarizationDType =
@@ -129,6 +135,12 @@ export class LocalDiarizationRuntimeService implements OnDestroy {
       useWebGPU: options.useWebGPU,
       audioDurationS,
       ...(options.dtype ? { dtype: options.dtype } : {}),
+      ...(options.numSpeakers != null ? { numSpeakers: options.numSpeakers } : {}),
+      ...(options.minSpeakers != null ? { minSpeakers: options.minSpeakers } : {}),
+      ...(options.maxSpeakers != null ? { maxSpeakers: options.maxSpeakers } : {}),
+      ...(options.mergeGapS != null ? { mergeGapS: options.mergeGapS } : {}),
+      ...(options.minTurnS != null ? { minTurnS: options.minTurnS } : {}),
+      ...(options.minConfidence != null ? { minConfidence: options.minConfidence } : {}),
     };
     worker.postMessage(message, [mono.buffer]);
 

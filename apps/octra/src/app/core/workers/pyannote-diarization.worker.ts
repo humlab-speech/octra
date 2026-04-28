@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 import { AutoModelForAudioFrameClassification, AutoProcessor, env } from '@huggingface/transformers';
 import { normalizePyannoteSpeakerTurns } from '../shared/service/local-diarization-postprocess';
 import { SpeakerTurn } from '../shared/service/local-diarization.service';
@@ -26,6 +26,12 @@ export interface WorkerDiarizeMessage {
   useWebGPU: boolean;
   audioDurationS: number;
   dtype?: DiarizationDType;
+  numSpeakers?: number;
+  minSpeakers?: number;
+  maxSpeakers?: number;
+  mergeGapS?: number;
+  minTurnS?: number;
+  minConfidence?: number;
 }
 
 export interface WorkerDiarizationDownloadProgressMessage {
@@ -67,7 +73,19 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerDiarizeMessage>)
     return;
   }
 
-  const { modelId, audio, useWebGPU, audioDurationS, dtype } = data;
+  const {
+    modelId,
+    audio,
+    useWebGPU,
+    audioDurationS,
+    dtype,
+    numSpeakers,
+    minSpeakers,
+    maxSpeakers,
+    mergeGapS,
+    minTurnS,
+    minConfidence,
+  } = data;
 
   try {
     if (!(await isCacheAvailable())) {
@@ -129,9 +147,18 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerDiarizeMessage>)
     const diarization = loadedProcessor.post_process_speaker_diarization(
       logits,
       audio.length,
+      {
+        ...(numSpeakers != null ? { num_speakers: numSpeakers } : {}),
+        ...(minSpeakers != null ? { min_speakers: minSpeakers } : {}),
+        ...(maxSpeakers != null ? { max_speakers: maxSpeakers } : {}),
+      },
     ) as Array<Array<{ id: number; start: number; end: number; confidence?: number }>>;
 
-    const turns = normalizePyannoteSpeakerTurns(diarization[0] ?? []);
+    const turns = normalizePyannoteSpeakerTurns(diarization[0] ?? [], {
+      mergeGapS,
+      minTurnS,
+      minConfidence,
+    });
     const resultMsg: WorkerDiarizationResultMessage = { type: 'result', turns };
     postMessage(resultMsg);
     self.close();

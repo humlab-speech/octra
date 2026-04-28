@@ -13,6 +13,7 @@ interface BuildTranscriptionOptionsArgs {
   dtype?: string;
   language: string;
   speakerSegmentationEnabled: boolean;
+  numSpeakers?: number | null;
 }
 
 export function buildTranscriptionOptions(
@@ -26,6 +27,7 @@ export function buildTranscriptionOptions(
     ? {
         modelId: DIARIZATION_DEFAULT_MODEL_ID,
         useWebGPU: false,
+        ...(args.numSpeakers != null ? { numSpeakers: args.numSpeakers } : {}),
       }
     : undefined;
 

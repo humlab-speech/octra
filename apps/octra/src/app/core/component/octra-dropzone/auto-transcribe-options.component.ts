@@ -449,6 +449,38 @@ const DEFAULT_KEY_FOR_FAMILY: Record<string, string> = {
             <small class="text-muted d-block mt-1">
               Runs locally in your browser. No Hugging Face login required. May increase processing time.
             </small>
+
+            @if (speakerSegmentationEnabled) {
+              <div class="mt-2 ms-3">
+                <label class="form-label small mb-1" for="numSpeakersInput">
+                  Expected number of speakers
+                </label>
+                <div class="d-flex align-items-center gap-2">
+                  <input
+                    type="number"
+                    id="numSpeakersInput"
+                    class="form-control form-control-sm"
+                    style="width: 80px"
+                    min="1"
+                    max="10"
+                    [placeholder]="'Auto'"
+                    [(ngModel)]="numSpeakersValue"
+                    (ngModelChange)="emitChange()"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    (click)="clearNumSpeakers()"
+                    [disabled]="numSpeakers === null"
+                  >
+                    Auto
+                  </button>
+                </div>
+                <small class="text-muted d-block mt-1">
+                  Set to 2 for a typical interview. Leave blank for auto-detection.
+                </small>
+              </div>
+            }
           </div>
         }
       </div>
@@ -477,6 +509,7 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   readonly hasWebGpu = signal(false);
   readonly isSafari = signal(false);
   speakerSegmentationEnabled = false;
+  numSpeakers: number | null = 2;
 
   models: KbWhisperModel[] = KB_WHISPER_MODELS;
   readonly languages = WHISPER_LANGUAGES.map((l) => ({
@@ -526,20 +559,33 @@ export class AutoTranscribeOptionsComponent implements OnInit {
     this.emitChange();
   }
 
+  get numSpeakersValue(): number | '' {
+    return this.numSpeakers ?? '';
+  }
+
+  set numSpeakersValue(v: number | '') {
+    this.numSpeakers = v === '' || isNaN(Number(v)) ? null : Number(v);
+  }
+
+  clearNumSpeakers(): void {
+    this.numSpeakers = null;
+    this.emitChange();
+  }
+
   emitChange(): void {
     const model = this.models.find(m => m.modelId === this.selectedModelId);
     const dtype = this.hasWebGpu() ? model?.dtypeWebgpu : model?.dtypeWasm;
-    this.optionsChange.emit(
-      buildTranscriptionOptions({
-        audioLoaded: this.audioLoaded(),
-        annotationAlreadyLoaded: this.annotationAlreadyLoaded(),
-        enabled: this.enabled(),
-        modelId: this.selectedModelId,
-        useWebGPU: this.hasWebGpu(),
-        dtype,
-        language: this.selectedLanguage,
-        speakerSegmentationEnabled: this.speakerSegmentationEnabled,
-      }),
-    );
+    const opts = buildTranscriptionOptions({
+      audioLoaded: this.audioLoaded(),
+      annotationAlreadyLoaded: this.annotationAlreadyLoaded(),
+      enabled: this.enabled(),
+      modelId: this.selectedModelId,
+      useWebGPU: this.hasWebGpu(),
+      dtype,
+      language: this.selectedLanguage,
+      speakerSegmentationEnabled: this.speakerSegmentationEnabled,
+      numSpeakers: this.numSpeakers,
+    });
+    this.optionsChange.emit(opts);
   }
 }
