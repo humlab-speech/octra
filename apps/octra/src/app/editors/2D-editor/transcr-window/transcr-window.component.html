@@ -134,17 +134,22 @@
         [playbackRate]="appStorage.audioSpeed"
         [volume]="appStorage.audioVolume"
       ></octra-audio-navigation>
-      <octra-audio-viewer
-        #magnifier
-        [audioChunk]="audiochunk"
-        [refreshOnInternChanges]="false"
-        [annotation]="annotationStoreService.transcript!"
-        (shortcut)="triggerUIAction($event)"
-        [ngStyle]="{
-          height: magnifier?.settings?.lineheight + 'px',
-        }"
-        id="magnifier"
-      ></octra-audio-viewer>
+      <div class="position-relative" style="display: inline-block; width: 100%;">
+        <octra-audio-viewer
+          #magnifier
+          [audioChunk]="audiochunk"
+          [refreshOnInternChanges]="false"
+          [annotation]="annotationStoreService.transcript!"
+          (shortcut)="triggerUIAction($event)"
+          [ngStyle]="{
+            height: magnifier?.settings?.lineheight + 'px',
+          }"
+          id="magnifier"
+        ></octra-audio-viewer>
+        @if (currentSegmentSpeaker) {
+          <div class="speaker-badge">{{ currentSegmentSpeaker }}</div>
+        }
+      </div>
       <octra-transcr-editor
         #editor
         (boundaryclicked)="onBoundaryClicked($event)"

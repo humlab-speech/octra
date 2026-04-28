@@ -198,6 +198,13 @@ export class TranscrWindowComponent
     return this.editor.rawText.match(/{[0-9]+}/) !== null;
   }
 
+  public get currentSegmentSpeaker(): string | undefined {
+    const segment = this.currentLevel?.items?.[this.segmentIndex];
+    if (!segment) return undefined;
+    const speakerLabel = segment.labels?.find((label) => label.name === 'Speaker');
+    return speakerLabel?.value;
+  }
+
   private _validationEnabled = false;
 
   get validationEnabled(): boolean {

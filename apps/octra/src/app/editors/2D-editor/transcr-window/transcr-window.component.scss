@@ -48,3 +48,18 @@ octra-transcr-editor {
   flex-direction: column;
   flex: auto;
 }
+
+.speaker-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: var(--octra-primary-color);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 50;
+  opacity: 0.95;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
