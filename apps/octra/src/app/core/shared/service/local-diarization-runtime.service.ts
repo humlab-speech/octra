@@ -98,6 +98,12 @@ export class LocalDiarizationRuntimeService implements OnDestroy {
         : new Float32Array(channel);
 
     const audioDurationS = mono.length / DIARIZATION_SAMPLE_RATE;
+    console.info('[octra:diarization] audio sent to worker', {
+      srcRate,
+      resampledSampleRate: DIARIZATION_SAMPLE_RATE,
+      monoSamples: mono.length,
+      audioDurationS,
+    });
     if (!this.createWorker) {
       subject.error(new Error('Local diarization worker factory is not configured'));
       return subject.asObservable();

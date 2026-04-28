@@ -147,17 +147,27 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerDiarizeMessage>)
     const diarization = loadedProcessor.post_process_speaker_diarization(
       logits,
       audio.length,
-      {
-        ...(numSpeakers != null ? { num_speakers: numSpeakers } : {}),
-        ...(minSpeakers != null ? { min_speakers: minSpeakers } : {}),
-        ...(maxSpeakers != null ? { max_speakers: maxSpeakers } : {}),
-      },
     ) as Array<Array<{ id: number; start: number; end: number; confidence?: number }>>;
 
-    const turns = normalizePyannoteSpeakerTurns(diarization[0] ?? [], {
+    const rawSegments = diarization[0] ?? [];
+    const uniqueRawIds = [...new Set(rawSegments.map((s) => s.id))];
+    console.info('[octra:pyannote-worker] raw model output', {
+      totalRawSegments: rawSegments.length,
+      uniqueRawSpeakerIds: uniqueRawIds,
+      first10Segments: rawSegments.slice(0, 10),
+      audioDurationS,
+    });
+
+    const turns = normalizePyannoteSpeakerTurns(rawSegments, {
       mergeGapS,
       minTurnS,
       minConfidence,
+    });
+
+    console.info('[octra:pyannote-worker] normalized turns', {
+      totalTurns: turns.length,
+      uniqueSpeakers: [...new Set(turns.map((t) => t.speakerId))],
+      first10Turns: turns.slice(0, 10),
     });
     const resultMsg: WorkerDiarizationResultMessage = { type: 'result', turns };
     postMessage(resultMsg);

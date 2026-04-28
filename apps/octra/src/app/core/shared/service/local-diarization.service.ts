@@ -66,6 +66,12 @@ export function applySpeakerTurnsToAnnotJson(
     level === sourceLevel ? newLevel : level,
   );
 
+  console.info('[octra:diarization] speaker label assignment', {
+    turnsInput: turns.length,
+    uniqueTurnSpeakers: [...new Set(turns.map((t) => t.speakerId))],
+    finalLabelMap: Object.fromEntries(speakerLabelMap),
+  });
+
   const result = new OAnnotJSON(
     annotJson.annotates,
     annotJson.name,
