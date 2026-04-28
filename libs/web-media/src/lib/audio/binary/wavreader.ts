@@ -8,6 +8,9 @@ import { BinaryByteReader } from './BinaryReader';
 import { PCMAudioFormat } from './format';
 import { WavFileFormat } from './wavformat';
 
+declare const AudioBuffer: any;
+type AudioBufferLike = any;
+
 export class WavReader {
   private br: BinaryByteReader;
   private format: PCMAudioFormat | null = null;
@@ -77,9 +80,9 @@ export class WavReader {
   }
 
   // Not tested yet!!!
-  read(): AudioBuffer | null {
+  read(): AudioBufferLike | null {
     this.br.pos = 0;
-    let ab: AudioBuffer | null = null;
+    let ab: AudioBufferLike | null = null;
     this.readHeader();
     let s = this.navigateToChunk('fmt ');
     if (!s) {
@@ -92,14 +95,15 @@ export class WavReader {
     let sr = this.format?.sampleRate;
     let nChs = this.format?.channelCount;
     if (sr && chsArr && nChs && nChs > 0 && nChs == chsArr?.length) {
-      ab = new AudioBuffer({
+      const audioBuffer = new AudioBuffer({
         length: chsArr[0].length,
         numberOfChannels: this.format?.channelCount,
         sampleRate: sr,
       });
       for (let ch = 0; ch < nChs; ch++) {
-        ab.copyToChannel(chsArr[ch], ch);
+        audioBuffer.copyToChannel(chsArr[ch], ch);
       }
+      ab = audioBuffer;
     }
     return ab;
   }

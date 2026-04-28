@@ -1,19 +1,11 @@
-import {
-  Component,
-  DestroyRef,
-  effect,
-  input,
-  OnInit,
-  output,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, effect, input, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
 import { formatLanguageLabel } from '@octra/utilities';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
+import { buildTranscriptionOptions } from './auto-transcribe-options.helpers';
 
 export interface KbWhisperModel {
   /** Translation key suffix for i18n, e.g. 'tiny', 'small', 'medium', 'large'. */
@@ -441,6 +433,22 @@ const DEFAULT_KEY_FOR_FAMILY: Record<string, string> = {
               <i class="bi bi-info-circle"></i>
               {{ 'login.auto-transcription.model cached after download' | transloco }}
             </small>
+
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="speakerSegmentationCheck"
+                [(ngModel)]="speakerSegmentationEnabled"
+                (ngModelChange)="emitChange()"
+              />
+              <label class="form-check-label" for="speakerSegmentationCheck">
+                Speaker segmentation (experimental)
+              </label>
+            </div>
+            <small class="text-muted d-block mt-1">
+              Runs locally in your browser. No Hugging Face login required. May increase processing time.
+            </small>
           </div>
         }
       </div>
@@ -468,19 +476,16 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   selectedModelId = KB_WHISPER_MODELS[2].modelId; // default: medium
   readonly hasWebGpu = signal(false);
   readonly isSafari = signal(false);
+  speakerSegmentationEnabled = false;
 
   models: KbWhisperModel[] = KB_WHISPER_MODELS;
   readonly languages = WHISPER_LANGUAGES.map((l) => ({
     ...l,
     label: formatLanguageLabel(l.code, l.name),
   }));
-  selectedLanguage = 'en';
-  private userHasOverridden = false;
+  selectedLanguage = 'sv';
 
-  constructor(
-    private readonly transloco: TranslocoService,
-    private readonly destroyRef: DestroyRef,
-  ) {
+  constructor() {
     effect(() => {
       // Track signal reads so the effect re-runs when they change
       this.audioLoaded();
@@ -490,16 +495,6 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.applyAppLanguage(this.transloco.getActiveLang());
-
-    this.transloco.langChanges$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(lang => {
-        if (!this.userHasOverridden) {
-          this.applyAppLanguage(lang);
-        }
-      });
-
     this.isSafari.set(isSafariOrWebKit());
     try {
       const nav = navigator as Navigator & {
@@ -514,16 +509,7 @@ export class AutoTranscribeOptionsComponent implements OnInit {
     }
   }
 
-  private applyAppLanguage(lang: string): void {
-    const code = lang.split('-')[0];
-    this.selectedLanguage = WHISPER_LANGUAGES.some(l => l.code === code) ? code : 'en';
-    this.onLanguageChange(false);
-  }
-
-  onLanguageChange(markOverride = true): void {
-    if (markOverride) {
-      this.userHasOverridden = true;
-    }
+  onLanguageChange(): void {
     const currentKey = this.models.find(m => m.modelId === this.selectedModelId)?.key ?? '';
     const newModels = getModelsForLanguage(this.selectedLanguage);
     const defaultKey = DEFAULT_KEY_FOR_FAMILY[this.selectedLanguage] ?? DEFAULT_OPENAI_KEY;
@@ -541,21 +527,19 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   }
 
   emitChange(): void {
-    if (!this.audioLoaded() || this.annotationAlreadyLoaded()) {
-      this.optionsChange.emit(null);
-      return;
-    }
-    if (!this.enabled()) {
-      this.optionsChange.emit(null);
-      return;
-    }
     const model = this.models.find(m => m.modelId === this.selectedModelId);
     const dtype = this.hasWebGpu() ? model?.dtypeWebgpu : model?.dtypeWasm;
-    this.optionsChange.emit({
-      modelId: this.selectedModelId,
-      useWebGPU: this.hasWebGpu(),
-      dtype,
-      language: this.selectedLanguage,
-    });
+    this.optionsChange.emit(
+      buildTranscriptionOptions({
+        audioLoaded: this.audioLoaded(),
+        annotationAlreadyLoaded: this.annotationAlreadyLoaded(),
+        enabled: this.enabled(),
+        modelId: this.selectedModelId,
+        useWebGPU: this.hasWebGpu(),
+        dtype,
+        language: this.selectedLanguage,
+        speakerSegmentationEnabled: this.speakerSegmentationEnabled,
+      }),
+    );
   }
 }

@@ -1,3 +1,7 @@
+declare const window: any;
+declare const document: any;
+declare const screen: any;
+
 /**
  * represents a file size definition giving size and label.
  */

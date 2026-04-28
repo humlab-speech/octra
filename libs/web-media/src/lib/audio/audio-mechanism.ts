@@ -4,6 +4,10 @@ import { AudioResource } from '@octra/web-media';
 import { Observable, of, Subject } from 'rxjs';
 
 declare let window: any;
+type GainNode = any;
+type AudioBufferSourceNode = any;
+type MediaElementAudioSourceNode = any;
+type AudioContext = any;
 
 export interface AudioMechanismPrepareOptions {
   filename: string;

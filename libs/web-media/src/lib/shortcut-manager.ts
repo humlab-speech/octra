@@ -1,6 +1,26 @@
 import { HotkeysEvent } from 'hotkeys-js';
 import { BrowserInfo } from './browser-info';
 
+type KeyboardEventLike = Event & {
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  shiftKey: boolean;
+  key?: string;
+  keyCode?: number;
+  which?: number;
+  code?: string;
+};
+
+type ShortcutCallback = {
+  bivarianceHack(
+    keyboardEvent: KeyboardEventLike,
+    shortcut: Shortcut,
+    hotkeyEvent: HotkeysEvent,
+    shortcutGroup: ShortcutGroup,
+  ): void;
+}['bivarianceHack'];
+
 /**
  * wrapper containing KeyboardEvent information with additional data
  */
@@ -10,7 +30,7 @@ export interface ShortcutEvent {
   shortcutName: string;
   shortcutGroupName: string;
   onFocusOnly?: boolean;
-  event: KeyboardEvent;
+  event: KeyboardEventLike;
   timestamp: number;
 }
 
@@ -33,12 +53,7 @@ export interface Shortcut {
   };
   title: string;
   label?: string;
-  callback?: (
-    keyboardEvent: KeyboardEvent,
-    shortcut: Shortcut,
-    hotkeyEvent: HotkeysEvent,
-    shortcutGroup: ShortcutGroup,
-  ) => void;
+  callback?: ShortcutCallback;
   focusonly?: boolean;
 }
 
@@ -188,7 +203,7 @@ export class ShortcutManager {
   }
 
   public checkKeyEvent(
-    event: KeyboardEvent,
+    event: KeyboardEventLike,
     timestamp: number,
     checkPressKey = true,
   ): ShortcutEvent | undefined {
@@ -237,7 +252,7 @@ export class ShortcutManager {
     }
   }
 
-  public getCommandByEvent(event: KeyboardEvent) {
+  public getCommandByEvent(event: KeyboardEventLike) {
     const shortcut = this.getShorcutCombination(event);
     return this.getCommand(shortcut, BrowserInfo.platform);
   }
@@ -286,7 +301,7 @@ export class ShortcutManager {
    *
    * gets the name of a special Key by number
    */
-  private getNameByEvent(event: KeyboardEvent): string {
+  private getNameByEvent(event: KeyboardEventLike): string {
     const code = this.getKeyCode(event);
 
     if (code > -1) {
@@ -312,7 +327,7 @@ export class ShortcutManager {
     return '';
   }
 
-  public getShorcutCombination(event: KeyboardEvent) {
+  public getShorcutCombination(event: KeyboardEventLike) {
     const keyCode = this.getKeyCode(event);
     const alt = event.altKey;
     const ctrl = event.ctrlKey;
@@ -386,7 +401,7 @@ export class ShortcutManager {
     return comboKey;
   }
 
-  private getKeyCode(event: KeyboardEvent): number {
+  private getKeyCode(event: KeyboardEventLike): number {
     if (event.which !== undefined) {
       return event.which;
     }
@@ -397,7 +412,7 @@ export class ShortcutManager {
     return -1;
   }
 
-  private checkPressedKey(event: KeyboardEvent) {
+  private checkPressedKey(event: KeyboardEventLike) {
     const keyName = this.getNameByEvent(event);
     const valueToSet = event.type === 'keydown';
 

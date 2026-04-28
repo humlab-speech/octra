@@ -235,6 +235,12 @@
                     <small class="d-block text-muted mt-1">
                       {{ 'login.auto-transcription.model cached' | transloco }}
                     </small>
+
+                    @if (diarizationWarning) {
+                      <div class="alert alert-warning mt-2 py-1 mb-0 small">
+                        {{ diarizationWarning }}
+                      </div>
+                    }
                   </div>
                 }
                 @if (translation.active || translation.error || translation.phase === 'finalizing') {

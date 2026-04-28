@@ -19,6 +19,11 @@ import {
   AudioMechanismPrepareOptions,
 } from './audio-mechanism';
 
+type HTMLAudioElement = any;
+declare const Audio: any;
+declare const OfflineAudioContext: any;
+type AudioBuffer = any;
+
 export class HtmlAudioMechanism extends AudioMechanism {
   private _audio?: HTMLAudioElement;
   private _playbackObjectUrl?: string;
@@ -247,7 +252,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
       this.statistics.decoding.started = Date.now();
       this.initAudioContext();
       this._audioContext!.decodeAudioData(this._resource.arraybuffer?.slice(0)!)
-        .then(async (audioBuffer) => {
+        .then(async (audioBuffer: AudioBuffer) => {
           try {
             const info = this._resource?.info!;
 
@@ -284,7 +289,7 @@ export class HtmlAudioMechanism extends AudioMechanism {
             this.decodeAudioWithLibavDecoder(subj, settle);
           }
         })
-        .catch((_e) => {
+        .catch((_e: unknown) => {
           // Tier 1 failed (decodeAudioData rejected) → Tier 3.
           this.decodeAudioWithLibavDecoder(subj, settle);
         });

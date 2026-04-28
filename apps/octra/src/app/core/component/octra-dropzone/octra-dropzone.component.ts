@@ -13,6 +13,7 @@ import { SupportedFilesModalComponent } from '../../modals/supportedfiles-modal/
 import { FileProgress } from '../../obj/objects';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import { TranslationOptions } from '../../shared/service/local-translation.service';
+import { SpeakerTurn } from '../../shared/service/local-diarization.service';
 import { DefaultComponent } from '../default.component';
 import { DropZoneComponent } from '../drop-zone';
 import { DropZoneComponent as DropZoneComponent_1 } from '../drop-zone/drop-zone.component';
@@ -45,6 +46,7 @@ export class OctraDropzoneComponent extends DefaultComponent {
   @Input() showAutoTranscribe = false;
   transcribeOptions: TranscriptionOptions | null = null;
   translateOptions: TranslationOptions | null = null;
+  private pendingSpeakerTurns: SpeakerTurn[] = [];
 
   onTranscribeOptionsChange(opts: TranscriptionOptions | null): void {
     this.transcribeOptions = opts;
@@ -64,6 +66,12 @@ export class OctraDropzoneComponent extends DefaultComponent {
 
   setAnnotationFromAnnotJson(annotJson: import('@octra/annotation').OAnnotJSON): void {
     this.octraDropzoneService.setAnnotationFromAnnotJson(annotJson);
+    this.applyPendingSpeakerTurns();
+  }
+
+  setSpeakerTurns(turns: SpeakerTurn[]): void {
+    this.pendingSpeakerTurns = turns;
+    this.applyPendingSpeakerTurns();
   }
 
   get hasAudio(): boolean {
@@ -157,6 +165,14 @@ export class OctraDropzoneComponent extends DefaultComponent {
   override ngOnDestroy() {
     super.ngOnDestroy();
     this.octraDropzoneService.destroy();
+  }
+
+  private applyPendingSpeakerTurns(): void {
+    if (!this.hasAnnotation || this.pendingSpeakerTurns.length === 0) {
+      return;
+    }
+
+    this.octraDropzoneService.applySpeakerTurnsToAnnotation(this.pendingSpeakerTurns);
   }
 
   protected readonly AudioManager = AudioManager;

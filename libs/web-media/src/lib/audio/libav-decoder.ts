@@ -1,3 +1,5 @@
+declare const window: Window & typeof globalThis;
+
 export interface AudioBufferLike {
   sampleRate: number;
   length: number;

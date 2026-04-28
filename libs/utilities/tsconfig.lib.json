@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": ["node", "vite/client"]
+    "types": [],
+    "lib": ["es2022", "dom", "dom.iterable"]
   },
   "include": ["src/**/*.ts"]
 }

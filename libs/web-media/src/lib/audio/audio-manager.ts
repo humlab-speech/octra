@@ -7,6 +7,8 @@ import { AudioMechanism } from './audio-mechanism';
 import { AudioResource } from './audio-resource';
 import { HtmlAudioMechanism } from './html-audio-mechanism';
 
+type GainNode = any;
+
 /**
  * AudioManager controls the audio file and all of its chunk. Each audio file should have exactly one manager. The AudioManager uses HTML Audio for playback.
  */
