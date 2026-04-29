@@ -22,6 +22,12 @@
       },
       "defaultConfiguration": "production"
     },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/ngx-components/vite.config.ts"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
