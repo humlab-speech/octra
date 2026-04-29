@@ -60,11 +60,11 @@
           "title": "Leere Segmente mit max. Dauer (ms) vom gleichen Sprecher zusammenführen"
         },
         "sortSpeakerSegments": {
-          "description": "Verschiebt alle Einheiten mit der festgelegten Sprechermarkierung auf eigene Ebenen. Einheiten ohne Sprecher werden auf die Ebene OCTRA_1 verschoben.",
+          "description": "Verschiebt alle Einheiten mit einer Sprechermarkierung auf eigene Annotationsebenen. Einheiten ohne Sprecher verbleiben auf der Standardebene.",
           "title": "Pro Sprecher eine eigene Transkriptionsspur"
         },
         "speakerIdentifierPattern": {
-          "description": "Regulärer Ausdruck, mit dem der Sprecher einer Transkriptionseinheit erkannt werden kann.",
+          "description": "Regulärer Ausdruck (mit einer Gruppe) der dem Sprecherpräfix am Anfang einer Cue-Zeile entspricht. Die erste Gruppe wird als Sprechername verwendet.",
           "title": "Regulärer Ausdruck für Sprecheridentifikation"
         }
       }
@@ -73,7 +73,7 @@
       "options": {
         "extractSpeakers": {
           "title": "Sprecher aus Stimmmarkierungen extrahieren",
-          "description": "Liest den Sprechernamen aus <v Name>-Stimmmarkierungen im Cue-Text und speichert ihn als Sprechermarkierung."
+          "description": "Liest den Sprechernamen aus <v Name>-Stimmmarkierungen oder [Name]-Klammerpräfixen im Cue-Text und speichert ihn als Sprechermarkierung."
         },
         "sortSpeakerSegments": {
           "title": "Pro Sprecher eine eigene Transkriptionsspur",

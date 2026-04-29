@@ -18,7 +18,7 @@ import {
 export class SRTConverterImportOptions {
   sortSpeakerSegments = false;
   combineSegmentsWithSameSpeakerThreshold?: number;
-  speakerIdentifierPattern?: string;
+  speakerIdentifierPattern = '\\[([^\\]]+)\\] *:? *';
 
   constructor(partial?: Partial<SRTConverterImportOptions>) {
     if (partial) Object.assign(this, partial);
@@ -169,9 +169,9 @@ export class SRTConverter extends Converter {
           title: 'speakerIdentifierPattern',
           toggleable: true,
           type: 'string',
-          default: '\\[(SPEAKER_[0-9]+)] *: *',
+          default: '\\[([^\\]]+)\\] *:? *',
           description:
-            'Defines the pattern to recognize the speaker from a given transcript text.',
+            'Regular expression (with one capture group) matching the speaker prefix at the start of a cue line. The first capture group becomes the speaker name.',
         },
         sortSpeakerSegments: {
           title: 'sortSpeakerSegments',
@@ -179,7 +179,7 @@ export class SRTConverter extends Converter {
           type: 'boolean',
           default: false,
           description:
-            'For each speaker a new level should be created and each speaker segment should be moved to its level.',
+            'Moves all units with a speaker label to separate annotation levels. Units without a speaker remain on the default level.',
         },
         combineSegmentsWithSameSpeakerThreshold: {
           title: 'combineSegmentsWithSameSpeakerThreshold',
@@ -231,13 +231,13 @@ export class SRTConverter extends Converter {
       let defaultLevel: OSegmentLevel<OSegment> = new OSegmentLevel<OSegment>(
         'OCTRA_1',
       );
-      let regexStr = `([0-9]+)[\\n\\r]*([0-9]{2}:[0-9]{2}:[0-9]{2}(?:,[0-9]{3})?) --> ([0-9]{2}:[0-9]{2}:[0-9]{2}(?:,[0-9]{3})?)\\r?\\n\\r?`;
-      if (options.speakerIdentifierPattern) {
-        regexStr += `(?:${options.speakerIdentifierPattern ?? ''})`;
-      } else {
-        regexStr += '()';
-      }
-      regexStr += '(.*)\\r?\\n\\r?';
+      const regexStr =
+        `([0-9]+)[\\n\\r]*([0-9]{2}:[0-9]{2}:[0-9]{2}(?:,[0-9]{3})?) --> ` +
+        `([0-9]{2}:[0-9]{2}:[0-9]{2}(?:,[0-9]{3})?)\\r?\\n\\r?` +
+        `(.*)\\r?\\n\\r?`;
+      const speakerRx = options.speakerIdentifierPattern
+        ? new RegExp(`^(?:${options.speakerIdentifierPattern})`)
+        : undefined;
 
       if (content !== '') {
         const regex = new RegExp(regexStr, 'g');
@@ -246,11 +246,17 @@ export class SRTConverter extends Converter {
         while (matches !== null) {
           let olevel: OSegmentLevel<OSegment> = defaultLevel;
 
-          if (!options.sortSpeakerSegments && matches[4]) {
-            matches[5] = `[${matches[4]}]: ${matches[5] ?? ''}`;
+          let transcript = matches[4].replace(/(\n|\s)+$/g, '');
+          let speakerName: string | undefined;
+          if (speakerRx) {
+            const sm = speakerRx.exec(transcript);
+            if (sm) {
+              speakerName = sm[1];
+              transcript = transcript.slice(sm[0].length);
+            }
           }
 
-          let timeStart = SRTConverter.getSamplesFromTimeString(
+          const timeStart = SRTConverter.getSamplesFromTimeString(
             matches[2],
             audiofile.sampleRate,
           );
@@ -258,15 +264,13 @@ export class SRTConverter extends Converter {
             matches[3],
             audiofile.sampleRate,
           );
-          let segmentContent: string = '';
-          segmentContent = matches[5].replace(/(\n|\s)+$/g, '');
 
           if (timeStart > -1 && timeEnd > -1) {
             if (timeStart > lastEnd) {
               // add additional segment
               olevel.items.push(
                 new OSegment(counterID++, lastEnd, timeStart - lastEnd, [
-                  ...(matches[4] ? [new OLabel('Speaker', matches[4])] : []),
+                  ...(speakerName ? [new OLabel('Speaker', speakerName)] : []),
                   new OLabel(olevel.name, ''),
                 ]),
               );
@@ -275,8 +279,8 @@ export class SRTConverter extends Converter {
             if (timeEnd >= timeStart) {
               olevel.items.push(
                 new OSegment(counterID++, timeStart, timeEnd - timeStart, [
-                  ...(matches[4] ? [new OLabel('Speaker', matches[4])] : []),
-                  new OLabel(olevel.name, segmentContent),
+                  ...(speakerName ? [new OLabel('Speaker', speakerName)] : []),
+                  new OLabel(olevel.name, transcript),
                 ]),
               );
             } else {
@@ -328,17 +332,8 @@ export class SRTConverter extends Converter {
 
                 const label = previousItem.getFirstLabelWithoutName('Speaker');
                 if (label) {
-                  const speakerRegex =
-                    options.speakerIdentifierPattern &&
-                    options.speakerIdentifierPattern !== ''
-                      ? options.speakerIdentifierPattern
-                      : '\\[SPEAKER_[0-9]+] *: *';
                   label.value +=
                     nextItem.getFirstLabelWithoutName('Speaker')?.value ?? '';
-                  label.value = label.value.replace(
-                    new RegExp(`(?!^) *${speakerRegex}`),
-                    ' ',
-                  );
                 }
               }
             }

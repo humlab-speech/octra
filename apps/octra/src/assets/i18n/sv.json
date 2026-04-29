@@ -60,11 +60,11 @@
           "title": "Kombinera tomma enheter med maximal varaktighet (ms) mellan enheter av samma talare"
         },
         "sortSpeakerSegments": {
-          "description": "Flyttar alla enheter med etikett \"SPEAKER_<NUM>\" till separata nivåer. Enheter utan talare kommer att flyttas till OCTRA_1.",
+          "description": "Flyttar alla enheter med en talaretikett till separata anteckningsnivåer. Enheter utan talare stannar kvar på standardnivån.",
           "title": "Flytta enheter med talaretikett till separata nivåer"
         },
         "speakerIdentifierPattern": {
-          "description": "Reguljärt uttryck med vilket talaren i en transkriptionsenhet kan kännas igen.",
+          "description": "Reguljärt uttryck (med en grupp) som matchar talarprefix i början av en cue-rad. Den första gruppen används som talarnamn.",
           "title": "Reguljärt uttryck för talaridentifikation"
         }
       }
@@ -73,7 +73,7 @@
       "options": {
         "extractSpeakers": {
           "title": "Extrahera talare från rösttaggar",
-          "description": "Läser talarnamnet från <v Namn>-rösttaggar i textinnehållet och lagrar det som en talaretikett."
+          "description": "Läser talarnamnet från <v Namn>-rösttaggar eller [Namn]-klammerprefixer i textinnehållet och lagrar det som en talaretikett."
         },
         "sortSpeakerSegments": {
           "title": "Flytta enheter med talaretikett till separata nivåer",

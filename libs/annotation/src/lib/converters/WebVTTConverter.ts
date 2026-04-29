@@ -154,7 +154,7 @@ export class WebVTTConverter extends Converter {
           type: 'boolean',
           default: true,
           description:
-            'Extract speaker names from <v Name> voice tags in cue text.',
+            'Reads the speaker name from <v Name> voice tags or [Name] bracket prefixes in cue text and stores it as a speaker label.',
         },
         sortSpeakerSegments: {
           title: 'sortSpeakerSegments',
@@ -374,6 +374,16 @@ export class WebVTTConverter extends Converter {
       .replace(/&nbsp;/g, ' ');
     // Collapse whitespace and trim
     text = text.replace(/\s+/g, ' ').trim();
+
+    // Strip [Speaker] bracket prefix (round-trip with addSpeakerId export; also plain bracket notation)
+    const bracketMatch = /^\[([^\]]+)\] *:? */.exec(text);
+    if (bracketMatch) {
+      const bracketSpeaker = bracketMatch[1].trim();
+      text = text.slice(bracketMatch[0].length).trim();
+      if (!speaker) {
+        speaker = bracketSpeaker;
+      }
+    }
 
     return { text, speaker };
   }

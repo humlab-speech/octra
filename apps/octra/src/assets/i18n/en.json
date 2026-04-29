@@ -60,11 +60,11 @@
           "title": "Combine empty units with max duration (ms) between units of the same speaker"
         },
         "sortSpeakerSegments": {
-          "description": "Moves all units with label \"SPEAKER_<NUM>\" to separate levels. Units without speaker are going to be moved to OCTRA_1.",
+          "description": "Moves all units with a speaker label to separate annotation levels. Units without a speaker remain on the default level.",
           "title": "Move units with speaker label to separate levels"
         },
         "speakerIdentifierPattern": {
-          "description": "Regular expression with which the speaker of a transcription unit can be recognized.",
+          "description": "Regular expression (with one capture group) matching the speaker prefix at the start of a cue line. The first capture group becomes the speaker name.",
           "title": "Regular expression for speaker identification"
         }
       }
@@ -73,7 +73,7 @@
       "options": {
         "extractSpeakers": {
           "title": "Extract speakers from voice tags",
-          "description": "Reads the speaker name from <v Name> voice tags in cue text and stores it as a speaker label."
+          "description": "Reads the speaker name from <v Name> voice tags or [Name] bracket prefixes in cue text and stores it as a speaker label."
         },
         "sortSpeakerSegments": {
           "title": "Move units with speaker label to separate levels",
