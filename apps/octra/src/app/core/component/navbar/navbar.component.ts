@@ -215,6 +215,21 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
   changeLanguage(lang: string) {
     this.langService.setActiveLang(lang);
     this.appStorage.language = lang;
+
+    const asrLangs = this.asrStoreService.asrLanguages as
+      | Array<{ value: string }>
+      | undefined;
+    if (asrLangs?.length) {
+      const matched = asrLangs.find((l) =>
+        l.value.toLowerCase().startsWith(lang.toLowerCase()),
+      )?.value;
+      if (matched) {
+        this.asrStoreService.setASRSettings({
+          ...this.asrStoreService.asrOptions,
+          selectedASRLanguage: matched,
+        });
+      }
+    }
   }
 
   public interfaceActive(name: string) {

@@ -53,11 +53,15 @@ export class ApplicationSessionEffects {
       exhaustMap((a) => {
         // set language
         const language = this.localStorage.retrieve('language');
-        this.transloco.setAvailableLangs(a.settings.octra.languages);
-
-        this.transloco.setActiveLang(
-          language?.replace(/-.*/g, '') ?? getBrowserLang() ?? 'en',
-        );
+        const availableLangs = a.settings.octra.languages as string[];
+        this.transloco.setAvailableLangs(availableLangs);
+        const browserLang = getBrowserLang()?.replace(/-.*/g, '');
+        const resolvedLang =
+          language?.replace(/-.*/g, '') ??
+          (browserLang && availableLangs.includes(browserLang)
+            ? browserLang
+            : 'en');
+        this.transloco.setActiveLang(resolvedLang);
 
         if (a.settings.octra.plugins?.asr?.enabled) {
           this.store.dispatch(

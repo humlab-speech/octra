@@ -1,18 +1,22 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { getBrowserLang, TranslocoService } from '@jsverse/transloco';
 import { uniqueHTTPRequest } from '@octra/ngx-utilities';
 import { formatLanguageLabel, isNumber } from '@octra/utilities';
 import { findElements, getAttr } from '@octra/web-media';
 import { DateTime } from 'luxon';
 import {
   catchError,
+  EMPTY,
   exhaustMap,
   forkJoin,
   from,
   map,
   Observable,
   of,
+  withLatestFrom,
 } from 'rxjs';
 import X2JS from 'x2js';
 import { environment } from '../../../../environments/environment';
@@ -27,6 +31,8 @@ import {
 } from '../../shared/service/bug-report.service';
 import { ConfigurationService } from '../../shared/service/configuration.service';
 import { RoutingService } from '../../shared/service/routing.service';
+import { ASRActions } from '../asr/asr.actions';
+import { RootState } from '../index';
 import { ApplicationActions } from './application.actions';
 import { URLParameters } from './index';
 
@@ -448,6 +454,25 @@ export class ApplicationInitEffects {
     ),
   );
 
+  setInitialASRLanguage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ApplicationActions.loadASRSettings.success),
+      withLatestFrom(this.store),
+      exhaustMap(([action, state]) => {
+        const uiLang = this.transloco.getActiveLang();
+        const matched = this.bestASRLang(uiLang, action.asrLanguages);
+        if (!matched || state.asr.settings?.selectedASRLanguage) {
+          return EMPTY;
+        }
+        return of(
+          ASRActions.setASRSettings.do({
+            settings: { selectedASRLanguage: matched },
+          }),
+        );
+      }),
+    ),
+  );
+
   constructor(
     private actions$: Actions,
     private http: HttpClient,
@@ -455,7 +480,18 @@ export class ApplicationInitEffects {
     private appStorage: AppStorageService,
     private routerService: RoutingService,
     private bugService: BugReportService,
+    private store: Store<RootState>,
+    private transloco: TranslocoService,
   ) {}
+
+  private bestASRLang(
+    uiLang: string,
+    asrLanguages: Array<{ value: string }>,
+  ): string | undefined {
+    return asrLanguages.find((l) =>
+      l.value.toLowerCase().startsWith(uiLang.toLowerCase()),
+    )?.value;
+  }
 
   public async updateASRQuotaInfo(
     asrSettings: ASRSettings,
