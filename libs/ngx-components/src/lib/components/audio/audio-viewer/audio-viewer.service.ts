@@ -1611,12 +1611,12 @@ export class AudioViewerService {
           const nextSeg = allSegments[boundarySegIndex + 1];
           const speakerId = nextSeg?.getLabel('Speaker')?.value;
 
-          if (speakerId) {
-            const existingLabel = boundaryRoot.findOne(
-              `#speaker_label_${boundary.id}`,
-            );
-            if (existingLabel) existingLabel.destroy();
+          const existingLabel = boundaryRoot.findOne(
+            `#speaker_label_${boundary.id}`,
+          );
+          if (existingLabel) existingLabel.destroy();
 
+          if (speakerId) {
             const allIds = getSpeakerIds(this.annotation);
             const bgColor = getSpeakerColor(speakerId, allIds);
             const textColor = getSpeakerTextColor(bgColor);
