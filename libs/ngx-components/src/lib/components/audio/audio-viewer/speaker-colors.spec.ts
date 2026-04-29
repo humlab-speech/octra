@@ -12,8 +12,8 @@ import {
 import {
   OctraAnnotation,
   OctraAnnotationSegment,
+  OLabel,
 } from '@octra/annotation';
-import { OLabel } from '@octra/annotation';
 import { SampleUnit } from '@octra/media';
 
 function makeAnnotation(speakerValues: (string | undefined)[]): OctraAnnotation<any, OctraAnnotationSegment> {

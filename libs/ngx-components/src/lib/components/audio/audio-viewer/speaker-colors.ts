@@ -39,6 +39,7 @@ export function getSpeakerColor(speakerId: string, allIds: string[]): string {
 }
 
 export function getSpeakerTextColor(bgHex: string): string {
+  if (!bgHex || bgHex.length < 7) return BEIGE_TEXT;
   const r = parseInt(bgHex.slice(1, 3), 16) / 255;
   const g = parseInt(bgHex.slice(3, 5), 16) / 255;
   const b = parseInt(bgHex.slice(5, 7), 16) / 255;
