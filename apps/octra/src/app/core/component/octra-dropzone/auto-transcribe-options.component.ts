@@ -531,13 +531,12 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.emitChange();
     });
 
-    this.transloco
-      .selectActiveLang()
+    this.transloco.langChanges$
       .pipe(
         skip(1), // initial value handled by resolveInitialLanguage()
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((lang) => {
+      .subscribe((lang: string) => {
         const exists = this.languages.some((l) => l.code === lang);
         if (exists && this.selectedLanguage !== lang) {
           this.selectedLanguage = lang;
