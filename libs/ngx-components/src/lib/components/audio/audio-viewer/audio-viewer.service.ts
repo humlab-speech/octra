@@ -34,6 +34,7 @@ import { Shape } from 'konva/lib/Shape';
 import { Rect } from 'konva/lib/shapes/Rect';
 import { Line } from 'konva/lib/shapes/Line';
 import { Circle } from 'konva/lib/shapes/Circle';
+import { Text } from 'konva/lib/shapes/Text';
 import { Animation } from 'konva/lib/Animation';
 import { Context } from 'konva/lib/Context';
 import { Util } from 'konva/lib/Util';
@@ -47,6 +48,12 @@ import { PlayCursor } from '../../../obj/play-cursor';
 import { OCTRA_COLORS } from '../../../obj';
 import { AudioViewerShortcutEvent } from './audio-viewer.component';
 import { AudioviewerConfig } from './audio-viewer.config';
+import {
+  cycleNextSpeaker,
+  getSpeakerColor,
+  getSpeakerIds,
+  getSpeakerTextColor,
+} from './speaker-colors';
 
 @Injectable()
 export class AudioViewerService {
@@ -1593,6 +1600,80 @@ export class AudioViewerService {
         });
 
         boundaryRoot.add(boundaryObj);
+
+        // Speaker label for the segment starting at this boundary
+        if (this.annotation && this.currentLevel) {
+          const allSegments =
+            this.currentLevel.items as OctraAnnotationSegment[];
+          const boundarySegIndex = allSegments.findIndex(
+            (s) => s.id === boundary.id,
+          );
+          const nextSeg = allSegments[boundarySegIndex + 1];
+          const speakerId = nextSeg?.getLabel('Speaker')?.value;
+
+          if (speakerId) {
+            const existingLabel = boundaryRoot.findOne(
+              `#speaker_label_${boundary.id}`,
+            );
+            if (existingLabel) existingLabel.destroy();
+
+            const allIds = getSpeakerIds(this.annotation);
+            const bgColor = getSpeakerColor(speakerId, allIds);
+            const textColor = getSpeakerTextColor(bgColor);
+
+            const labelGroup = new Group({
+              id: `speaker_label_${boundary.id}`,
+              x: boundary.x + 4,
+              y: boundary.y,
+            });
+
+            const labelText = new Text({
+              text: speakerId,
+              fontSize: 10,
+              fill: textColor,
+              x: 3,
+              y: 3,
+            });
+
+            const textWidth = labelText.width();
+            const textHeight = labelText.height();
+
+            const labelRect = new Rect({
+              width: textWidth + 6,
+              height: textHeight + 6,
+              fill: bgColor,
+              cornerRadius: 2,
+            });
+
+            labelGroup.add(labelRect);
+            labelGroup.add(labelText);
+
+            labelGroup.on('click tap', () => {
+              if (!this.annotation || !this.currentLevel) return;
+              const currentAllSegments =
+                this.currentLevel.items as OctraAnnotationSegment[];
+              const currentBoundarySegIndex = currentAllSegments.findIndex(
+                (s) => s.id === boundary.id,
+              );
+              const currentNextSeg =
+                currentAllSegments[currentBoundarySegIndex + 1];
+              if (!currentNextSeg) return;
+              const currentSpeakerId =
+                currentNextSeg.getLabel('Speaker')?.value;
+              if (!currentSpeakerId) return;
+              const currentIds = getSpeakerIds(this.annotation);
+              const nextId = cycleNextSpeaker(currentSpeakerId, currentIds);
+              currentNextSeg.changeLabel('Speaker', nextId);
+              this.currentLevelChange.emit({
+                type: 'change',
+                items: [{ instance: currentNextSeg }],
+              });
+              this.redraw();
+            });
+
+            boundaryRoot.add(labelGroup);
+          }
+        }
       }
     }
   }
