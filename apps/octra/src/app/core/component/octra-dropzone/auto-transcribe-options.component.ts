@@ -1,9 +1,11 @@
-import { Component, effect, input, OnInit, output, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { isSafariOrWebKit } from '@octra/web-media';
 import { formatLanguageLabel } from '@octra/utilities';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { skip } from 'rxjs';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import { buildTranscriptionOptions } from './auto-transcribe-options.helpers';
 
@@ -504,6 +506,9 @@ export class AutoTranscribeOptionsComponent implements OnInit {
   readonly annotationAlreadyLoaded = input<boolean>(false);
   readonly optionsChange = output<TranscriptionOptions | null>();
 
+  private readonly transloco = inject(TranslocoService);
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly enabled = signal(false);
   selectedModelId = KB_WHISPER_MODELS[2].modelId; // default: medium
   readonly hasWebGpu = signal(false);
@@ -516,7 +521,7 @@ export class AutoTranscribeOptionsComponent implements OnInit {
     ...l,
     label: formatLanguageLabel(l.code, l.name),
   }));
-  selectedLanguage = 'sv';
+  selectedLanguage = this.resolveInitialLanguage();
 
   constructor() {
     effect(() => {
@@ -525,9 +530,29 @@ export class AutoTranscribeOptionsComponent implements OnInit {
       this.annotationAlreadyLoaded();
       this.emitChange();
     });
+
+    this.transloco
+      .selectActiveLang()
+      .pipe(
+        skip(1), // initial value handled by resolveInitialLanguage()
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((lang) => {
+        const exists = this.languages.some((l) => l.code === lang);
+        if (exists && this.selectedLanguage !== lang) {
+          this.selectedLanguage = lang;
+          this.onLanguageChange();
+        }
+      });
+  }
+
+  private resolveInitialLanguage(): string {
+    const uiLang = this.transloco.getActiveLang();
+    return this.languages.some((l) => l.code === uiLang) ? uiLang : 'sv';
   }
 
   async ngOnInit(): Promise<void> {
+    this.onLanguageChange(); // sync model list to the initial language
     this.isSafari.set(isSafariOrWebKit());
     try {
       const nav = navigator as Navigator & {
