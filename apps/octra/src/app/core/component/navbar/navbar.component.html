@@ -292,6 +292,67 @@
               </div>
             </li>
           }
+          @if (hasSpeakers) {
+            <li
+              class="nav-item dropdown"
+              [ngStyle]="{
+                display:
+                  !appStorage.loggedIn ||
+                  appStorage.onlineSession?.currentProject === undefined ||
+                  !appStorage.audioLoaded
+                    ? 'none'
+                    : 'inherit',
+              }"
+              ngbDropdown
+              placement="bottom-left"
+            >
+              <a
+                ngbDropdownToggle
+                type="button"
+                class="nav-link dropdown-toggle"
+              >
+                <i class="bi bi-people-fill me-1"></i>
+                <span class="d-inline d-md-none mt-2">Speakers</span>
+              </a>
+              <div
+                ngbDropdownMenu
+                class="dropdown-menu dropdown dropdown-primary dropdown-menu-right rounded rounded-3 py-0"
+                role="menu"
+                style="min-width: 280px"
+                (click)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
+                (keydown.space)="$event.stopPropagation()"
+                tabindex="0"
+              >
+                <table class="w-100">
+                  <tbody>
+                    @for (spk of speakerIds; track spk; let i = $index) {
+                      <tr
+                        [ngClass]="{ last: i === speakerIds.length - 1 }"
+                        class="level-row"
+                      >
+                        <td style="width: 28px; padding: 6px 4px 6px 8px;">
+                          <span
+                            style="display: inline-block; width: 16px; height: 16px; border-radius: 3px; vertical-align: middle;"
+                            [style.background-color]="speakerService.getColor(spk)"
+                          ></span>
+                        </td>
+                        <td style="padding: 2px 8px 2px 0;">
+                          <input
+                            (blur)="onSpeakerNameLeave($event, spk)"
+                            maxlength="100"
+                            type="text"
+                            [value]="spk"
+                            style="width: 100%"
+                          />
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </li>
+          }
           <!--
                   infoDropdown
                   -->

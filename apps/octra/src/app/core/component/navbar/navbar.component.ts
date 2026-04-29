@@ -1,5 +1,5 @@
 import { NgClass, NgStyle, UpperCasePipe } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -33,6 +33,7 @@ import { YesNoModalComponent } from '../../modals/yes-no-modal/yes-no-modal.comp
 import {
   AudioService,
   SettingsService,
+  SpeakerManagementService,
   UserInteractionsService,
 } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
@@ -71,6 +72,8 @@ import { NavbarService } from './navbar.service';
   ],
 })
 export class NavigationComponent extends DefaultComponent implements OnInit {
+  readonly speakerService = inject(SpeakerManagementService);
+
   modalexport?: NgbModalRef;
   modalTools?: NgbModalRef;
   modalStatistics?: NgbModalRef;
@@ -247,6 +250,19 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
 
   onLevelNameLeave(event: any, tiernum: number) {
     this.annotationStoreService.changeLevelName(tiernum, event.target.value);
+  }
+
+  get speakerIds(): string[] {
+    return this.speakerService.getSpeakerIds();
+  }
+
+  get hasSpeakers(): boolean {
+    return this.speakerIds.length > 0;
+  }
+
+  onSpeakerNameLeave(event: Event, oldId: string): void {
+    const newId = (event.target as HTMLInputElement).value;
+    this.speakerService.rename(oldId, newId);
   }
 
   onLevelAddClick() {
