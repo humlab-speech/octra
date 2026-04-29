@@ -10,6 +10,8 @@ if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = '/assets/ort/';
 }
 
+const DIARIZATION_SAMPLE_RATE = 16000;
+
 async function isCacheAvailable(): Promise<boolean> {
   try {
     await caches.open('__probe__');
@@ -142,14 +144,40 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerDiarizeMessage>)
     };
     postMessage(startMsg);
 
-    const inputs = await loadedProcessor(audio);
-    const { logits } = await loadedModel(inputs);
-    const diarization = loadedProcessor.post_process_speaker_diarization(
-      logits,
-      audio.length,
-    ) as Array<Array<{ id: number; start: number; end: number; confidence?: number }>>;
+    const WINDOW_SAMPLES = Math.round(10 * DIARIZATION_SAMPLE_RATE);
+    const STRIDE_SAMPLES = Math.round(2.5 * DIARIZATION_SAMPLE_RATE);
 
-    const rawSegments = diarization[0] ?? [];
+    const allRawSegments: Array<{ id: number; start: number; end: number; confidence?: number }> = [];
+    let chunkStart = 0;
+    let chunkIndex = 0;
+
+    while (chunkStart < audio.length) {
+      const chunkEnd = Math.min(chunkStart + WINDOW_SAMPLES, audio.length);
+      const chunk = audio.slice(chunkStart, chunkEnd);
+      const chunkStartS = chunkStart / DIARIZATION_SAMPLE_RATE;
+
+      const inputs = await loadedProcessor(chunk);
+      const { logits } = await loadedModel(inputs);
+      const chunkDiarization = loadedProcessor.post_process_speaker_diarization(
+        logits,
+        chunk.length,
+      ) as Array<Array<{ id: number; start: number; end: number; confidence?: number }>>;
+
+      console.info(`[octra:pyannote-worker] chunk ${chunkIndex}`, {
+        chunkStartS,
+        chunkEndS: chunkEnd / DIARIZATION_SAMPLE_RATE,
+        rawSegments: chunkDiarization[0]?.length ?? 0,
+      });
+
+      for (const seg of chunkDiarization[0] ?? []) {
+        allRawSegments.push({ ...seg, start: seg.start + chunkStartS, end: seg.end + chunkStartS });
+      }
+
+      chunkStart += STRIDE_SAMPLES;
+      chunkIndex++;
+    }
+
+    const rawSegments = allRawSegments;
     const uniqueRawIds = [...new Set(rawSegments.map((s) => s.id))];
     console.info('[octra:pyannote-worker] raw model output', {
       totalRawSegments: rawSegments.length,
