@@ -354,7 +354,7 @@ export class WebVTTConverter extends Converter {
    */
   private parseVttCueText(raw: string): { text: string; speaker?: string } {
     const voiceMatch = /^<v\s+([^>]+)>/.exec(raw.trim());
-    const speaker = voiceMatch?.[1]?.trim() || undefined;
+    let speaker = voiceMatch?.[1]?.trim() || undefined;
 
     let text = raw;
     // Ruby: strip <rt>…</rt> content entirely, then ruby wrappers
