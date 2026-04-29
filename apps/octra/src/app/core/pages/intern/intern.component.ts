@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { DefaultComponent } from '../../component/default.component';
 import { SettingsService, UserInteractionsService } from '../../shared/service';
@@ -10,7 +10,7 @@ import { SettingsService, UserInteractionsService } from '../../shared/service';
   providers: [UserInteractionsService],
   imports: [RouterOutlet],
 })
-export class InternComponent extends DefaultComponent {
+export class InternComponent extends DefaultComponent implements OnDestroy {
   constructor(
     private router: Router,
     private settService: SettingsService,

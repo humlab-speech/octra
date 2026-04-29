@@ -7,7 +7,7 @@ import {
   HostListener,
   OnInit,
   Output,
-  ViewChild,
+  ViewChild, OnDestroy,
 } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { contains, hasProperty } from '@octra/utilities';
@@ -65,7 +65,7 @@ import { TranscrWindowComponent } from './transcr-window';
 })
 export class TwoDEditorComponent
   extends OCTRAEditor
-  implements OnInit, AfterViewInit, OctraEditorRequirements
+  implements OnInit, AfterViewInit, OctraEditorRequirements, OnDestroy
 {
   public static editorname = '2D-Editor';
   public initialized: EventEmitter<void> = new EventEmitter<void>();

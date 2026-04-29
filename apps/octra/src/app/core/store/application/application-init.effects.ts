@@ -615,7 +615,7 @@ export class ApplicationInitEffects {
             }
           }
           serv.addEntry(ConsoleType.LOG, args[0]);
-          // eslint-disable-next-line prefer-rest-params
+           
           oldLog.apply(console, args);
         };
       })();
@@ -665,7 +665,7 @@ export class ApplicationInitEffects {
             );
           }
 
-          // eslint-disable-next-line prefer-rest-params
+           
           oldError.apply(console, args);
         };
       })();
@@ -682,7 +682,7 @@ export class ApplicationInitEffects {
           }
 
           serv.addEntry(ConsoleType.WARN, args[0]);
-          // eslint-disable-next-line prefer-rest-params
+           
           oldWarn.apply(console, args);
         };
       })();
@@ -693,7 +693,7 @@ export class ApplicationInitEffects {
         // tslint:disable-next-line:only-arrow-functions
         console.groupCollapsed = function (...args) {
           serv.beginGroup(args[0]);
-          // eslint-disable-next-line prefer-rest-params
+           
           oldGroupCollapsed.apply(console, args);
         };
       })();
@@ -704,7 +704,7 @@ export class ApplicationInitEffects {
         // tslint:disable-next-line:only-arrow-functions
         console.groupEnd = function (...args) {
           serv.endGroup();
-          // eslint-disable-next-line prefer-rest-params
+           
           oldGroupEnd.apply(console, args);
         };
       })();

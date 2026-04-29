@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
@@ -27,7 +27,7 @@ export class PreparedPolicyListItemDto extends PolicyListItemDto {
   styleUrls: ['./signup.component.scss'],
   imports: [FormsModule, TranslocoPipe],
 })
-export class SignupComponent extends DefaultComponent implements OnInit {
+export class SignupComponent extends DefaultComponent implements OnInit, OnDestroy {
   protected readonly TIMEZONE_NAMES = TIMEZONE_NAMES;
   protected readonly LANGUAGES = LANGUAGES;
 

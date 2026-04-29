@@ -6,7 +6,7 @@ import {
   EventEmitter,
   HostListener,
   OnInit,
-  ViewChild,
+  ViewChild, OnDestroy,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -71,7 +71,7 @@ import { PermutationsReplaceModalComponent } from './modals/permutations-replace
 })
 export class TrnEditorComponent
   extends OCTRAEditor
-  implements OnInit, OctraEditorRequirements
+  implements OnInit, OctraEditorRequirements, OnDestroy
 {
   get textEditor(): Texteditor {
     return this._textEditor;

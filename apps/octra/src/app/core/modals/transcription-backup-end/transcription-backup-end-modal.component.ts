@@ -1,4 +1,4 @@
-import { Component, OnInit, SecurityContext } from '@angular/core';
+import { Component, OnInit, SecurityContext, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { NgbActiveModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
@@ -22,7 +22,7 @@ export enum ModalEndAnswer {
 })
 export class TranscriptionBackupEndModalComponent
   extends OctraModal
-  implements OnInit
+  implements OnInit, OnDestroy
 {
   downloadClicked = false;
   downloadFile?: {

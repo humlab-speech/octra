@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 import { env, pipeline, WhisperTextStreamer } from '@huggingface/transformers';
 
 // Point ONNX Runtime to the locally served WASM files
@@ -162,7 +162,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerTranscribeMessag
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     console.info('[octra:whisper-worker] starting inference', {
       modelId,
       chunkLengthS: CHUNK_LENGTH_S,

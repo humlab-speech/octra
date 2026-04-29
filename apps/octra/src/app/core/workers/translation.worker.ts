@@ -372,7 +372,7 @@ async function loadStageTranslator(stage: PlanStage, agg: AggregateProgress): Pr
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       progress_callback: (progress: any) => {
         if (agg.initSignaled.v) return;
-        const file: string = `${stage.modelId}::${progress?.file ?? ''}`;
+        const file = `${stage.modelId}::${progress?.file ?? ''}`;
         if (progress?.status === 'progress' && progress.loaded !== undefined) {
           agg.fileProgress.set(file, {
             loaded: progress.loaded,

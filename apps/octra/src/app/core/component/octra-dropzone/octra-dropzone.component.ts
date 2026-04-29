@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { Component, Input, Output, ViewChild } from '@angular/core';
+import { Component, Input, Output, ViewChild, OnDestroy } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { OAnnotJSON } from '@octra/annotation';
@@ -40,7 +40,7 @@ import {
     AutoTranslateOptionsComponent,
   ],
 })
-export class OctraDropzoneComponent extends DefaultComponent {
+export class OctraDropzoneComponent extends DefaultComponent implements OnDestroy {
   @ViewChild('dropzone', { static: true }) dropzone!: DropZoneComponent;
   @Input() height = '250px';
   @Input() showAutoTranscribe = false;

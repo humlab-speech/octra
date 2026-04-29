@@ -4,7 +4,7 @@ import {
   Component,
   EventEmitter,
   OnInit,
-  ViewChild,
+  ViewChild, OnDestroy,
 } from '@angular/core';
 import { contains } from '@octra/utilities';
 import {
@@ -68,7 +68,7 @@ import { OCTRAEditor, OctraEditorRequirements } from '../octra-editor';
 })
 export class LinearEditorComponent
   extends OCTRAEditor
-  implements OnInit, AfterViewInit, OctraEditorRequirements
+  implements OnInit, AfterViewInit, OctraEditorRequirements, OnDestroy
 {
   public static editorname = 'Linear Editor';
   public initialized: EventEmitter<void> = new EventEmitter<void>();
