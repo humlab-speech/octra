@@ -1659,14 +1659,18 @@ export class AudioViewerService {
                 currentAllSegments[currentBoundarySegIndex + 1];
               if (!currentNextSeg) return;
               const currentSpeakerId =
-                currentNextSeg.getLabel('Speaker')?.value;
-              if (!currentSpeakerId) return;
+                currentNextSeg.getLabel('Speaker')?.value ?? '';
+              // no early return on empty — cycleNextSpeaker handles it
               const currentIds = getSpeakerIds(this.annotation);
               const nextId = cycleNextSpeaker(currentSpeakerId, currentIds);
-              currentNextSeg.changeLabel('Speaker', nextId);
+              const clonedSeg = currentNextSeg.clone() as OctraAnnotationSegment;
+              const changed = clonedSeg.changeLabel('Speaker', nextId);
+              if (!changed) {
+                clonedSeg.labels = [...clonedSeg.labels, new OLabel('Speaker', nextId)];
+              }
               this.currentLevelChange.emit({
                 type: 'change',
-                items: [{ instance: currentNextSeg }],
+                items: [{ instance: clonedSeg }],
               });
               this.redraw();
             });
