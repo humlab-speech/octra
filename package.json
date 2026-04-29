@@ -1,6 +1,6 @@
 {
   "name": "octra-source",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "license": "MIT",
   "author": "Julian Pömp, Christoph Draxler; Institut für Phonetik und Sprachverarbeitung, LMU München",
   "scripts": {
