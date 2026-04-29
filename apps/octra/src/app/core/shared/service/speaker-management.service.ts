@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import {
   AnnotationAnySegment,
+  OLabel,
   OctraAnnotationSegment,
 } from '@octra/annotation';
 import {
@@ -43,15 +44,24 @@ export class SpeakerManagementService {
   cycleSpeakerOnSegment(segmentId: number): void {
     const level = this.annotationStore.currentLevel;
     if (!level) return;
-    const segment = level.items.find(
-      (s) => s.id === segmentId,
-    ) as OctraAnnotationSegment | undefined;
-    if (!segment) return;
+    const segIndex = level.items.findIndex((s) => s.id === segmentId);
+    if (segIndex < 0) return;
+    const segment = level.items[segIndex] as OctraAnnotationSegment;
     const current = segment.getLabel('Speaker')?.value ?? '';
     const next = this.cycleNext(current);
-    segment.changeLabel('Speaker', next);
-    this.annotationStore.changeCurrentLevelItems(
-      [...level.items] as AnnotationAnySegment[],
-    );
+    const updatedSegment = segment.clone() as OctraAnnotationSegment;
+    const changed = updatedSegment.changeLabel('Speaker', next);
+    if (!changed) {
+      updatedSegment.labels = [
+        ...updatedSegment.labels,
+        new OLabel('Speaker', next),
+      ];
+    }
+    const updatedItems = [
+      ...level.items.slice(0, segIndex),
+      updatedSegment,
+      ...level.items.slice(segIndex + 1),
+    ] as AnnotationAnySegment[];
+    this.annotationStore.changeCurrentLevelItems(updatedItems);
   }
 }
