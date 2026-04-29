@@ -113,6 +113,7 @@
       "add newline": "Lägg till en radbrytning efter varje transkriptionsenhet.",
       "add samplepoints": "Separera transkriptionsenheter med sampelpunkter (t.ex. 123456)",
       "add timestamps": "Separera transkriptionsenheter med läsbara tidsstämplar (HH:MM:SS.s)",
+      "mark speaker id": "Markera talar-ID i början av meningar",
       "timestamp notice": "Om du markerar båda alternativen kommer båda tidsformaten att infogas:"
     }
   },

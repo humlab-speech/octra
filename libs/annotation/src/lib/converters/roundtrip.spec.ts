@@ -41,7 +41,7 @@ describe('annotation round-trip (export → re-import)', () => {
     const src_count = segmentCount(source);
 
     const exporter = new TextConverter();
-    exporter.options = { showTimestampString: true, showTimestampSamples: false, addNewLineString: false };
+    exporter.options = { showTimestampString: true, showTimestampSamples: false, addNewLineString: false, addSpeakerId: false, breakMarkerCode: '<P>' };
     const exported = exporter.export(source, rtAudiofile, 0);
     expect(exported.error).toBeFalsy();
     expect(exported.file!.content).toContain('<ts=');
@@ -61,7 +61,7 @@ describe('annotation round-trip (export → re-import)', () => {
     const src_count = segmentCount(source);
 
     const exporter = new TextConverter();
-    exporter.options = { showTimestampString: false, showTimestampSamples: true, addNewLineString: false };
+    exporter.options = { showTimestampString: false, showTimestampSamples: true, addNewLineString: false, addSpeakerId: false, breakMarkerCode: '<P>' };
     const exported = exporter.export(source, rtAudiofile, 0);
     expect(exported.error).toBeFalsy();
     expect(exported.file!.content).toContain('<sp=');

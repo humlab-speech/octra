@@ -23,6 +23,7 @@ export class TextConverter extends Converter {
     showTimestampSamples: false,
     showTimestampString: false,
     addNewLineString: false,
+    addSpeakerId: false,
     breakMarkerCode: '<P>',
   };
 
@@ -94,7 +95,9 @@ export class TextConverter extends Converter {
             continue;
           }
 
-          result += transcript;
+          const speakerId = item.labels?.find((l) => l.name === 'Speaker')?.value;
+          const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+          result += speakerPrefix + transcript;
           if (j < level.items.length - 1) {
             const sampleEnd = item.sampleStart + item.sampleDur;
             const unixTimestamp = Math.ceil(

@@ -37,6 +37,8 @@ export class WebVTTConverter extends Converter {
 
   override defaultImportOptions = new WebVTTConverterImportOptions();
 
+  public override options = { addSpeakerId: false };
+
   public constructor() {
     super();
     this._applications = [
@@ -100,9 +102,11 @@ export class WebVTTConverter extends Converter {
 
           const speaker = item.labels.find((l) => l.name === 'Speaker')?.value;
           const escapedText = this.escapeXml(rawText);
+          const speakerPrefix = this.options.addSpeakerId && speaker ? `[${speaker}] ` : '';
+          const prefixedText = speakerPrefix + escapedText;
           const cueText = speaker
-            ? `<v ${speaker}>${escapedText}</v>`
-            : escapedText;
+            ? `<v ${speaker}>${prefixedText}</v>`
+            : prefixedText;
 
           const start = this.getTimeStringFromSamples(
             item.sampleStart!,

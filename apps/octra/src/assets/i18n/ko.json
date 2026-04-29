@@ -61,6 +61,7 @@
     "options": {
       "add samplepoints": "샘플 포인트별로 전사 단위를 구분합니다(예: 123456)",
       "add timestamps": "판독 가능한 타임스탬프로 전사 단위를 구분합니다(HH:MM:SS.s)",
+      "mark speaker id": "문장 시작 부분에 화자 ID 표시",
       "timestamp notice": "두 옵션을 모두 선택하면 두 시간 형식이 모두 삽입됩니다."
     }
   },

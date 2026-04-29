@@ -61,6 +61,7 @@
     "options": {
       "add samplepoints": "Separa le unità di trascrizione con punti di campionamento (e.g. 123456)",
       "add timestamps": "Separa le unità di trascrizione con marcature temporali leggibili (HH:MM:SS.s)",
+      "mark speaker id": "Contrassegna l'ID del parlante all'inizio delle frasi",
       "timestamp notice": "Se spunti entrambi le opzioni, entrambi i formati temporali saranno inseriti:"
     }
   },

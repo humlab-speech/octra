@@ -11,10 +11,12 @@ export class OdtConverter extends Converter {
   public override options: {
     mode: 'separate' | 'continuous';
     addTimestamps: boolean;
+    addSpeakerId: boolean;
     breakMarkerCode: string;
   } = {
     mode: 'separate',
     addTimestamps: false,
+    addSpeakerId: false,
     breakMarkerCode: '<P>',
   };
 
@@ -41,25 +43,26 @@ export class OdtConverter extends Converter {
 
     if (this.options.mode === 'separate') {
       for (const seg of segments) {
-        const text = seg.labels?.[0]?.value ?? '';
+        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
         if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        const prefix = this.options.addTimestamps
+        const tsPrefix = this.options.addTimestamps
           ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
           : '';
-        paragraphs.push(prefix + text.trim());
+        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+        paragraphs.push(tsPrefix + speakerPrefix + text.trim());
       }
     } else {
       const parts: string[] = [];
       for (const seg of segments) {
-        const text = seg.labels?.[0]?.value ?? '';
+        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
         if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        if (this.options.addTimestamps) {
-          parts.push(
-            `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] ${text.trim()}`,
-          );
-        } else {
-          parts.push(text.trim());
-        }
+        const tsPrefix = this.options.addTimestamps
+          ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
+          : '';
+        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+        parts.push(tsPrefix + speakerPrefix + text.trim());
       }
       if (parts.length > 0) {
         paragraphs.push(parts.join(' '));

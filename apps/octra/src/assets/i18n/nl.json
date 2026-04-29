@@ -61,6 +61,7 @@
     "options": {
       "add samplepoints": "Scheid transcriptie-eenheden op monsterpunten (bijv. 123456)",
       "add timestamps": "Scheid transcriptie-eenheden op leesbare tijdstempels (HH:MM:SS.s)",
+      "mark speaker id": "Sprekers-ID aan het begin van zinnen markeren",
       "timestamp notice": "Als u beide opties aanvinkt, worden beide tijdformaten ingevoegd:"
     }
   },

@@ -363,4 +363,12 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
   onOdtOptionChanged(converter: Converter) {
     this.updateParentFormat(converter, this.selectedLevel);
   }
+
+  onSRTOptionChanged(converter: Converter) {
+    this.updateParentFormat(converter, this.selectedLevel);
+  }
+
+  onWebVTTOptionChanged(converter: Converter) {
+    this.updateParentFormat(converter, this.selectedLevel);
+  }
 }

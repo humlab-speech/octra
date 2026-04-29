@@ -174,6 +174,19 @@
                                 <td style="vertical-align: top">
                                   <input
                                     type="checkbox"
+                                    id="docx-speaker-id-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addSpeakerId"
+                                    (ngModelChange)="onDocxOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="docx-speaker-id-{{item.index}}">{{ 'export.options.mark speaker id' | transloco }}</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
                                     id="docx-timestamps-{{item.index}}"
                                     [(ngModel)]="item.converter.options.addTimestamps"
                                     (ngModelChange)="onDocxOptionChanged(item.converter)"
@@ -225,6 +238,19 @@
                                 <td style="vertical-align: top">
                                   <input
                                     type="checkbox"
+                                    id="odt-speaker-id-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addSpeakerId"
+                                    (ngModelChange)="onOdtOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="odt-speaker-id-{{item.index}}">{{ 'export.options.mark speaker id' | transloco }}</label>
+                                </td>
+                              </tr>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
                                     id="odt-timestamps-{{item.index}}"
                                     [(ngModel)]="item.converter.options.addTimestamps"
                                     (ngModelChange)="onOdtOptionChanged(item.converter)"
@@ -242,6 +268,19 @@
                         <div class="timestamp-options">
                           <table>
                             <tbody>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
+                                    id="plaintext-speaker-id-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addSpeakerId"
+                                    (ngModelChange)="onPlaintextTimestampOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="plaintext-speaker-id-{{item.index}}">{{ 'export.options.mark speaker id' | transloco }}</label>
+                                </td>
+                              </tr>
                               <tr class="option">
                                 <td style="vertical-align: top">
                                   <input
@@ -334,6 +373,48 @@
                               sp="379736"> of a transcript with timestamps.
                             </code>
                           </p>
+                        </div>
+                      }
+                      @if (item.converter.name === 'SRT') {
+                        <div class="timestamp-options">
+                          <table>
+                            <tbody>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
+                                    id="srt-speaker-id-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addSpeakerId"
+                                    (ngModelChange)="onSRTOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="srt-speaker-id-{{item.index}}">{{ 'export.options.mark speaker id' | transloco }}</label>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                      @if (item.converter.name === 'WebVTT') {
+                        <div class="timestamp-options">
+                          <table>
+                            <tbody>
+                              <tr class="option">
+                                <td style="vertical-align: top">
+                                  <input
+                                    type="checkbox"
+                                    id="webvtt-speaker-id-{{item.index}}"
+                                    [(ngModel)]="item.converter.options.addSpeakerId"
+                                    (ngModelChange)="onWebVTTOptionChanged(item.converter)"
+                                  />
+                                </td>
+                                <td style="vertical-align: top">
+                                  <label for="webvtt-speaker-id-{{item.index}}">{{ 'export.options.mark speaker id' | transloco }}</label>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       }
                     </div>

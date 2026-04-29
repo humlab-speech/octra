@@ -30,6 +30,8 @@ export class SRTConverter extends Converter {
 
   override defaultImportOptions = new SRTConverterImportOptions();
 
+  public override options = { addSpeakerId: false };
+
   public constructor() {
     super();
     this._applications = [
@@ -128,9 +130,11 @@ export class SRTConverter extends Converter {
           );
 
           if (transcript !== '') {
+            const speaker = item.labels?.find((l) => l.name === 'Speaker')?.value;
+            const speakerPrefix = this.options.addSpeakerId && speaker ? `[${speaker}] ` : '';
             result += `${counter}\n`;
             result += `${start} --> ${end}\n`;
-            result += `${transcript}\n\n`;
+            result += `${speakerPrefix}${transcript}\n\n`;
             counter++;
           }
         }

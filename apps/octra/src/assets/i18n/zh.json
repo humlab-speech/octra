@@ -61,6 +61,7 @@
     "options": {
       "add samplepoints": "按样本点分隔转录单元（例如 123456）",
       "add timestamps": "通过可读时间戳分割标注单元（HH:MM:SS.s）",
+      "mark speaker id": "在句子开头标记说话人 ID",
       "timestamp notice": "如果同时选择两个选项，两种时间格式都会被插入："
     }
   },

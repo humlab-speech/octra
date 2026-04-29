@@ -106,6 +106,7 @@
       "add newline": "Nach jeder Transkriptionseinheit einen Zeilenumbruch hinzufügen.",
       "add samplepoints": "Trenne Transkriptionseinheiten durch Zeitstempel im Sample-Format (z.B. 123456)",
       "add timestamps": "Trenne Transkriptionseinheiten durch Zeitstempel im lesbaren Format (HH:MM:SS.s)",
+      "mark speaker id": "Sprecher-ID am Anfang von Sätzen markieren",
       "timestamp notice": "Wenn Du beide Optionen aktivierst, werden beide Formate eingefügt:"
     }
   },
