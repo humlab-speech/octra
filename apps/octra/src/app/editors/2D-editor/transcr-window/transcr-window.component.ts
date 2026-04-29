@@ -36,6 +36,7 @@ import {
   getSegmentBySamplePosition,
   OctraAnnotationSegment,
   OctraAnnotationSegmentLevel,
+  OLabel,
 } from '@octra/annotation';
 import { OctraGuidelines } from '@octra/assets';
 import { AudioSelection, PlayBackStatus, SampleUnit } from '@octra/media';
@@ -64,6 +65,7 @@ import {
   AlertService,
   AudioService,
   SettingsService,
+  SpeakerManagementService,
   UserInteractionsService,
 } from '../../../core/shared/service';
 import { AppStorageService } from '../../../core/shared/service/appstorage.service';
@@ -113,6 +115,7 @@ export class TranscrWindowComponent
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly sanitizer = inject(DomSanitizer);
+  readonly speakerService = inject(SpeakerManagementService);
   private videoSyncSubscription?: Subscription;
   private _videoBlobUrl?: string;
 
@@ -203,6 +206,37 @@ export class TranscrWindowComponent
     if (!segment) return undefined;
     const speakerLabel = segment.labels?.find((label) => label.name === 'Speaker');
     return speakerLabel?.value;
+  }
+
+  get currentSpeakerColor(): string | null {
+    const spk = this.currentSegmentSpeaker;
+    return spk ? this.speakerService.getColor(spk) : null;
+  }
+
+  get currentSpeakerTextColor(): string {
+    const bg = this.currentSpeakerColor;
+    return bg ? this.speakerService.getTextColor(bg) : '#000000';
+  }
+
+  cycleSpeaker(): void {
+    const level = this.annotationStoreService.currentLevel;
+    if (!level || this.segmentIndex < 0) return;
+    const segIndex = this.segmentIndex;
+    const segment = level.items[segIndex] as OctraAnnotationSegment;
+    const current = segment.getLabel('Speaker')?.value ?? '';
+    const next = this.speakerService.cycleNext(current);
+    const updatedSegment = segment.clone() as OctraAnnotationSegment;
+    const changed = updatedSegment.changeLabel('Speaker', next);
+    if (!changed) {
+      updatedSegment.labels = [...updatedSegment.labels, new OLabel('Speaker', next)];
+    }
+    const updatedItems = [
+      ...level.items.slice(0, segIndex),
+      updatedSegment,
+      ...level.items.slice(segIndex + 1),
+    ];
+    this.annotationStoreService.changeCurrentLevelItems(updatedItems as any);
+    this.cd.markForCheck();
   }
 
   private _validationEnabled = false;

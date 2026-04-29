@@ -147,7 +147,13 @@
           id="magnifier"
         ></octra-audio-viewer>
         @if (currentSegmentSpeaker) {
-          <div class="speaker-badge">{{ currentSegmentSpeaker }}</div>
+          <div
+            class="speaker-badge"
+            [style.background-color]="currentSpeakerColor"
+            [style.color]="currentSpeakerTextColor"
+            (click)="cycleSpeaker()"
+            title="Click to cycle speaker"
+          >{{ currentSegmentSpeaker }}</div>
         }
       </div>
       <octra-transcr-editor
