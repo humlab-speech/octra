@@ -466,7 +466,7 @@ export class ApplicationInitEffects {
         }
         return of(
           ASRActions.setASRSettings.do({
-            settings: { selectedASRLanguage: matched },
+            settings: { ...state.asr.settings, selectedASRLanguage: matched },
           }),
         );
       }),
