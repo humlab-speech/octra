@@ -1,4 +1,5 @@
 import { NgClass, NgStyle, UpperCasePipe } from '@angular/common';
+import { filter, first } from 'rxjs';
 import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -216,11 +217,12 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.langService.setActiveLang(lang);
     this.appStorage.language = lang;
 
-    const asrLangs = this.asrStoreService.asrLanguages as
-      | Array<{ value: string }>
-      | undefined;
-    if (asrLangs?.length) {
-      const matched = asrLangs.find((l) =>
+    this.applyASRLanguageForLang(lang);
+  }
+
+  private applyASRLanguageForLang(lang: string): void {
+    const applyIfFound = (langs: Array<{ value: string }>) => {
+      const matched = langs.find((l) =>
         l.value.toLowerCase().startsWith(lang.toLowerCase()),
       )?.value;
       if (matched) {
@@ -229,6 +231,21 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
           selectedASRLanguage: matched,
         });
       }
+    };
+
+    const current = this.asrStoreService.asrLanguages as
+      | Array<{ value: string }>
+      | undefined;
+    if (current?.length) {
+      applyIfFound(current);
+    } else {
+      // Languages not yet loaded — apply once they arrive
+      this.asrStoreService.asrLanguages$
+        .pipe(
+          filter((langs): langs is Array<{ value: string }> => !!langs?.length),
+          first(),
+        )
+        .subscribe(applyIfFound);
     }
   }
 

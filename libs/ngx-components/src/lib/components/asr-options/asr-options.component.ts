@@ -1,6 +1,7 @@
 import { NgClass, NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -8,6 +9,7 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -145,6 +147,8 @@ export class AsrOptionsComponent
     },
   };
 
+  private cdr = inject(ChangeDetectorRef);
+
   constructor() {
     super();
   }
@@ -180,6 +184,7 @@ export class AsrOptionsComponent
         this.filterLanguages(this.fields.asr.selected, 'asr');
         this.filterLanguages(this.fields.maus.selected, 'maus');
         this.filterProviders(this.fields.provider.selected);
+        this.cdr.markForCheck();
       }, 0);
 
       const i18n = changes['i18n']?.currentValue;

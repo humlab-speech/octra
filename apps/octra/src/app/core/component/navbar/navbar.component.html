@@ -723,7 +723,7 @@
                     60
                   </button>
                 </div>
-                @if (asrStoreService.asrEnabled) {
+                @if (asrStoreService.asrEnabledSignal()) {
                   <br /><br />
                   <hr />
                   <span style="font-size: 1rem" class="mb-2 d-block">{{
@@ -733,7 +733,7 @@
                     [options]="asrStoreService.asrOptionsSignal() ?? undefined"
                     (optionsChange)="asrStoreService.setASRSettings($event)"
                     [languageSettings]="
-                      asrStoreService.languageSettings ?? undefined
+                      asrStoreService.languageSettingsSignal() ?? undefined
                     "
                     [manualURL]="api.appProperties?.support?.manual_url ?? ''"
                     [mausLanguages]="asrStoreService.mausLanguages() ?? undefined"
