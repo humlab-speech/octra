@@ -730,7 +730,7 @@
                     'g.asr options' | transloco
                   }}</span>
                   <octra-asr-options
-                    [options]="asrStoreService.asrOptions ?? undefined"
+                    [options]="asrStoreService.asrOptionsSignal() ?? undefined"
                     (optionsChange)="asrStoreService.setASRSettings($event)"
                     [languageSettings]="
                       asrStoreService.languageSettings ?? undefined
