@@ -24,6 +24,7 @@ export class TextConverter extends Converter {
     showTimestampString: false,
     addNewLineString: false,
     addSpeakerId: false,
+    groupByTier: false,
     breakMarkerCode: '<P>',
   };
 
@@ -84,73 +85,93 @@ export class TextConverter extends Converter {
     }
 
     const multi = indices.length > 1;
-    const tierBlocks: string[] = [];
+    const segmentLevels = indices
+      .map((i) => annotation.levels[i])
+      .filter((l) => l.type === 'SEGMENT');
 
-    for (const idx of indices) {
-      const level = annotation.levels[idx];
-      if (level.type !== 'SEGMENT') continue;
+    const noTimestamps =
+      !this.options.showTimestampString &&
+      !this.options.showTimestampSamples;
 
-      let block = '';
-      for (let j = 0; j < level.items.length; j++) {
-        const item = level.items[j] as OSegment;
-        const transcript =
-          item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+    const speakerPrefixOf = (item: OSegment) => {
+      const speakerId = item.labels?.find((l) => l.name === 'Speaker')?.value;
+      return this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+    };
 
-        const noTimestamps =
-          !this.options.showTimestampString &&
-          !this.options.showTimestampSamples;
-        if (
-          noTimestamps &&
-          transcript.trim() === this.options.breakMarkerCode
-        ) {
-          continue;
-        }
+    const timestampSuffixOf = (item: OSegment) => {
+      if (!this.options.showTimestampString && !this.options.showTimestampSamples) {
+        return '';
+      }
+      const sampleEnd = item.sampleStart + item.sampleDur;
+      const unixTimestamp = Math.ceil((sampleEnd * 1000) / audiofile.sampleRate);
+      let s = ' <';
+      if (this.options.showTimestampString) {
+        const endTime = this.convertToTimeString(unixTimestamp, {
+          showHour: true,
+          showMilliSeconds: true,
+        });
+        s += `ts="${endTime}"`;
+      }
+      if (this.options.showTimestampSamples) {
+        s += this.options.showTimestampString ? ' ' : '';
+        s += `sp="${sampleEnd}"`;
+      }
+      s += '>';
+      return s;
+    };
 
-        const speakerId = item.labels?.find((l) => l.name === 'Speaker')?.value;
-        const speakerPrefix =
-          this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-        block += speakerPrefix + transcript;
-        if (j < level.items.length - 1) {
-          const sampleEnd = item.sampleStart + item.sampleDur;
-          const unixTimestamp = Math.ceil(
-            (sampleEnd * 1000) / audiofile.sampleRate,
-          );
+    let result: string;
 
-          if (this.options) {
-            if (
-              this.options.showTimestampString ||
-              this.options.showTimestampSamples
-            ) {
-              block += ` <`;
-              if (this.options.showTimestampString) {
-                const endTime = this.convertToTimeString(unixTimestamp, {
-                  showHour: true,
-                  showMilliSeconds: true,
-                });
-                block += `ts="${endTime}"`;
-              }
-              if (this.options.showTimestampSamples) {
-                block += this.options.showTimestampString ? ' ' : '';
-                block += `sp="${sampleEnd}"`;
-              }
-              block += `>`;
-            }
-
-            if (this.options.addNewLineString) {
-              block += '\n';
-            } else {
-              block += ' ';
-            }
+    if (multi && !this.options.groupByTier) {
+      // Utterance-major: interleave tiers per segment index.
+      const maxLen = Math.max(...segmentLevels.map((l) => l.items.length));
+      const groups: string[] = [];
+      for (let j = 0; j < maxLen; j++) {
+        const lines: string[] = [];
+        for (let t = 0; t < segmentLevels.length; t++) {
+          const level = segmentLevels[t];
+          if (j >= level.items.length) continue;
+          const item = level.items[j] as OSegment;
+          const transcript = item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (noTimestamps && transcript.trim() === this.options.breakMarkerCode) {
+            continue;
           }
+          if (!transcript.trim()) continue;
+          let line = `[${level.name}] ${speakerPrefixOf(item)}${transcript}`;
+          if (t === segmentLevels.length - 1) {
+            line += timestampSuffixOf(item);
+          }
+          line = line.replace(/ +/g, ' ');
+          lines.push(line);
+        }
+        if (lines.length > 0) {
+          groups.push(lines.join('\n'));
         }
       }
-
-      block = block.replace(/ +/g, ' ');
-      const header = multi ? `=== ${level.name} ===\n` : '';
-      tierBlocks.push(header + block);
+      result = groups.join('\n\n');
+    } else {
+      const tierBlocks: string[] = [];
+      for (const level of segmentLevels) {
+        let block = '';
+        for (let j = 0; j < level.items.length; j++) {
+          const item = level.items[j] as OSegment;
+          const transcript = item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (noTimestamps && transcript.trim() === this.options.breakMarkerCode) {
+            continue;
+          }
+          block += speakerPrefixOf(item) + transcript;
+          if (j < level.items.length - 1) {
+            block += timestampSuffixOf(item);
+            block += this.options.addNewLineString ? '\n' : ' ';
+          }
+        }
+        block = block.replace(/ +/g, ' ');
+        const header = multi ? `=== ${level.name} ===\n` : '';
+        tierBlocks.push(header + block);
+      }
+      result = tierBlocks.join('\n\n');
     }
 
-    let result = tierBlocks.join('\n\n');
     let filename = `${annotation.name}`;
     if (!multi && annotation.levels.length > 1) {
       filename += `-${annotation.levels[indices[0]].name}`;
