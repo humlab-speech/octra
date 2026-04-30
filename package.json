@@ -1,8 +1,8 @@
 {
   "name": "octra-source",
-  "version": "2.5.1",
+  "version": "2.2.1",
   "license": "MIT",
-  "author": "Julian Pömp, Christoph Draxler; Institut für Phonetik und Sprachverarbeitung, LMU München",
+  "author": "Fredrik Nylen, Umeå University. Authors of the original OCTRA: Julian Pömp, Christoph Draxler; Institut für Phonetik und Sprachverarbeitung, LMU München",
   "scripts": {
     "start": "npm run start:octra",
     "start:octra": "nx serve octra --host 0.0.0.0 --disable-host-check",
