@@ -1,7 +1,7 @@
 /**
  * Linked level round-trip + speaker label survival tests.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   IAnnotJSON,
   OAnnotJSON,
@@ -9,6 +9,8 @@ import {
   OSegment,
   OSegmentLevel,
 } from '../annotjson';
+import { OctraAnnotation, OctraAnnotationSegmentLevel } from '../annotation';
+import { SampleUnit } from '@octra/media';
 
 function makeAnnot(): OAnnotJSON {
   const sourceLevel = new OSegmentLevel<OSegment>('OCTRA_1', [
@@ -79,5 +81,25 @@ describe('linked levels', () => {
       expect(sSpeaker?.value).toBeDefined();
       expect(lSpeaker?.value).toBe(sSpeaker?.value);
     }
+  });
+
+  it('blocks add/remove on linked level via OctraAnnotation guard', () => {
+    const json = makeAnnot().serialize();
+    const transcript = OctraAnnotation.deserialize<any>(json);
+    expect(transcript).toBeDefined();
+    const linkedIdx = transcript!.levels.findIndex(
+      (l: any) => l instanceof OctraAnnotationSegmentLevel && l.linkedToLevelId !== undefined,
+    );
+    expect(linkedIdx).toBeGreaterThan(-1);
+    transcript!.changeCurrentLevelIndex(linkedIdx);
+
+    const before = transcript!.currentLevel!.items.length;
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    transcript!.addItemToCurrentLevel(new SampleUnit(24000, 48000));
+    expect(transcript!.currentLevel!.items.length).toBe(before);
+    transcript!.removeItemByIndex(0);
+    expect(transcript!.currentLevel!.items.length).toBe(before);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
   });
 });

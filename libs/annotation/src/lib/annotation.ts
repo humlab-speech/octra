@@ -310,6 +310,15 @@ export class OctraAnnotation<
 
   addItemToCurrentLevel(time?: SampleUnit, labels?: OLabel[], context?: S) {
     if (this.currentLevel) {
+      if (
+        this.currentLevel instanceof OctraAnnotationSegmentLevel &&
+        this.currentLevel.linkedToLevelId !== undefined
+      ) {
+        console.warn(
+          `Cannot add segment to linked level "${this.currentLevel.name}". Detach the level first to make it standalone.`,
+        );
+        return this;
+      }
       if (this.currentLevel.type === 'SEGMENT') {
         // check situation
         const level = this.currentLevel as OctraAnnotationSegmentLevel<T>;
@@ -374,6 +383,16 @@ export class OctraAnnotation<
   ) {
     if (!this.currentLevel) {
       throw new Error('Current level is undefined');
+    }
+
+    if (
+      this.currentLevel instanceof OctraAnnotationSegmentLevel &&
+      this.currentLevel.linkedToLevelId !== undefined
+    ) {
+      console.warn(
+        `Cannot remove segment from linked level "${this.currentLevel.name}". Detach the level first to make it standalone.`,
+      );
+      return this;
     }
 
     if (
