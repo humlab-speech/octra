@@ -75,10 +75,10 @@
     </div>
   </div>
   @if (shownSegments.length > 0) {
+    <div class="table-responsive" [hidden]="!showTranscriptionTable">
     <table
       id="transcription-table"
       class="table table-bordered"
-      [hidden]="!showTranscriptionTable"
     >
       <thead id="table-head">
         <tr>
@@ -279,5 +279,6 @@
         }
       </tbody>
     </table>
+    </div>
   }
 }

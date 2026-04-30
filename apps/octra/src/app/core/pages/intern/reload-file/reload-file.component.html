@@ -42,6 +42,7 @@
         [disabled]="
           dropzone.files.length === 0 ||
           !dropzone.statistics ||
+          !dropzone.hasAudio ||
           dropzone.statistics.invalid > 0 ||
           dropzone.statistics.progress > 0 ||
           dropzone.statistics.waiting > 0

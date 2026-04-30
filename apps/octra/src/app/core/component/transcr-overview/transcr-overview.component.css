@@ -22,9 +22,19 @@
 .segment-transcript {
   vertical-align: middle;
   cursor: pointer;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.segment-transcript {
+.segment-transcript p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  margin-bottom: 0;
+}
+
+#transcription-table {
+  table-layout: fixed;
+  width: 100%;
 }
 
 .found-errors {
