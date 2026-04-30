@@ -346,6 +346,18 @@
                             style="width: 100%"
                           />
                         </td>
+                        <td style="padding: 2px 4px 2px 0;">
+                          @if (!speakerService.isAssigned(spk)) {
+                            <button
+                              type="button"
+                              class="btn btn-link p-0"
+                              (click)="onSpeakerRemoveClick(spk)"
+                            >
+                              <i class="bi bi-trash"></i>
+                              <span class="visually-hidden">Remove speaker</span>
+                            </button>
+                          }
+                        </td>
                       </tr>
                     }
                     <tr>

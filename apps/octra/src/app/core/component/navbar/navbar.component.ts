@@ -297,6 +297,10 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.speakerService.rename(oldId, newId);
   }
 
+  onSpeakerRemoveClick(id: string) {
+    this.annotationStoreService.removeSpeakerId(id);
+  }
+
   onSpeakerAddClick() {
     const existing = this.speakerService.getSpeakerIds();
     let n = existing.length + 1;

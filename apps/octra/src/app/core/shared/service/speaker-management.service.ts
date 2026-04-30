@@ -50,6 +50,11 @@ export class SpeakerManagementService {
     }
   }
 
+  isAssigned(speakerId: string): boolean {
+    const t = this.annotationStore.transcript;
+    return t ? getSpeakerIds(t).includes(speakerId) : false;
+  }
+
   cycleSpeakerOnSegment(segmentId: number): void {
     const level = this.annotationStore.currentLevel;
     if (!level) return;
