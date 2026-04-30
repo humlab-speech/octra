@@ -366,7 +366,12 @@ export class LocalTranslationService implements OnDestroy {
     });
 
     const sourceLevel_ = new OSegmentLevel<OSegment>(uniqueSourceName, sourceItems);
-    const targetLevel = new OSegmentLevel<OSegment>(uniqueTargetName, targetItems);
+    const targetLevel = new OSegmentLevel<OSegment>(
+      uniqueTargetName,
+      targetItems,
+      uniqueSourceName,
+      'translation',
+    );
 
     const mergedLevels = [
       sourceLevel_.serialize(),

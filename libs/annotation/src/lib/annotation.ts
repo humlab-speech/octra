@@ -587,6 +587,13 @@ export class OctraAnnotation<
               this.createSegment(lastSegmentTime, [new OLabel(a.name, '')]),
             );
           }
+          // Resolve linkedToLevelId → linkedToLevelName for round-trip.
+          if (a instanceof OctraAnnotationSegmentLevel && a.linkedToLevelId !== undefined) {
+            const source = this._levels.find((l) => l.id === a.linkedToLevelId);
+            if (source) {
+              (result as any).linkedToLevelName = source.name;
+            }
+          }
         }
 
         return result;
@@ -603,17 +610,20 @@ export class OctraAnnotation<
     for (const jsonObjectElement of jsonObject.levels) {
       if (jsonObjectElement.type === AnnotationLevelType.SEGMENT) {
         const level = jsonObjectElement as OSegmentLevel<OSegment>;
-        result.levels.push(
-          result.createSegmentLevel(
-            level.name,
-            level.items.map((a) =>
-              OctraAnnotationSegment.deserializeFromOSegment(
-                a,
-                jsonObject.sampleRate,
-              ),
-            ) as T[],
-          ),
+        const segmentLevel = result.createSegmentLevel(
+          level.name,
+          level.items.map((a) =>
+            OctraAnnotationSegment.deserializeFromOSegment(
+              a,
+              jsonObject.sampleRate,
+            ),
+          ) as T[],
         );
+        // Carry link metadata; linkedToLevelName is resolved to id below
+        // after all levels exist.
+        (segmentLevel as any)._linkedToLevelNamePending = level.linkedToLevelName;
+        segmentLevel.linkedKind = level.linkedKind;
+        result.levels.push(segmentLevel);
       } else if (jsonObjectElement.type === AnnotationLevelType.EVENT) {
         const level = jsonObjectElement as OEventLevel;
         result.levels.push(
@@ -641,6 +651,21 @@ export class OctraAnnotation<
 
     for (const link of jsonObject.links) {
       result.addLink(link.fromID, link.toID);
+    }
+
+    // Resolve pending linkedToLevelName references → linkedToLevelId now that
+    // every level has its final id assigned.
+    for (const lvl of result.levels) {
+      if (lvl instanceof OctraAnnotationSegmentLevel) {
+        const pending = (lvl as any)._linkedToLevelNamePending as string | undefined;
+        if (pending) {
+          const source = result.levels.find((l) => l.name === pending);
+          if (source) {
+            lvl.linkedToLevelId = source.id;
+          }
+        }
+        delete (lvl as any)._linkedToLevelNamePending;
+      }
     }
 
     result.updateIDCounters();
@@ -753,13 +778,30 @@ export class OctraAnnotationLevel<T extends OLevel<S>, S extends OItem> {
 export class OctraAnnotationSegmentLevel<
   T extends OctraAnnotationSegment<ASRContext>,
 > extends OctraAnnotationLevel<OLevel<T>, T> {
-  constructor(id: number, name: string, items?: T[]) {
+  /**
+   * Id of the source level this level is linked to. When set, this level
+   * mirrors source segment boundaries and shares Speaker labels with the
+   * source via the speaker-sync hook in {@link SpeakerManagementService}.
+   * Resolved from {@link ISegmentLevel.linkedToLevelName} on deserialize.
+   */
+  linkedToLevelId?: number;
+  linkedKind?: string;
+
+  constructor(
+    id: number,
+    name: string,
+    items?: T[],
+    linkedToLevelId?: number,
+    linkedKind?: string,
+  ) {
     super(id, new OLevel<T>(name, AnnotationLevelType.SEGMENT, items));
+    this.linkedToLevelId = linkedToLevelId;
+    this.linkedKind = linkedKind;
   }
 
   override serialize(): any {
     let start = 0;
-    const res = {
+    const res: any = {
       items: this.level.items.map((a) => {
         const result = a.serializeToOSegment(start);
         start = a.time.samples;
@@ -769,6 +811,10 @@ export class OctraAnnotationSegmentLevel<
       name: this.level.name,
       type: this.type,
     };
+    if (this.linkedKind !== undefined) {
+      res.linkedKind = this.linkedKind;
+    }
+    // linkedToLevelName is resolved by OctraAnnotation.serialize() which has access to all levels
     return res;
   }
 
@@ -777,6 +823,8 @@ export class OctraAnnotationSegmentLevel<
       this._id,
       this.name,
       this.level.items.map((a) => a.clone() as any),
+      this.linkedToLevelId,
+      this.linkedKind,
     );
   }
 
@@ -797,6 +845,8 @@ export class OctraAnnotationSegmentLevel<
           ) as T,
       ),
     );
+    // Note: duplicate() intentionally drops linkedToLevelId — a duplicated
+    // tier is a fresh standalone copy.
   }
 }
 

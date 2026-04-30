@@ -15,6 +15,17 @@ export interface ILevel {
 
 export interface ISegmentLevel extends ILevel {
   items: ISegment[];
+  /**
+   * Optional: name of the source level this segment level is linked to.
+   * When set, this level mirrors the source level's segment boundaries and
+   * shares speaker labels with the source. Currently used for translation
+   * tiers derived from a transcription tier.
+   */
+  linkedToLevelName?: string;
+  /**
+   * Optional kind of link. e.g. 'translation'. Reserved for future kinds.
+   */
+  linkedKind?: string;
 }
 
 export interface IItemLevel extends ILevel {
@@ -188,16 +199,33 @@ export class OSegmentLevel<T extends OSegment>
   extends OLevel<T>
   implements ISegmentLevel, Serializable<ISegmentLevel, OSegmentLevel<T>>
 {
-  constructor(name: string, items?: T[]) {
+  linkedToLevelName?: string;
+  linkedKind?: string;
+
+  constructor(
+    name: string,
+    items?: T[],
+    linkedToLevelName?: string,
+    linkedKind?: string,
+  ) {
     super(name, AnnotationLevelType.SEGMENT, items);
+    this.linkedToLevelName = linkedToLevelName;
+    this.linkedKind = linkedKind;
   }
 
   serialize(): ISegmentLevel {
-    return {
+    const result: ISegmentLevel = {
       items: this.items.map((a) => a.serialize()),
       name: this.name,
       type: this.type,
     };
+    if (this.linkedToLevelName !== undefined) {
+      result.linkedToLevelName = this.linkedToLevelName;
+    }
+    if (this.linkedKind !== undefined) {
+      result.linkedKind = this.linkedKind;
+    }
+    return result;
   }
 
   deserialize<T extends OSegment>(jsonObject: ISegmentLevel): OSegmentLevel<T> {
@@ -210,6 +238,8 @@ export class OSegmentLevel<T extends OSegment>
     return new OSegmentLevel<T>(
       jsonObject.name,
       jsonObject.items.map((a) => OSegment.deserialize(a) as T),
+      jsonObject.linkedToLevelName,
+      jsonObject.linkedKind,
     );
   }
 }

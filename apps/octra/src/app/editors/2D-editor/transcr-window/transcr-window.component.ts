@@ -36,7 +36,6 @@ import {
   getSegmentBySamplePosition,
   OctraAnnotationSegment,
   OctraAnnotationSegmentLevel,
-  OLabel,
 } from '@octra/annotation';
 import { OctraGuidelines } from '@octra/assets';
 import { AudioSelection, PlayBackStatus, SampleUnit } from '@octra/media';
@@ -221,21 +220,9 @@ export class TranscrWindowComponent
   cycleSpeaker(): void {
     const level = this.annotationStoreService.currentLevel;
     if (!level || this.segmentIndex < 0) return;
-    const segIndex = this.segmentIndex;
-    const segment = level.items[segIndex] as OctraAnnotationSegment;
-    const current = segment.getLabel('Speaker')?.value ?? '';
-    const next = this.speakerService.cycleNext(current);
-    const updatedSegment = segment.clone() as OctraAnnotationSegment;
-    const changed = updatedSegment.changeLabel('Speaker', next);
-    if (!changed) {
-      updatedSegment.labels = [...updatedSegment.labels, new OLabel('Speaker', next)];
-    }
-    const updatedItems = [
-      ...level.items.slice(0, segIndex),
-      updatedSegment,
-      ...level.items.slice(segIndex + 1),
-    ];
-    this.annotationStoreService.changeCurrentLevelItems(updatedItems as any);
+    const segment = level.items[this.segmentIndex] as OctraAnnotationSegment;
+    if (!segment) return;
+    this.speakerService.cycleSpeakerOnSegment(segment.id);
     this.cd.markForCheck();
   }
 
