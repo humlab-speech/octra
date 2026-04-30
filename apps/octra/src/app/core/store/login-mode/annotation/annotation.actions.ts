@@ -398,6 +398,26 @@ export class AnnotationActions {
     },
   });
 
+  static addSpeakerId = createActionGroup({
+    source: 'annotation/add speaker id',
+    events: {
+      do: props<{
+        id: string;
+        mode: LoginMode;
+      }>(),
+    },
+  });
+
+  static removeSpeakerId = createActionGroup({
+    source: 'annotation/remove speaker id',
+    events: {
+      do: props<{
+        id: string;
+        mode: LoginMode;
+      }>(),
+    },
+  });
+
   static changeLevelName = createActionGroup({
     source: 'annotation/change level name',
     events: {

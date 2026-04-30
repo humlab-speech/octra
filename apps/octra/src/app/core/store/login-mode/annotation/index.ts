@@ -49,6 +49,7 @@ export class AnnotationStateSegment<
 export interface AnnotationState extends UndoRedoState {
   savingNeeded: boolean;
   isSaving: boolean;
+  additionalSpeakerIds: string[];
   currentEditor?: string;
   importOptions?: Record<string, any>;
   importConverter?: string;

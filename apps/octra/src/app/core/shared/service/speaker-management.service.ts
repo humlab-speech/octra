@@ -19,7 +19,12 @@ export class SpeakerManagementService {
 
   getSpeakerIds(): string[] {
     const t = this.annotationStore.transcript;
-    return t ? getSpeakerIds(t) : [];
+    const fromTranscript = t ? getSpeakerIds(t) : [];
+    const additional = this.annotationStore.additionalSpeakerIds;
+    const merged = new Set([...fromTranscript, ...additional]);
+    return [...merged].sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+    );
   }
 
   getColor(speakerId: string): string {
@@ -39,6 +44,10 @@ export class SpeakerManagementService {
     if (!t || !newId.trim() || newId === oldId) return;
     const renamed = renameSpeakerInAnnotation(oldId, newId.trim(), t);
     this.annotationStore.overwriteTranscript(renamed);
+    if (this.annotationStore.additionalSpeakerIds.includes(oldId)) {
+      this.annotationStore.removeSpeakerId(oldId);
+      this.annotationStore.addSpeakerId(newId.trim());
+    }
   }
 
   cycleSpeakerOnSegment(segmentId: number): void {

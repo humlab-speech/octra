@@ -467,6 +467,8 @@ export class IDBEffects {
         LoginModeActions.endTranscription.do,
         AnnotationActions.setLevelIndex.do,
         LoginModeActions.setImportConverter.do,
+        AnnotationActions.addSpeakerId.do,
+        AnnotationActions.removeSpeakerId.do,
       ),
       withLatestFrom(this.store),
       mergeMap(([action, appState]) => {
@@ -495,6 +497,9 @@ export class IDBEffects {
                 : undefined,
               feedback: modeState.currentSession?.assessment ?? null,
               comment: modeState.currentSession?.comment ?? null,
+              additionalSpeakerIds: modeState.additionalSpeakerIds?.length
+                ? modeState.additionalSpeakerIds
+                : null,
               user: appState.authentication.me
                 ? {
                     id: appState.authentication.me.id,

@@ -217,6 +217,10 @@ export class AnnotationStoreService {
     return this._feedback;
   }
 
+  get additionalSpeakerIds(): string[] {
+    return getModeState(this.appStorage.snapshot)?.additionalSpeakerIds ?? [];
+  }
+
   private currentSessionForFeedback = this.store.selectSignal(selectCurrentSession);
   private guidelinesForBreakMarker = this.store.selectSignal(selectGuidelines);
 
@@ -350,6 +354,24 @@ export class AnnotationStoreService {
 
   resumeTaskManually() {
     this.store.dispatch(AnnotationActions.resumeTaskManually.do());
+  }
+
+  addSpeakerId(id: string) {
+    this.store.dispatch(
+      AnnotationActions.addSpeakerId.do({
+        id,
+        mode: this.appStorage.useMode,
+      }),
+    );
+  }
+
+  removeSpeakerId(id: string) {
+    this.store.dispatch(
+      AnnotationActions.removeSpeakerId.do({
+        id,
+        mode: this.appStorage.useMode,
+      }),
+    );
   }
 
   public addAnnotationLevel(levelType: AnnotationLevelType) {

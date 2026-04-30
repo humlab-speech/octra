@@ -289,12 +289,20 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
   }
 
   get hasSpeakers(): boolean {
-    return this.speakerIds.length > 0;
+    return this.appStorage.audioLoaded === true;
   }
 
   onSpeakerNameLeave(event: Event, oldId: string): void {
     const newId = (event.target as HTMLInputElement).value;
     this.speakerService.rename(oldId, newId);
+  }
+
+  onSpeakerAddClick() {
+    const existing = this.speakerService.getSpeakerIds();
+    let n = existing.length + 1;
+    let newId = `Speaker ${n}`;
+    while (existing.includes(newId)) newId = `Speaker ${++n}`;
+    this.annotationStoreService.addSpeakerId(newId);
   }
 
   onLevelAddClick() {

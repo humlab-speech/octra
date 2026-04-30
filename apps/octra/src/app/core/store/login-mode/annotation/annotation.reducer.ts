@@ -25,6 +25,7 @@ export const initialState: AnnotationState = {
   >(),
   savingNeeded: false,
   isSaving: false,
+  additionalSpeakerIds: [],
   audio: {
     loaded: false,
     sampleRate: 0,
@@ -638,6 +639,24 @@ export class AnnotationStateReducers {
           return state;
         },
       ),
+      on(
+        AnnotationActions.addSpeakerId.do,
+        (state: AnnotationState, { mode, id }) => {
+          if (mode === this.mode && !state.additionalSpeakerIds.includes(id)) {
+            return { ...state, additionalSpeakerIds: [...state.additionalSpeakerIds, id] };
+          }
+          return state;
+        },
+      ),
+      on(
+        AnnotationActions.removeSpeakerId.do,
+        (state: AnnotationState, { mode, id }) => {
+          if (mode === this.mode) {
+            return { ...state, additionalSpeakerIds: state.additionalSpeakerIds.filter((s) => s !== id) };
+          }
+          return state;
+        },
+      ),
     ];
   }
 
@@ -664,6 +683,11 @@ export class AnnotationStateReducers {
             ...state.logging,
             enabled: value === true,
           },
+        };
+      case 'additionalSpeakerIds':
+        return {
+          ...state,
+          additionalSpeakerIds: Array.isArray(value) ? value : [],
         };
     }
 

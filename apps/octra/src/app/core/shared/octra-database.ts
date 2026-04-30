@@ -699,6 +699,7 @@ export interface IIDBModeOptions {
   logging?: boolean | null;
   project?: ProjectDto | null;
   comment?: string | null;
+  additionalSpeakerIds?: string[] | null;
   user?: {
     id: string;
     name: string;
