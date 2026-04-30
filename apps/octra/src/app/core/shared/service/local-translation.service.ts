@@ -343,25 +343,26 @@ export class LocalTranslationService implements OnDestroy {
       uniqueTargetName = `${targetLevelName} (${counter++})`;
     }
 
+    const extraLabelsOf = (item: OSegment) =>
+      (item.labels ?? [])
+        .slice(1)
+        .map((l) => new OLabel(l.name, l.value));
+
     const sourceItems = sourceLevel.items.map((item, idx) => {
       const label = item.labels?.[0];
-      return new OSegment(
-        idx + 1,
-        item.sampleStart,
-        item.sampleDur,
-        label ? [new OLabel(uniqueSourceName, label.value)] : [],
-      );
+      const labels: OLabel[] = label
+        ? [new OLabel(uniqueSourceName, label.value)]
+        : [];
+      labels.push(...extraLabelsOf(item));
+      return new OSegment(idx + 1, item.sampleStart, item.sampleDur, labels);
     });
 
     const targetItems = sourceLevel.items.map((item, idx) => {
       const tr = translated.find((t) => t.id === idx);
       const text = tr?.text ?? '';
-      return new OSegment(
-        idx + 1,
-        item.sampleStart,
-        item.sampleDur,
-        [new OLabel(uniqueTargetName, text)],
-      );
+      const labels: OLabel[] = [new OLabel(uniqueTargetName, text)];
+      labels.push(...extraLabelsOf(item));
+      return new OSegment(idx + 1, item.sampleStart, item.sampleDur, labels);
     });
 
     const sourceLevel_ = new OSegmentLevel<OSegment>(uniqueSourceName, sourceItems);
