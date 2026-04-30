@@ -247,6 +247,15 @@
                             value="{{ level.name }}"
                             style="width: 100%"
                           />
+                          @if ($any(level).linkedToLevelId) {
+                            <span
+                              class="badge bg-info text-dark"
+                              style="font-size: 0.65rem; margin-top: 2px; display: inline-block"
+                              title="linked tier — boundaries follow source"
+                            >
+                              <i class="bi bi-link-45deg"></i> linked
+                            </span>
+                          }
                         </td>
                         <td
                           [ngClass]="{
@@ -270,6 +279,14 @@
                               class="bi bi-back"
                               (mousedown)="onLevelDuplicateClick(i)"
                               style="margin-left: 3px; cursor: pointer"
+                            ></i>
+                          }
+                          @if ($any(level).linkedToLevelId) {
+                            <i
+                              class="bi bi-link-45deg"
+                              (mousedown)="onDetachLinkedClick(level)"
+                              style="margin-left: 3px; cursor: pointer"
+                              title="detach — make this tier standalone"
                             ></i>
                           }
                         </td>

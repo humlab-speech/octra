@@ -336,6 +336,10 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.annotationStoreService.duplicateLevel(tiernum);
   }
 
+  onDetachLinkedClick(level: OctraAnnotationAnyLevel<OctraAnnotationSegment>) {
+    this.annotationStoreService.detachLinkedLevel(level.id);
+  }
+
   public selectLevel(tiernum: number) {
     this.annotationStoreService.setLevelIndex(tiernum);
   }
