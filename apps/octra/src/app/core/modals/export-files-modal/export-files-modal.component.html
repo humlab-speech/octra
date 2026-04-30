@@ -105,6 +105,33 @@
                 <td></td>
                 <td colspan="4" style="padding-left: 20px">
                   @if (
+                    item.converter.multiTierExport &&
+                    annotationStoreService.transcript?.levels !== undefined &&
+                    annotationStoreService.transcript!.levels.length > 1
+                  ) {
+                    <div class="tier-selection" style="margin-bottom: 10px">
+                      <span style="margin-left: 10px; font-weight: bold"
+                        >Select tiers to include:
+                      </span>
+                      @for (
+                        level of annotationStoreService.transcript!.levels;
+                        track level;
+                        let l = $index
+                      ) {
+                        <div style="margin-left: 20px">
+                          <input
+                            type="checkbox"
+                            id="tier-sel-{{item.index}}-{{l}}"
+                            [checked]="isLevelSelected(l)"
+                            (change)="toggleLevelSelection(item.converter, l, $any($event.target).checked)"
+                          />
+                          <label for="tier-sel-{{item.index}}-{{l}}" style="margin-left: 5px">
+                            {{ level.name }}
+                          </label>
+                        </div>
+                      }
+                    </div>
+                  } @else if (
                     !item.converter.multitiers &&
                     annotationStoreService.transcript?.levels !== undefined &&
                     annotationStoreService.transcript!.levels.length > 1

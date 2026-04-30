@@ -49,12 +49,14 @@ export class TextConverter extends Converter {
     this._encoding = 'UTF-8';
     this._category = 'general';
     this._multitiers = false;
+    this._multiTierExport = true;
   }
 
   public export(
     annotation: OAnnotJSON,
     audiofile: OAudiofile,
-    levelnum: number,
+    levelnum?: number,
+    levelnums?: number[],
   ): ExportResult {
     if (!annotation) {
       return {
@@ -68,79 +70,92 @@ export class TextConverter extends Converter {
       };
     }
 
-    let result = '';
-    let filename = '';
+    const indices =
+      levelnums && levelnums.length > 0
+        ? levelnums.filter(
+            (i) => i >= 0 && i < annotation.levels.length,
+          )
+        : levelnum !== undefined && levelnum >= 0 && levelnum < annotation.levels.length
+          ? [levelnum]
+          : [];
 
-    if (
-      levelnum === undefined ||
-      levelnum < 0 ||
-      levelnum > annotation.levels.length
-    ) {
-      return {
-        error: 'Missing level number',
-      };
+    if (indices.length === 0) {
+      return { error: 'Missing level number' };
     }
 
-    if (levelnum < annotation.levels.length) {
-      const level = annotation.levels[levelnum];
+    const multi = indices.length > 1;
+    const tierBlocks: string[] = [];
 
-      if (level.type === 'SEGMENT') {
-        for (let j = 0; j < level.items.length; j++) {
-          const item = level.items[j] as OSegment;
-          const transcript =
-            item.getFirstLabelWithoutName('Speaker')?.value ?? '';
+    for (const idx of indices) {
+      const level = annotation.levels[idx];
+      if (level.type !== 'SEGMENT') continue;
 
-          const noTimestamps = !this.options.showTimestampString && !this.options.showTimestampSamples;
-          if (noTimestamps && transcript.trim() === this.options.breakMarkerCode) {
-            continue;
-          }
+      let block = '';
+      for (let j = 0; j < level.items.length; j++) {
+        const item = level.items[j] as OSegment;
+        const transcript =
+          item.getFirstLabelWithoutName('Speaker')?.value ?? '';
 
-          const speakerId = item.labels?.find((l) => l.name === 'Speaker')?.value;
-          const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-          result += speakerPrefix + transcript;
-          if (j < level.items.length - 1) {
-            const sampleEnd = item.sampleStart + item.sampleDur;
-            const unixTimestamp = Math.ceil(
-              (sampleEnd * 1000) / audiofile.sampleRate,
-            );
+        const noTimestamps =
+          !this.options.showTimestampString &&
+          !this.options.showTimestampSamples;
+        if (
+          noTimestamps &&
+          transcript.trim() === this.options.breakMarkerCode
+        ) {
+          continue;
+        }
 
-            if (this.options) {
-              if (
-                this.options.showTimestampString ||
-                this.options.showTimestampSamples
-              ) {
-                result += ` <`;
-                if (this.options.showTimestampString) {
-                  const endTime = this.convertToTimeString(unixTimestamp, {
-                    showHour: true,
-                    showMilliSeconds: true,
-                  });
-                  result += `ts="${endTime}"`;
-                }
-                if (this.options.showTimestampSamples) {
-                  result += this.options.showTimestampString ? ' ' : '';
-                  result += `sp="${sampleEnd}"`;
-                }
-                result += `>`;
+        const speakerId = item.labels?.find((l) => l.name === 'Speaker')?.value;
+        const speakerPrefix =
+          this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+        block += speakerPrefix + transcript;
+        if (j < level.items.length - 1) {
+          const sampleEnd = item.sampleStart + item.sampleDur;
+          const unixTimestamp = Math.ceil(
+            (sampleEnd * 1000) / audiofile.sampleRate,
+          );
+
+          if (this.options) {
+            if (
+              this.options.showTimestampString ||
+              this.options.showTimestampSamples
+            ) {
+              block += ` <`;
+              if (this.options.showTimestampString) {
+                const endTime = this.convertToTimeString(unixTimestamp, {
+                  showHour: true,
+                  showMilliSeconds: true,
+                });
+                block += `ts="${endTime}"`;
               }
-
-              if (this.options.addNewLineString) {
-                result += '\n';
-              } else {
-                result += ' ';
+              if (this.options.showTimestampSamples) {
+                block += this.options.showTimestampString ? ' ' : '';
+                block += `sp="${sampleEnd}"`;
               }
+              block += `>`;
+            }
+
+            if (this.options.addNewLineString) {
+              block += '\n';
+            } else {
+              block += ' ';
             }
           }
         }
-        result += '';
       }
 
-      filename = `${annotation.name}`;
-      if (annotation.levels.length > 1) {
-        filename += `-${level.name}`;
-      }
-      filename += `${this._extensions[0]}`;
+      block = block.replace(/ +/g, ' ');
+      const header = multi ? `=== ${level.name} ===\n` : '';
+      tierBlocks.push(header + block);
     }
+
+    let result = tierBlocks.join('\n\n');
+    let filename = `${annotation.name}`;
+    if (!multi && annotation.levels.length > 1) {
+      filename += `-${annotation.levels[indices[0]].name}`;
+    }
+    filename += `${this._extensions[0]}`;
 
     result = result.replace(/ +/g, ' ');
     return {

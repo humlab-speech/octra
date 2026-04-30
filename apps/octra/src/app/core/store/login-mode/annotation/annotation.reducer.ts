@@ -247,6 +247,21 @@ export class AnnotationStateReducers {
         },
       ),
       on(
+        AnnotationActions.detachLinkedLevel.do,
+        (state: AnnotationState, { id, mode }) => {
+          if (this.mode === mode) {
+            const transcript = state.transcript.clone();
+            const level = transcript.levels.find((l) => l.id === id);
+            if (level && 'linkedToLevelId' in level) {
+              (level as any).linkedToLevelId = undefined;
+              (level as any).linkedKind = undefined;
+              return { ...state, transcript };
+            }
+          }
+          return state;
+        },
+      ),
+      on(
         AnnotationActions.removeAnnotationLevel.do,
         (state: AnnotationState, { id, mode }) => {
           if (this.mode === mode) {

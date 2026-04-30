@@ -115,6 +115,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
   uiService!: UserInteractionsService;
 
   public selectedLevel = 0;
+  public selectedLevels: number[] = [0];
 
   converters: Converter[] = [];
 
@@ -188,8 +189,28 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
         this.annotationStoreService.transcript!.levels.length === 1)
     ) {
       this.updateParentFormat(converter);
+    } else if (converter.multiTierExport) {
+      this.updateParentFormat(converter);
     }
     this.toggleLine(index);
+  }
+
+  isLevelSelected(idx: number): boolean {
+    return this.selectedLevels.includes(idx);
+  }
+
+  toggleLevelSelection(converter: Converter, idx: number, checked: boolean) {
+    if (checked) {
+      if (!this.selectedLevels.includes(idx)) {
+        this.selectedLevels = [...this.selectedLevels, idx].sort((a, b) => a - b);
+      }
+    } else {
+      this.selectedLevels = this.selectedLevels.filter((i) => i !== idx);
+    }
+    if (this.selectedLevels.length === 0) {
+      this.selectedLevels = [0];
+    }
+    this.updateParentFormat(converter);
   }
 
   sanitize(url: string): SafeUrl {
@@ -229,6 +250,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
     if (levelnum === undefined && !converter.multitiers) {
       levelnum = 0;
     }
+    const levelnums = converter.multiTierExport ? this.selectedLevels : undefined;
 
     if (!this.preparing.preparing) {
       if (this.annotationStoreService.transcript?.levels === undefined) {
@@ -258,6 +280,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
           oannotjson,
           oAudioFile,
           levelnum,
+          levelnums,
         );
 
         if (!result.error && result.file) {

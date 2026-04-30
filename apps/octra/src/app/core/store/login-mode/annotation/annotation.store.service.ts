@@ -402,6 +402,15 @@ export class AnnotationStoreService {
     );
   }
 
+  detachLinkedLevel(id: number) {
+    this.store.dispatch(
+      AnnotationActions.detachLinkedLevel.do({
+        id,
+        mode: this.appStorage.useMode,
+      }),
+    );
+  }
+
   /***
    * destroys audio service and transcr service. Call this after quit.
    * @param destroyaudio

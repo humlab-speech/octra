@@ -27,45 +27,64 @@ export class OdtConverter extends Converter {
     this._conversion = { export: true, import: false };
     this._encoding = 'binary';
     this._multitiers = false;
+    this._multiTierExport = true;
   }
 
-  export(annotation: OAnnotJSON, audiofile: OAudiofile, levelnum = 0): ExportResult {
+  export(
+    annotation: OAnnotJSON,
+    audiofile: OAudiofile,
+    levelnum = 0,
+    levelnums?: number[],
+  ): ExportResult {
     if (!audiofile?.sampleRate) {
       return { error: 'Invalid audio file' };
     }
-    const level = annotation.levels[levelnum];
-    if (!level) {
+
+    const indices =
+      levelnums && levelnums.length > 0
+        ? levelnums.filter((i) => i >= 0 && i < annotation.levels.length)
+        : [levelnum].filter((i) => i >= 0 && i < annotation.levels.length);
+
+    if (indices.length === 0) {
       return { error: `Level ${levelnum} not found` };
     }
 
-    const segments = level.items as OSegment[];
-    const paragraphs: string[] = [];
+    const multi = indices.length > 1;
+    const paragraphs: { text: string; heading?: boolean }[] = [];
 
-    if (this.options.mode === 'separate') {
-      for (const seg of segments) {
-        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
-        if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        const tsPrefix = this.options.addTimestamps
-          ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
-          : '';
-        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
-        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-        paragraphs.push(tsPrefix + speakerPrefix + text.trim());
+    for (const idx of indices) {
+      const level = annotation.levels[idx];
+      if (multi) {
+        paragraphs.push({ text: level.name, heading: true });
       }
-    } else {
-      const parts: string[] = [];
-      for (const seg of segments) {
-        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
-        if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        const tsPrefix = this.options.addTimestamps
-          ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
-          : '';
-        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
-        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-        parts.push(tsPrefix + speakerPrefix + text.trim());
-      }
-      if (parts.length > 0) {
-        paragraphs.push(parts.join(' '));
+      const segments = level.items as OSegment[];
+
+      if (this.options.mode === 'separate') {
+        for (const seg of segments) {
+          const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
+          const tsPrefix = this.options.addTimestamps
+            ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
+            : '';
+          const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+          const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+          paragraphs.push({ text: tsPrefix + speakerPrefix + text.trim() });
+        }
+      } else {
+        const parts: string[] = [];
+        for (const seg of segments) {
+          const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
+          const tsPrefix = this.options.addTimestamps
+            ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
+            : '';
+          const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+          const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+          parts.push(tsPrefix + speakerPrefix + text.trim());
+        }
+        if (parts.length > 0) {
+          paragraphs.push({ text: parts.join(' ') });
+        }
       }
     }
 
@@ -89,7 +108,7 @@ export class OdtConverter extends Converter {
     return undefined;
   }
 
-  private buildOdt(paragraphs: string[]): Uint8Array {
+  private buildOdt(paragraphs: { text: string; heading?: boolean }[]): Uint8Array {
     const enc = new TextEncoder();
 
     // mimetype MUST be the first entry per ODF spec, STORED (no compression)
@@ -108,7 +127,10 @@ export class OdtConverter extends Converter {
     );
 
     const paras = paragraphs
-      .map((p) => `<text:p text:style-name="Standard">${this.escapeXml(p)}</text:p>`)
+      .map((p) => {
+        const style = p.heading ? 'Heading_20_1' : 'Standard';
+        return `<text:p text:style-name="${style}">${this.escapeXml(p.text)}</text:p>`;
+      })
       .join('');
 
     const content = enc.encode(

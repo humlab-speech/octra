@@ -28,46 +28,68 @@ export class DocxConverter extends Converter {
     this._conversion = { export: true, import: false };
     this._encoding = 'binary';
     this._multitiers = false;
+    this._multiTierExport = true;
   }
 
-  export(annotation: OAnnotJSON, audiofile: OAudiofile, levelnum = 0): ExportResult {
+  export(
+    annotation: OAnnotJSON,
+    audiofile: OAudiofile,
+    levelnum = 0,
+    levelnums?: number[],
+  ): ExportResult {
     if (!audiofile?.sampleRate) {
       return { error: 'Invalid audio file' };
     }
-    const level = annotation.levels[levelnum];
-    if (!level) {
+
+    const indices =
+      levelnums && levelnums.length > 0
+        ? levelnums.filter((i) => i >= 0 && i < annotation.levels.length)
+        : [levelnum].filter((i) => i >= 0 && i < annotation.levels.length);
+
+    if (indices.length === 0) {
       return { error: `Level ${levelnum} not found` };
     }
 
-    const segments = level.items as OSegment[];
-    const paragraphs: string[] = [];
+    const multi = indices.length > 1;
+    const paragraphs: { text: string; heading?: boolean }[] = [];
 
-    if (this.options.mode === 'separate') {
-      for (const seg of segments) {
-        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
-        if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        const tsPrefix = this.options.addTimestamps
-          ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
-          : '';
-        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
-        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-        paragraphs.push(tsPrefix + speakerPrefix + text.trim());
+    for (const idx of indices) {
+      const level = annotation.levels[idx];
+      if (multi) {
+        paragraphs.push({ text: level.name, heading: true });
       }
-    } else {
-      // continuous
-      const parts: string[] = [];
-      for (const seg of segments) {
-        const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
-        if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
-        const tsPrefix = this.options.addTimestamps
-          ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
-          : '';
-        const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
-        const speakerPrefix = this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
-        parts.push(tsPrefix + speakerPrefix + text.trim());
-      }
-      if (parts.length > 0) {
-        paragraphs.push(parts.join(' '));
+      const segments = level.items as OSegment[];
+
+      if (this.options.mode === 'separate') {
+        for (const seg of segments) {
+          const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
+          const tsPrefix = this.options.addTimestamps
+            ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
+            : '';
+          const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+          const speakerPrefix =
+            this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+          paragraphs.push({
+            text: tsPrefix + speakerPrefix + text.trim(),
+          });
+        }
+      } else {
+        const parts: string[] = [];
+        for (const seg of segments) {
+          const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
+          if (!text.trim() || text.trim() === this.options.breakMarkerCode) continue;
+          const tsPrefix = this.options.addTimestamps
+            ? `[${this.msToTimeString(Math.round((seg.sampleStart / audiofile.sampleRate) * 1000))}] `
+            : '';
+          const speakerId = seg.labels?.find((l) => l.name === 'Speaker')?.value;
+          const speakerPrefix =
+            this.options.addSpeakerId && speakerId ? `[${speakerId}] ` : '';
+          parts.push(tsPrefix + speakerPrefix + text.trim());
+        }
+        if (parts.length > 0) {
+          paragraphs.push({ text: parts.join(' ') });
+        }
       }
     }
 
@@ -91,7 +113,7 @@ export class DocxConverter extends Converter {
     return undefined;
   }
 
-  private buildDocx(paragraphs: string[]): Uint8Array {
+  private buildDocx(paragraphs: { text: string; heading?: boolean }[]): Uint8Array {
     const enc = new TextEncoder();
 
     const contentTypes = enc.encode(
@@ -125,10 +147,13 @@ export class DocxConverter extends Converter {
     );
 
     const paras = paragraphs
-      .map(
-        (p) =>
-          `<w:p><w:r><w:t xml:space="preserve">${this.escapeXml(p)}</w:t></w:r></w:p>`,
-      )
+      .map((p) => {
+        const text = `<w:t xml:space="preserve">${this.escapeXml(p.text)}</w:t>`;
+        if (p.heading) {
+          return `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:rPr><w:b/></w:rPr>${text}</w:r></w:p>`;
+        }
+        return `<w:p><w:r>${text}</w:r></w:p>`;
+      })
       .join('');
 
     const document = enc.encode(

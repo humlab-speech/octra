@@ -146,6 +146,16 @@ export class AnnotationActions {
     },
   });
 
+  static detachLinkedLevel = createActionGroup({
+    source: `annotation/ detach linked level`,
+    events: {
+      do: props<{
+        id: number;
+        mode: LoginMode;
+      }>(),
+    },
+  });
+
   static setSavingNeeded = createActionGroup({
     source: `annotation/ set saving needed`,
     events: {

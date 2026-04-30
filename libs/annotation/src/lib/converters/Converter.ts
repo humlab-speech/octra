@@ -89,12 +89,25 @@ export abstract class Converter {
   public options: any;
   protected _category: ExportCategory = 'linguistic';
 
+  /**
+   * When true, the export modal shows a multi-tier selection (checkbox list)
+   * for this converter, and `export()` should consult the `levelnums`
+   * argument to emit several tiers in one file. Distinct from `_multitiers`
+   * which describes whether the format itself can carry multiple tiers in
+   * its native structure.
+   */
+  protected _multiTierExport = false;
+
   get category(): ExportCategory {
     return this._category;
   }
 
   get multitiers(): boolean {
     return this._multitiers;
+  }
+
+  get multiTierExport(): boolean {
+    return this._multiTierExport;
   }
 
   protected msToTimeString(ms: number): string {
@@ -121,13 +134,18 @@ export abstract class Converter {
    * exports AnnotJSON to another annotation format considering an audio file and a level number (optional).
    * @param annotation the AnnotJSON
    * @param audiofile information about the audio file
-   * @param levelnum the level number for export
+   * @param levelnum the level number for export. When `levelnums` is supplied
+   *   it takes precedence over `levelnum`.
+   * @param levelnums optional list of level indices for converters that
+   *   support multi-tier export (currently DOCX, ODT, PlainText). When
+   *   present, each tier is emitted in order and prefixed with its name.
    * returns resulted file or error.
    */
   public abstract export(
     annotation: OAnnotJSON,
     audiofile: OAudiofile,
     levelnum?: number,
+    levelnums?: number[],
   ): ExportResult;
 
   /**
