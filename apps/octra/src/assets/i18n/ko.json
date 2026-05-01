@@ -266,9 +266,9 @@
         }
       },
       "language label": "트랜스크립션 언어",
-      "swedish kb-whisper hint": "스웨덴어는 KB-Whisper를 사용합니다 — 스웨덴어 음성에 최적화됨.",
-      "finnish fine-tuned hint": "핀란드어는 핀란드어 음성에 최적화된 미세 조정 모델을 사용합니다.",
-      "norwegian fine-tuned hint": "노르웨이어는 노르웨이어 음성에 최적화된 미세 조정 모델을 사용합니다.",
+      "swedish kb-whisper hint": "스웨덴어는 스웨덴어 음성에 최적화된 KB-Whisper를 사용합니다.",
+      "finnish fine-tuned hint": "핀란드어는 핀란드어 음성에 최적화된 모델을 사용합니다.",
+      "norwegian fine-tuned hint": "노르웨이어는 노르웨이어 음성에 최적화된 모델을 사용합니다.",
       "diarizingLabel": "화자 식별 중…",
       "initializing speaker segmentation": "화자 세분화 모델 로드 중"
     },

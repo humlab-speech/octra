@@ -266,9 +266,9 @@
         }
       },
       "language label": "Transcriptietaal",
-      "swedish kb-whisper hint": "Zweeds gebruikt KB-Whisper — geoptimaliseerd voor Zweeds spraak.",
-      "finnish fine-tuned hint": "Fins gebruikt een fijngestemd model — geoptimaliseerd voor Finse spraak.",
-      "norwegian fine-tuned hint": "Noors gebruikt een fijngestemd model — geoptimaliseerd voor Noorse spraak.",
+      "swedish kb-whisper hint": "Zweeds gebruikt KB-Whisper, geoptimaliseerd voor Zweedse spraak.",
+      "finnish fine-tuned hint": "Fins gebruikt een model dat geoptimaliseerd is voor Finse spraak.",
+      "norwegian fine-tuned hint": "Noors gebruikt een model dat geoptimaliseerd is voor Noorse spraak.",
       "diarizingLabel": "Spreker identificatie…",
       "initializing speaker segmentation": "Sprekerherkenningsmodel wordt geladen"
     },

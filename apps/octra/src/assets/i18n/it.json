@@ -266,9 +266,9 @@
         }
       },
       "language label": "Lingua di trascrizione",
-      "swedish kb-whisper hint": "Lo svedese utilizza KB-Whisper — ottimizzato per il parlato svedese.",
-      "finnish fine-tuned hint": "Il finlandese usa un modello ottimizzato — ottimizzato per il parlato finlandese.",
-      "norwegian fine-tuned hint": "Il norvegese usa un modello ottimizzato — ottimizzato per il parlato norvegese.",
+      "swedish kb-whisper hint": "Lo svedese utilizza KB-Whisper, ottimizzato per il parlato svedese.",
+      "finnish fine-tuned hint": "Il finlandese usa un modello ottimizzato per il parlato finlandese.",
+      "norwegian fine-tuned hint": "Il norvegese usa un modello ottimizzato per il parlato norvegese.",
       "diarizingLabel": "Identificazione dei parlanti…",
       "initializing speaker segmentation": "Caricamento del modello di segmentazione dei parlanti"
     },

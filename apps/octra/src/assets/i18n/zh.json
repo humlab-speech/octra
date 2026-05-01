@@ -266,9 +266,9 @@
         }
       },
       "language label": "转录语言",
-      "swedish kb-whisper hint": "瑞典语使用 KB-Whisper — 专为瑞典语音语优化。",
-      "finnish fine-tuned hint": "芬兰语使用经过微调的模型 — 针对芬兰语语音优化。",
-      "norwegian fine-tuned hint": "挪威语使用经过微调的模型 — 针对挪威语语音优化。",
+      "swedish kb-whisper hint": "瑞典语使用 KB-Whisper，针对瑞典语语音优化。",
+      "finnish fine-tuned hint": "芬兰语使用针对芬兰语语音优化的模型。",
+      "norwegian fine-tuned hint": "挪威语使用针对挪威语语音优化的模型。",
       "diarizingLabel": "正在识别发言人…",
       "initializing speaker segmentation": "加载说话人分割模型"
     },
