@@ -366,9 +366,9 @@
         }
       },
       "language label": "Transkriptionsspråk",
-      "swedish kb-whisper hint": "Svenska använder KB-Whisper — optimerad för svensk tal.",
-      "finnish fine-tuned hint": "Finska använder en finjusterad modell — optimerad för finskt tal.",
-      "norwegian fine-tuned hint": "Norska använder en finjusterad modell — optimerad för norskt tal.",
+      "swedish kb-whisper hint": "För Svenska används KB-Whisper som optimerad för svensk tal.",
+      "finnish fine-tuned hint": "För Finska används en modell som optimerats för finskt tal.",
+      "norwegian fine-tuned hint": "För Norska används modell som optimersts för norskt tal.",
       "diarizingLabel": "Identifierar talare…",
       "initializing speaker segmentation": "Talarsegmenteringsmodellen laddas"
     },
