@@ -445,11 +445,11 @@ const DEFAULT_KEY_FOR_FAMILY: Record<string, string> = {
                 (ngModelChange)="emitChange()"
               />
               <label class="form-check-label" for="speakerSegmentationCheck">
-                Speaker segmentation (experimental)
+                Speaker separation
               </label>
             </div>
             <small class="text-muted d-block mt-1">
-              Runs locally in your browser. No Hugging Face login required. May increase processing time.
+              Runs locally in your browser and may increase processing time.
             </small>
 
             @if (speakerSegmentationEnabled) {

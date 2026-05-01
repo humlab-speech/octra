@@ -32,7 +32,7 @@ export async function applyOptionalSpeakerSegmentation(
     const message = error instanceof Error ? error.message : String(error);
     return {
       annotJson: args.annotJson,
-      warning: `Speaker segmentation failed: ${message}`,
+      warning: `Speaker separation failed: ${message}`,
     };
   }
 }

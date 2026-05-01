@@ -65,7 +65,7 @@ describe('applyOptionalSpeakerSegmentation', () => {
     });
 
     const level = result.annotJson.levels[0] as OSegmentLevel<OSegment>;
-    expect(result.warning).toContain('Speaker segmentation failed');
+    expect(result.warning).toContain('Speaker separation failed');
     expect(level.items[0].labels.find((label) => label.name === 'Speaker')).toBeUndefined();
   });
 });
