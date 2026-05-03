@@ -366,13 +366,34 @@
           "wasm": "Large v3 Turbo (~700 MB) — Fast and accurate, needs WebGPU",
           "webgpu": "Large v3 Turbo (~700 MB) — Fast and reasonably accurate, our selected reference model"
         },
-        "fi-tiny": { "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish", "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish" },
-        "fi-medium": { "wasm": "Medium (~712 MB) — More accurate, fine-tuned for Finnish", "webgpu": "Medium (~712 MB) — More accurate, fine-tuned for Finnish" },
-        "fi-large": { "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Finnish", "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Finnish" },
-        "nb-tiny": { "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian", "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian" },
-        "nb-small": { "wasm": "Small (~324 MB) — More accurate, fine-tuned for Norwegian", "webgpu": "Small (~324 MB) — More accurate, fine-tuned for Norwegian" },
-        "nb-medium": { "wasm": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian", "webgpu": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian" },
-        "nb-large": { "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian", "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian" }
+        "fi-tiny": {
+          "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish",
+          "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Finnish"
+        },
+        "fi-medium": {
+          "wasm": "Medium (~712 MB) — More accurate, fine-tuned for Finnish",
+          "webgpu": "Medium (~712 MB) — More accurate, fine-tuned for Finnish"
+        },
+        "fi-large": {
+          "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Finnish",
+          "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Finnish"
+        },
+        "nb-tiny": {
+          "wasm": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian",
+          "webgpu": "Tiny (~108 MB) — Least accurate, fine-tuned for Norwegian"
+        },
+        "nb-small": {
+          "wasm": "Small (~324 MB) — More accurate, fine-tuned for Norwegian",
+          "webgpu": "Small (~324 MB) — More accurate, fine-tuned for Norwegian"
+        },
+        "nb-medium": {
+          "wasm": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian",
+          "webgpu": "Medium (~712 MB) — Our reference model, fine-tuned for Norwegian"
+        },
+        "nb-large": {
+          "wasm": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian",
+          "webgpu": "Large (~2 GB) — Most accurate, fine-tuned for Norwegian"
+        }
       },
       "language label": "Transcription language",
       "swedish kb-whisper hint": "Swedish uses KB-Whisper, optimised for Swedish speech.",
@@ -566,6 +587,7 @@
     "another file selected": "Another file selected. Please select the same file as before or start a new transcription.\n\nWanted: '{{file}}'",
     "file not supported": "Type of file is '{{type}}' and not supported.",
     "header": "Reload audio file",
+    "missing-audio": "Please supply the audio file — your annotation will be restored from local storage.",
     "text": "This application was closed or refreshed. Please select the same audio file again. After that you can proceed with your work."
   },
   "segment invisible": "This transcription unit has to be visible to play the audio contained within it",

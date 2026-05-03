@@ -552,6 +552,7 @@
     "another file selected": "Es wurde eine andere Datei ausgewählt. Bitte wähle die gleiche Datei aus wie zuvor oder beginne eine neue Transkription.\n\nGesucht wird die Datei '{{file}}'",
     "file not supported": "Die Datei ist vom Typ '{{type}}' und wird nicht unterstützt.",
     "header": "Datei erneut einlesen",
+    "missing-audio": "Bitte die Audiodatei hinzufügen – die Annotation wird aus dem lokalen Speicher wiederhergestellt.",
     "text": "Die Seite wurde zuvor geschlossen oder erneut geladen. Bitte wähle erneut eine Audiodatei aus um sie einlesen zu lassen. Nach dem Einlesen kannst Du deine Arbeit fortsetzen."
   },
   "segment invisible": "Die Transkriptionseinheit muss sichtbar sein, um sie abspielen zu können",

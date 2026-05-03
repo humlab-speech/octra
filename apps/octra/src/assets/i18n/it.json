@@ -362,6 +362,7 @@
     "another file selected": "Un altro file è stato selezionato. Per favore, selezione lo stesso file o inizia una nuova trascrizione. Richiesto: '{{file}}'",
     "file not supported": "Il tipo di file è '{{type}}' non è supportato.",
     "header": "Ricarica file audio.",
+    "missing-audio": "Aggiungere il file audio – l'annotazione verrà ripristinata dalla memoria locale.",
     "text": "Questa applicazione è stata chiusa o ricaricata. Per favore, seleziona di nuovo lo stesso file audio. Potrai poi proseguire con il tuo lavoro."
   },
   "segment invisible": "Quest'unità di trascrizione deve essere visibile per riprodurre l'audio contenuto al suo interno",
