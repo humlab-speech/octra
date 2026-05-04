@@ -52,10 +52,17 @@
   vertical-align: middle;
 }
 
+.speaker-column {
+  text-align: center;
+  vertical-align: middle;
+  width: 80px;
+  padding: 3px;
+}
+
 .table .last-column {
   text-align: center;
   vertical-align: middle;
-  width: 100px;
+  width: 70px;
 }
 
 .last-column .btn-link,

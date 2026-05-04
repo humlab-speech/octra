@@ -76,6 +76,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       text: string;
     };
     validationMessages: string[];
+    speakerId: string;
   }[] = [];
   public transcript = '';
 
@@ -83,6 +84,14 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     OctraAnnotationSegment<ASRContext>
   >;
   _internLevel?: OctraAnnotationAnyLevel<OctraAnnotationSegment<ASRContext>>;
+
+  get hasSpeakerIds(): boolean {
+    if (!this._internLevel || this._internLevel.type !== 'SEGMENT') return false;
+    const level = this._internLevel as OctraAnnotationSegmentLevel<OctraAnnotationSegment>;
+    return level.items.some(
+      seg => !!((seg as OctraAnnotationSegment).labels.find(l => l.name === 'Speaker')?.value)
+    );
+  }
 
   @Input() public showTranscriptionTable = true;
   public showLoading = true;
@@ -467,6 +476,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
                 i,
                 levelValidation,
                 (segment as OctraAnnotationSegment).getFirstLabelWithoutName('Speaker')?.value ?? '',
+                (segment as OctraAnnotationSegment).labels.find(l => l.name === 'Speaker')?.value ?? '',
               ),
             ),
           );
@@ -496,12 +506,14 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     validationArray: any[],
   ): Promise<void> {
     const rawText = segment.getFirstLabelWithoutName('Speaker')?.value ?? '';
+    const speakerId = segment.labels.find(l => l.name === 'Speaker')?.value ?? '';
     const obj = await this.getShownSegment(
       startTime,
       segment.time.samples,
       i,
       validationArray,
       rawText,
+      speakerId,
     );
 
     // New array reference required for OnPush change detection
@@ -529,6 +541,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     i: number,
     validation: any[],
     rawText?: string,
+    speakerId?: string,
   ): Promise<{
     start: number;
     end: number;
@@ -538,6 +551,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
     };
     validation: string;
     validationMessages: string[];
+    speakerId: string;
   }> {
     const obj = {
       start: startSamples,
@@ -548,6 +562,7 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       },
       validation: '',
       validationMessages: [] as string[],
+      speakerId: speakerId ?? '',
     };
 
     if (this.appStorage.useMode !== 'url') {
@@ -896,10 +911,6 @@ export class TranscrOverviewComponent implements OnInit, OnDestroy, OnChanges {
       this.audio.audiomanagers[0].removeChunk(chunk);
     }
     this.cd.markForCheck();
-  }
-
-  toggleSkipCheckbox() {
-    this.playAllState.skipSilence = !this.playAllState.skipSilence;
   }
 
   public stopPlayback(): Promise<void> {

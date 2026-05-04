@@ -82,19 +82,13 @@
     >
       <thead id="table-head">
         <tr>
-          <th id="table-first-column"></th>
-          <th id="table-second-column">{{ 'g.segment' | transloco }}</th>
+          <th id="table-second-column">{{ 'g.utterance' | transloco }}</th>
           <th id="table-third-column">{{ 'g.transcription' | transloco }}</th>
+          @if (hasSpeakerIds) {
+            <th id="table-speaker-column">{{ 'g.speaker' | transloco }}</th>
+          }
           <th class="last-column">
-            <input
-              type="checkbox"
-              id="skip-silence-checkbox"
-              (click)="toggleSkipCheckbox()"
-              [checked]="playAllState.skipSilence"
-            />
-            <label for="skip-silence-checkbox">{{
-              'g.skip silence' | transloco
-            }}</label>
+            {{ 'g.play' | transloco }}
             <button
               type="button"
               class="btn btn-link p-0"
@@ -128,7 +122,7 @@
             }"
           >
             <td
-              style="width: 25px; vertical-align: middle"
+              class="segment-number"
               [ngClass]="{
                 'bg-success':
                   segment.transcription.text !== '' &&
@@ -147,25 +141,9 @@
                 <i
                   class="bi bi-exclamation-triangle segment-warning"
                   [title]="segment.validationMessages.join('\n')"
+                  style="margin-right: 4px"
                 ></i>
               }
-            </td>
-            <td
-              class="segment-number"
-              [ngClass]="{
-                'bg-success':
-                  segment.transcription.text !== '' &&
-                  (!annotationStoreService.breakMarker ||
-                    segment.transcription.text !==
-                      annotationStoreService.breakMarker!.code),
-                'bg-info':
-                  annotationStoreService.breakMarker &&
-                  segment.transcription.text ===
-                    annotationStoreService.breakMarker!.code,
-                'bg-danger': segment.transcription.text === '',
-                'bg-highlight': playAllState.currentSegment === i,
-              }"
-            >
               <button
                 type="button"
                 class="btn btn-link link p-0"
@@ -248,6 +226,26 @@
                   }"
                 ></octra-validation-popover>
                 <p [innerHTML]="sanitizeHTML(segment.transcription.html)"></p>
+              </td>
+            }
+            @if (hasSpeakerIds) {
+              <td
+                class="speaker-column"
+                [ngClass]="{
+                  'bg-success':
+                    segment.transcription.text !== '' &&
+                    (!annotationStoreService.breakMarker ||
+                      segment.transcription.text !==
+                        annotationStoreService.breakMarker!.code),
+                  'bg-info':
+                    annotationStoreService.breakMarker &&
+                    segment.transcription.text ===
+                      annotationStoreService.breakMarker!.code,
+                  'bg-danger': segment.transcription.text === '',
+                  'bg-highlight': playAllState.currentSegment === i,
+                }"
+              >
+                {{ segment.speakerId }}
               </td>
             }
             <td
