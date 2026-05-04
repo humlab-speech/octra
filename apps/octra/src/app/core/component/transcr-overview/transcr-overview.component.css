@@ -37,6 +37,14 @@
   width: 100%;
 }
 
+#table-second-column {
+  width: 90px;
+}
+
+#table-third-column {
+  /* no explicit width — absorbs all remaining space */
+}
+
 .found-errors {
   padding: 5px;
   display: block;
@@ -55,14 +63,14 @@
 .speaker-column {
   text-align: center;
   vertical-align: middle;
-  width: 80px;
+  width: 110px;
   padding: 3px;
 }
 
 .table .last-column {
   text-align: center;
   vertical-align: middle;
-  width: 70px;
+  width: 60px;
 }
 
 .last-column .btn-link,
@@ -76,11 +84,6 @@
   cursor: pointer;
 }
 
-#skip-silence-checkbox {
-  margin-left: 5px;
-  display: inline-flex;
-  margin-right: 3px;
-}
 
 .ripple-container {
   display: none;
