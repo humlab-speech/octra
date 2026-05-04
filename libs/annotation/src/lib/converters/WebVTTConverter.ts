@@ -60,7 +60,7 @@ export class WebVTTConverter extends Converter {
     this._conversion.import = true;
     this._encoding = 'UTF-8';
     this._category = 'specialist';
-    this._multitiers = true;
+    this._multitiers = false;
     this._notice =
       'Supports voice-tagged speaker extraction (<v Name>). STYLE, REGION and NOTE blocks are ignored. Multi-line cues are merged.';
   }

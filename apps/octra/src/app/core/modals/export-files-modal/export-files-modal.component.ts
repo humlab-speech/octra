@@ -191,6 +191,8 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
       this.updateParentFormat(converter);
     } else if (converter.multiTierExport) {
       this.updateParentFormat(converter);
+    } else {
+      this.updateParentFormat(converter, this.selectedLevel);
     }
     this.toggleLine(index);
   }
@@ -301,6 +303,10 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
           };
         } else {
           console.error(`Annotation conversion error: ${result.error}`);
+          this.preparing = {
+            name: converter.name,
+            preparing: false,
+          };
         }
       });
     }
