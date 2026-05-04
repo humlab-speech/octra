@@ -374,8 +374,8 @@
       "initializing speaker segmentation": "Talarsegmenteringsmodellen laddas"
     },
     "app description": "OCTRA är ett gratis webbprogram för transkription av talinspelningar till klartext (ortografiskt). Det har tre olika redigerare som tillgodoser olika behov vid transkribering, och du kan fritt växla mellan dem under en session.",
-    "funding support and development": "Finansiell stöd och utveckling",
-    "groups that developed the language models": "Grupper som utvecklade språkmodellerna"
+    "funding support and development": "Finansiärer och samarbeten",
+    "groups that developed the language models": "Utvecklare av språkmodellerna som används"
   },
   "logout": {
     "login again": "Logga in igen",

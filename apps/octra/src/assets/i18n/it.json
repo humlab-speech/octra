@@ -273,8 +273,8 @@
       "initializing speaker segmentation": "Caricamento del modello di segmentazione dei parlanti"
     },
     "app description": "OCTRA è un'applicazione web gratuita per la trascrizione in testo normale (ortografica) di registrazioni vocali. Dispone di tre editor diversi che soddisfano esigenze differenti durante la trascrizione e permette di passare liberamente da uno all'altro nel corso di una sessione.",
-    "funding support and development": "Finanziamenti e sviluppo",
-    "groups that developed the language models": "Gruppi che hanno sviluppato i modelli linguistici"
+    "funding support and development": "Finanziatori e collaborazioni",
+    "groups that developed the language models": "Sviluppatori dei modelli linguistici utilizzati"
   },
   "logout": {
     "login again": "Ripeti l'accesso",

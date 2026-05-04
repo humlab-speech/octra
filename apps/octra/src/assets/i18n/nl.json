@@ -273,8 +273,8 @@
       "initializing speaker segmentation": "Sprekerherkenningsmodel wordt geladen"
     },
     "app description": "OCTRA is een gratis webapplicatie voor transcriptie van spraakopnamen in platte tekst (orthografisch). Het beschikt over drie verschillende editors die tegemoetkomen aan uiteenlopende behoeften bij het transcriberen, en u kunt er tijdens een sessie vrij tussen wisselen.",
-    "funding support and development": "Financiële ondersteuning en ontwikkeling",
-    "groups that developed the language models": "Groepen die de taalmodellen hebben ontwikkeld"
+    "funding support and development": "Financiers en samenwerkingen",
+    "groups that developed the language models": "Ontwikkelaars van de gebruikte taalmodellen"
   },
   "logout": {
     "login again": "Log opnieuw in",

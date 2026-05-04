@@ -366,8 +366,8 @@
       "norwegian fine-tuned hint": "Für Norwegisch wird ein für norwegische Sprache optimiertes Modell verwendet."
     },
     "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln.",
-    "funding support and development": "Finanzielle Unterstützung und Entwicklung",
-    "groups that developed the language models": "Gruppen, die die Sprachmodelle entwickelt haben"
+    "funding support and development": "Förderer und Kooperationen",
+    "groups that developed the language models": "Entwickler der verwendeten Sprachmodelle"
   },
   "logout": {
     "login again": "Erneut anmelden",
