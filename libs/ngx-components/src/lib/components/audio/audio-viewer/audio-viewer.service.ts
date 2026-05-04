@@ -3822,7 +3822,9 @@ export class AudioViewerService {
           });
         }
 
-        this.drawNewBoundaries(boundariesToDraw);
+        if (this.settings.boundaries.enabled) {
+          this.drawNewBoundaries(boundariesToDraw);
+        }
       }
     }
   }
