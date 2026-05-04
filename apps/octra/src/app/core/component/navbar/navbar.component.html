@@ -534,25 +534,7 @@
               </div>
             </li>
           }
-          @if (
-            appStorage.loggedIn &&
-            appStorage.audioLoaded &&
-            navbarServ.showExport &&
-            (settService.projectsettings?.octra?.tools ?? []).length > 0
-          ) {
-            <li class="nav-item">
-                <button
-                  type="button"
-                  (click)="openToolsModal()"
-                  class="nav-link btn btn-link"
-                >
-                  <i class="bi bi-tools navbar-icon"></i>
-                  <span class="d-md-none d-xxl-inline">
-                    {{ 'g.tools' | transloco }}</span
-                  >
-                </button>
-              </li>
-          }
+
           @if (
             appStorage.loggedIn &&
             appStorage.audioLoaded &&

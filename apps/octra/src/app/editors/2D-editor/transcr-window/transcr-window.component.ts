@@ -367,6 +367,14 @@ export class TranscrWindowComponent
     await this.doDirectionAction('down');
   };
 
+  onCycleSpeaker = (
+    $event: KeyboardEvent,
+    shortcut: Shortcut,
+    hotkeyEvent: HotkeysEvent,
+  ) => {
+    this.cycleSpeaker();
+  };
+
   private audioShortcuts: ShortcutGroup = {
     name: '',
     enabled: true,
@@ -659,6 +667,11 @@ export class TranscrWindowComponent
       'transcription window',
       'close_save',
       this.onClose,
+    );
+    this.shortcutsService.overwriteCallback(
+      'transcription window',
+      'cycle_speaker',
+      this.onCycleSpeaker,
     );
     this.shortcutsService.enableGroup('transcription window');
 

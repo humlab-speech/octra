@@ -288,6 +288,15 @@ export class TwoDEditorComponent
         focusonly: false,
         title: 'close_save',
       },
+      {
+        name: 'cycle_speaker',
+        keys: {
+          mac: 'CMD + S',
+          pc: 'CTRL + S',
+        },
+        focusonly: false,
+        title: 'cycle_speaker',
+      },
     ],
   };
 
