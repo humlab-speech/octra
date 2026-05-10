@@ -1,0 +1,850 @@
+{
+  "nodes": [
+    {
+      "id": "readme_octra_libraries",
+      "label": "OCTRA libraries overview",
+      "file_type": "document",
+      "source_file": "libs/README.md",
+      "source_location": "1-127",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_utilities_lib",
+      "label": "@octra/utilities library",
+      "file_type": "document",
+      "source_file": "libs/utilities/README.md",
+      "source_location": "1-62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_media_lib",
+      "label": "Core media classes without DOM",
+      "file_type": "document",
+      "source_file": "libs/README.md",
+      "source_location": "29-37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_web_media_lib",
+      "label": "@octra/web-media browser audio handling",
+      "file_type": "document",
+      "source_file": "libs/web-media/README.md",
+      "source_location": "1-63",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_annotation_lib",
+      "label": "@octra/annotation annotation classes and converters",
+      "file_type": "document",
+      "source_file": "libs/annotation/README.md",
+      "source_location": "1-68",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_json_sets_lib",
+      "label": "@octra/json-sets JSON validation and selection",
+      "file_type": "document",
+      "source_file": "libs/json-sets/README.md",
+      "source_location": "1-134",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_assets_lib",
+      "label": "@octra/assets JSON schemas and shared assets",
+      "file_type": "document",
+      "source_file": "libs/assets/README.md",
+      "source_location": "1-57",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_ngx_utilities_lib",
+      "label": "@octra/ngx-utilities Angular utilities",
+      "file_type": "document",
+      "source_file": "libs/ngx-utilities/README.md",
+      "source_location": "1-18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_ngx_components_lib",
+      "label": "@octra/ngx-components Angular components",
+      "file_type": "document",
+      "source_file": "libs/ngx-components/README.md",
+      "source_location": "1-19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "audioformats_readme",
+      "label": "Audio format classes for parsing binary data",
+      "file_type": "document",
+      "source_file": "libs/web-media/src/lib/audio/AudioFormats/README.md",
+      "source_location": "1-5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "json_sets_validator",
+      "label": "JSONSetValidator class for set validation",
+      "file_type": "document",
+      "source_file": "libs/json-sets/README.md",
+      "source_location": "21-76",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "changelog_web_media_1_0_1",
+      "label": "web-media v1.0.1 release",
+      "file_type": "document",
+      "source_file": "libs/web-media/CHANGELOG.md",
+      "source_location": "1-9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "changelog_annotation_1_1_0",
+      "label": "annotation v1.1.0 TextConverter timestamp format change",
+      "file_type": "document",
+      "source_file": "libs/annotation/CHANGELOG.md",
+      "source_location": "9-20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "changelog_json_sets_1_0_0",
+      "label": "json-sets v1.0.0 validator bug fix",
+      "file_type": "document",
+      "source_file": "libs/json-sets/CHANGELOG.md",
+      "source_location": "14-20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "changelog_utilities_1_1_0",
+      "label": "utilities v1.1.0 appendURLQueryParams function",
+      "file_type": "document",
+      "source_file": "libs/utilities/CHANGELOG.md",
+      "source_location": "5-16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "changelog_ngx_components_1_1_0",
+      "label": "ngx-components v1.1.0 version notification component",
+      "file_type": "document",
+      "source_file": "libs/ngx-components/CHANGELOG.md",
+      "source_location": "5-18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "sample_unit_class",
+      "label": "SampleUnit class for audio timing",
+      "file_type": "document",
+      "source_file": "libs/web-media/README.md",
+      "source_location": "40-43",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "octra_annotation_class",
+      "label": "OctraAnnotation class for creating annotations",
+      "file_type": "document",
+      "source_file": "libs/annotation/README.md",
+      "source_location": "41-59",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "getfilename_function",
+      "label": "getFileSize utility function",
+      "file_type": "document",
+      "source_file": "libs/utilities/README.md",
+      "source_location": "40-53",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "umd_bundle_support",
+      "label": "UMD bundle distribution format",
+      "file_type": "document",
+      "source_file": "libs/web-media/README.md",
+      "source_location": "14-29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "angular_module_import",
+      "label": "Angular module import pattern",
+      "file_type": "document",
+      "source_file": "libs/ngx-utilities/README.md",
+      "source_location": "7-13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "license_mit",
+      "label": "MIT License",
+      "file_type": "document",
+      "source_file": "libs/web-media/LICENSE.txt",
+      "source_location": "1-21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "audio_format_manager",
+      "label": "AudioManager class for audio format handling",
+      "file_type": "document",
+      "source_file": "libs/web-media/src/lib/audio/AudioFormats/README.md",
+      "source_location": "1-5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ngx_components_library",
+      "label": "NGX Components Library",
+      "file_type": "document",
+      "source_file": "libs/ngx-components/LICENSE.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "bugreport_modal_component",
+      "label": "BugReport Modal Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/bugreport-modal/bugreport-modal.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "audioplayer_component",
+      "label": "Audio Player Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/audio/audioplayer/audioplayer.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "audio_viewer_component",
+      "label": "Audio Viewer Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/audio/audio-viewer/audio-viewer.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "question_mark_component",
+      "label": "Question Mark Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/question-mark/question-mark.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tool_configurator_component",
+      "label": "Tool Configurator Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/tool-configurator.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "toolconfig_group_component",
+      "label": "Tool Config Group Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/toolconfig-group/toolconfig-group.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "toolconfig_array_adder_component",
+      "label": "Tool Config Array Adder Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/array-adder/toolconfig-array-adder.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "asr_options_component",
+      "label": "ASR Options Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/components/asr-options/asr-options.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "version_notification_component",
+      "label": "Version Notification Component",
+      "file_type": "code",
+      "source_file": "libs/ngx-components/src/lib/version-checker/version-notification/version-notification.component.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "media_library",
+      "label": "Media Library",
+      "file_type": "document",
+      "source_file": "libs/media/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "audio_module",
+      "label": "Audio Module",
+      "file_type": "document",
+      "source_file": "libs/media/src/lib/audio/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "media_changelog",
+      "label": "Media Library Changelog",
+      "file_type": "document",
+      "source_file": "libs/media/CHANGELOG.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_utilities_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "17-26",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_media_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "29-37",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_web_media_lib",
+      "target": "readme_media_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/README.md",
+      "source_location": "1-3",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_annotation_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "73-81",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_json_sets_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "62-70",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_assets_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "51-59",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_ngx_utilities_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "94-103",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_ngx_components_lib",
+      "target": "readme_octra_libraries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md",
+      "source_location": "83-92",
+      "weight": 1.0
+    },
+    {
+      "source": "audioformats_readme",
+      "target": "readme_web_media_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/src/lib/audio/AudioFormats/README.md",
+      "source_location": "1-5",
+      "weight": 1.0
+    },
+    {
+      "source": "json_sets_validator",
+      "target": "readme_json_sets_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/json-sets/README.md",
+      "source_location": "21-76",
+      "weight": 1.0
+    },
+    {
+      "source": "changelog_web_media_1_0_1",
+      "target": "readme_web_media_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/CHANGELOG.md",
+      "source_location": "5-9",
+      "weight": 1.0
+    },
+    {
+      "source": "changelog_annotation_1_1_0",
+      "target": "readme_annotation_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/annotation/CHANGELOG.md",
+      "source_location": "9-20",
+      "weight": 1.0
+    },
+    {
+      "source": "changelog_json_sets_1_0_0",
+      "target": "readme_json_sets_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/json-sets/CHANGELOG.md",
+      "source_location": "14-20",
+      "weight": 1.0
+    },
+    {
+      "source": "changelog_utilities_1_1_0",
+      "target": "readme_utilities_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/utilities/CHANGELOG.md",
+      "source_location": "5-16",
+      "weight": 1.0
+    },
+    {
+      "source": "changelog_ngx_components_1_1_0",
+      "target": "readme_ngx_components_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/CHANGELOG.md",
+      "source_location": "5-18",
+      "weight": 1.0
+    },
+    {
+      "source": "sample_unit_class",
+      "target": "readme_web_media_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/README.md",
+      "source_location": "40-43",
+      "weight": 1.0
+    },
+    {
+      "source": "octra_annotation_class",
+      "target": "readme_annotation_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/annotation/README.md",
+      "source_location": "41-59",
+      "weight": 1.0
+    },
+    {
+      "source": "getfilename_function",
+      "target": "readme_utilities_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/utilities/README.md",
+      "source_location": "40-53",
+      "weight": 1.0
+    },
+    {
+      "source": "umd_bundle_support",
+      "target": "readme_web_media_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/README.md",
+      "source_location": "14-29",
+      "weight": 1.0
+    },
+    {
+      "source": "angular_module_import",
+      "target": "readme_ngx_utilities_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-utilities/README.md",
+      "source_location": "7-13",
+      "weight": 1.0
+    },
+    {
+      "source": "audio_format_manager",
+      "target": "audioformats_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/web-media/src/lib/audio/AudioFormats/README.md",
+      "source_location": "1-5",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_web_media_lib",
+      "target": "readme_utilities_lib",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "libs/web-media/CHANGELOG.md",
+      "source_location": "66-71",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_annotation_lib",
+      "target": "readme_json_sets_lib",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "libs/annotation/CHANGELOG.md",
+      "source_location": "1-68",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_ngx_components_lib",
+      "target": "readme_annotation_lib",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "libs/ngx-components/README.md",
+      "source_location": "1-19",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_ngx_utilities_lib",
+      "target": "readme_utilities_lib",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "libs/ngx-utilities/README.md",
+      "source_location": "1-18",
+      "weight": 1.0
+    },
+    {
+      "source": "bugreport_modal_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/bugreport-modal/bugreport-modal.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "audioplayer_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/audio/audioplayer/audioplayer.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "audio_viewer_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/audio/audio-viewer/audio-viewer.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "question_mark_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/question-mark/question-mark.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "tool_configurator_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/tool-configurator.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "toolconfig_group_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/toolconfig-group/toolconfig-group.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "toolconfig_array_adder_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/array-adder/toolconfig-array-adder.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "asr_options_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/components/asr-options/asr-options.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "version_notification_component",
+      "target": "ngx_components_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/ngx-components/src/lib/version-checker/version-notification/version-notification.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "audio_module",
+      "target": "media_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/media/src/lib/audio/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "media_changelog",
+      "target": "media_library",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/media/CHANGELOG.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "audioplayer_component",
+      "target": "audio_module",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "libs/ngx-components/src/lib/components/audio/audioplayer/audioplayer.component.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "audio_viewer_component",
+      "target": "audio_module",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "libs/ngx-components/src/lib/components/audio/audio-viewer/audio-viewer.component.html",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "core_utilities_ecosystem",
+      "label": "Cross-platform utilities foundation",
+      "nodes": [
+        "readme_utilities_lib",
+        "readme_json_sets_lib",
+        "readme_assets_lib"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "libs/README.md"
+    },
+    {
+      "id": "angular_specific_libraries",
+      "label": "Angular-specific libraries (ngx prefix)",
+      "nodes": [
+        "readme_ngx_utilities_lib",
+        "readme_ngx_components_lib"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "libs/README.md"
+    },
+    {
+      "id": "audio_processing_pipeline",
+      "label": "Audio handling libraries (media, web-media, components)",
+      "nodes": [
+        "readme_media_lib",
+        "readme_web_media_lib",
+        "readme_ngx_components_lib",
+        "audioformats_readme"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "libs/README.md"
+    },
+    {
+      "id": "form_generator_components",
+      "label": "Form Generator Component Suite",
+      "nodes": [
+        "tool_configurator_component",
+        "toolconfig_group_component",
+        "toolconfig_array_adder_component"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "libs/ngx-components/src/lib/components/form-generator/"
+    },
+    {
+      "id": "audio_components",
+      "label": "Audio Component Collection",
+      "nodes": [
+        "audioplayer_component",
+        "audio_viewer_component"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "libs/ngx-components/src/lib/components/audio/"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
