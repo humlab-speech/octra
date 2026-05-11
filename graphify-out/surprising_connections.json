@@ -1,0 +1,502 @@
+[
+  {
+    "source": "navbar_component_navigationcomponent_onlevelremoveclick",
+    "target": "local_translation_service_localtranslationservice_translate",
+    "source_label": ".onLevelRemoveClick()",
+    "target_label": ".translate()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "navbar_component_navigationcomponent_openend",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openEnd()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_editor_component_transcreditorcomponent_update",
+    "target": "application_store_service_applicationstoreservice_destroy",
+    "source_label": ".update()",
+    "target_label": ".destroy()",
+    "source_community": 8,
+    "target_community": 7,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "auto_transcribe_options_component_autotranscribeoptionscomponent_emitchange",
+    "target": "userinteractions_service_userinteractionsservice_enabled",
+    "source_label": ".emitChange()",
+    "target_label": ".enabled()",
+    "source_community": 3,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_ontexteditorleave",
+    "target": "userinteractions_service_userinteractionsservice_addelementfromevent",
+    "source_label": ".onTextEditorLeave()",
+    "target_label": ".addElementFromEvent()",
+    "source_community": 7,
+    "target_community": 1,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_updatesegments",
+    "target": "bug_report_service_bugreportservice_clear",
+    "source_label": ".updateSegments()",
+    "target_label": ".clear()",
+    "source_community": 7,
+    "target_community": 3,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_updatesegments",
+    "target": "settings_service_settingsservice_log",
+    "source_label": ".updateSegments()",
+    "target_label": ".log()",
+    "source_community": 7,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_playall",
+    "target": "settings_service_settingsservice_log",
+    "source_label": ".playAll()",
+    "target_label": ".log()",
+    "source_community": 7,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_feedback_component_transcriptionfeedbackcomponent_savefeedbackform",
+    "target": "appstorage_service_appstorageservice_save",
+    "source_label": ".saveFeedbackform()",
+    "target_label": ".save()",
+    "source_community": 1,
+    "target_community": 8,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openmodal",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openModal()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openmodalref",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openModalRef()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openbugreportmodal",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".openBugreportModal()",
+    "target_label": ".add()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "re_authentication_modal_component_reauthenticationmodalcomponent_abort",
+    "target": "transcription_stop_modal_component_transcriptionstopmodalcomponent_close",
+    "source_label": ".abort()",
+    "target_label": ".close()",
+    "source_community": 15,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "import_options_modal_component_importoptionsmodalcomponent_ngoninit",
+    "target": "statistics_modal_component_statisticsmodalcomponent_stringify",
+    "source_label": ".ngOnInit()",
+    "target_label": ".stringify()",
+    "source_community": 2,
+    "target_community": 9,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_guidelines_modal_component_transcriptionguidelinesmodalcomponent_ngoninit",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".ngOnInit()",
+    "target_label": ".add()",
+    "source_community": 9,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_guidelines_modal_component_transcriptionguidelinesmodalcomponent_getguidelinehtml",
+    "target": "annotation_store_service_annotationstoreservice_rawtohtml",
+    "source_label": ".getGuidelineHTML()",
+    "target_label": ".rawToHTML()",
+    "source_community": 9,
+    "target_community": 8,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_database_octradatabase_init",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".init()",
+    "target_label": ".open()",
+    "source_community": 4,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_database_octradatabase_backupcurrentdatabase",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".backupCurrentDatabase()",
+    "target_label": ".open()",
+    "source_community": 4,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_database_octradatabase_backupcurrentdatabase",
+    "target": "idb_service_idbservice_import",
+    "source_label": ".backupCurrentDatabase()",
+    "target_label": ".import()",
+    "source_community": 4,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_database_octradatabase_savemodedata",
+    "target": "statistics_modal_component_statisticsmodalcomponent_stringify",
+    "source_label": ".saveModeData()",
+    "target_label": ".stringify()",
+    "source_community": 4,
+    "target_community": 9,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_database_octradatabase_savemodedata",
+    "target": "transcr_editor_component_transcreditorcomponent_update",
+    "source_label": ".saveModeData()",
+    "target_label": ".update()",
+    "source_community": 4,
+    "target_community": 8,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "dyn_component_directive_dyncomponentdirective_ngoninit",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".ngOnInit()",
+    "target_label": ".add()",
+    "source_community": 3,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "local_transcription_service_localtranscriptionservice_chunkstoannotjson",
+    "target": "idb_service_idbservice_import",
+    "source_label": ".chunksToAnnotJson()",
+    "target_label": ".import()",
+    "source_community": 11,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "speaker_management_service_speakermanagementservice_findlinkgroup",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".findLinkGroup()",
+    "target_label": ".add()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "bug_report_service_bugreportservice_getpackage",
+    "target": "statistics_modal_component_statisticsmodalcomponent_stringify",
+    "source_label": ".getPackage()",
+    "target_label": ".stringify()",
+    "source_community": 0,
+    "target_community": 9,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "translation_worker_decodeworkererror",
+    "target": "statistics_modal_component_statisticsmodalcomponent_stringify",
+    "source_label": "decodeWorkerError()",
+    "target_label": ".stringify()",
+    "source_community": 18,
+    "target_community": 9,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "help_tools_component_helptoolscomponent_importbackup",
+    "target": "idb_service_idbservice_import",
+    "source_label": ".importBackup()",
+    "target_label": ".import()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_component_transcriptioncomponent_ngoninit",
+    "target": "settings_service_settingsservice_istheme",
+    "source_label": ".ngOnInit()",
+    "target_label": ".isTheme()",
+    "source_community": 3,
+    "target_community": 1,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_component_transcriptioncomponent_onsendnowclick",
+    "target": "transcription_stop_modal_component_transcriptionstopmodalcomponent_close",
+    "source_label": ".onSendNowClick()",
+    "target_label": ".close()",
+    "source_community": 0,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_component_transcriptioncomponent_onsendbuttonclick",
+    "target": "octra_modal_service_octramodalservice_openmodalref",
+    "source_label": ".onSendButtonClick()",
+    "target_label": ".openModalRef()",
+    "source_community": 7,
+    "target_community": 0,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "local_offline_transcription_helpers_applyoptionalspeakersegmentation",
+    "target": "local_diarization_service_applyspeakerturnstoannotjson",
+    "source_label": "applyOptionalSpeakerSegmentation()",
+    "target_label": "applySpeakerTurnsToAnnotJson()",
+    "source_community": 2,
+    "target_community": 11,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "annotation_effects_annotationeffects_loadsegments",
+    "target": "index_getmodestate",
+    "source_label": ".loadSegments()",
+    "target_label": "getModeState()",
+    "source_community": 1,
+    "target_community": 3,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "annotation_effects_annotationeffects_loadsegments",
+    "target": "appstorage_service_appstorageservice_clearloggingdatapermanently",
+    "source_label": ".loadSegments()",
+    "target_label": ".clearLoggingDataPermanently()",
+    "source_community": 1,
+    "target_community": 3,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "annotation_store_service_annotationstoreservice_rawtohtml",
+    "target": "multi_threading_service_multithreadingservice_run",
+    "source_label": ".rawToHTML()",
+    "target_label": ".run()",
+    "source_community": 8,
+    "target_community": 17,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "annotation_store_service_annotationstoreservice_validateall",
+    "target": "index_getmodestate",
+    "source_label": ".validateAll()",
+    "target_label": "getModeState()",
+    "source_community": 7,
+    "target_community": 3,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "navbar_component_navigationcomponent_onlevelremoveclick",
+    "target": "local_translation_service_localtranslationservice_translate",
+    "source_label": ".onLevelRemoveClick()",
+    "target_label": ".translate()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "navbar_component_navigationcomponent_openend",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openEnd()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_editor_component_transcreditorcomponent_update",
+    "target": "application_store_service_applicationstoreservice_destroy",
+    "source_label": ".update()",
+    "target_label": ".destroy()",
+    "source_community": 8,
+    "target_community": 7,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "auto_transcribe_options_component_autotranscribeoptionscomponent_emitchange",
+    "target": "userinteractions_service_userinteractionsservice_enabled",
+    "source_label": ".emitChange()",
+    "target_label": ".enabled()",
+    "source_community": 3,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_ontexteditorleave",
+    "target": "userinteractions_service_userinteractionsservice_addelementfromevent",
+    "source_label": ".onTextEditorLeave()",
+    "target_label": ".addElementFromEvent()",
+    "source_community": 7,
+    "target_community": 1,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_updatesegments",
+    "target": "bug_report_service_bugreportservice_clear",
+    "source_label": ".updateSegments()",
+    "target_label": ".clear()",
+    "source_community": 7,
+    "target_community": 3,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_updatesegments",
+    "target": "settings_service_settingsservice_log",
+    "source_label": ".updateSegments()",
+    "target_label": ".log()",
+    "source_community": 7,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcr_overview_component_transcroverviewcomponent_playall",
+    "target": "settings_service_settingsservice_log",
+    "source_label": ".playAll()",
+    "target_label": ".log()",
+    "source_community": 7,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_feedback_component_transcriptionfeedbackcomponent_savefeedbackform",
+    "target": "appstorage_service_appstorageservice_save",
+    "source_label": ".saveFeedbackform()",
+    "target_label": ".save()",
+    "source_community": 1,
+    "target_community": 8,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openmodal",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openModal()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openmodalref",
+    "target": "about_modal_component_aboutmodalcomponent_open",
+    "source_label": ".openModalRef()",
+    "target_label": ".open()",
+    "source_community": 0,
+    "target_community": 18,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "octra_modal_service_octramodalservice_openbugreportmodal",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".openBugreportModal()",
+    "target_label": ".add()",
+    "source_community": 0,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "re_authentication_modal_component_reauthenticationmodalcomponent_abort",
+    "target": "transcription_stop_modal_component_transcriptionstopmodalcomponent_close",
+    "source_label": ".abort()",
+    "target_label": ".close()",
+    "source_community": 15,
+    "target_community": 4,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "import_options_modal_component_importoptionsmodalcomponent_ngoninit",
+    "target": "statistics_modal_component_statisticsmodalcomponent_stringify",
+    "source_label": ".ngOnInit()",
+    "target_label": ".stringify()",
+    "source_community": 2,
+    "target_community": 9,
+    "relation": "calls",
+    "confidence_score": 0.8
+  },
+  {
+    "source": "transcription_guidelines_modal_component_transcriptionguidelinesmodalcomponent_ngoninit",
+    "target": "octra_dropzone_service_octradropzoneservice_add",
+    "source_label": ".ngOnInit()",
+    "target_label": ".add()",
+    "source_community": 9,
+    "target_community": 2,
+    "relation": "calls",
+    "confidence_score": 0.8
+  }
+]
