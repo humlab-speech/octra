@@ -18,6 +18,7 @@ import { timer } from 'rxjs';
 import { AppInfo } from '../../../app.info';
 import { NavbarService } from '../../component/navbar/navbar.service';
 import { AudioService, UserInteractionsService } from '../../shared/service';
+import { AppStorageService } from '../../shared/service/appstorage.service';
 import { AnnotationStoreService } from '../../store/login-mode/annotation/annotation.store.service';
 import { NamingDragAndDropComponent } from '../../tools/naming-drag-and-drop/naming-drag-and-drop.component';
 import { TableConfiguratorComponent } from '../../tools/table-configurator/table-configurator.component';
@@ -123,6 +124,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
     private sanitizer: DomSanitizer,
     private audio: AudioService,
     public annotationStoreService: AnnotationStoreService,
+    private appStorage: AppStorageService,
     protected override activeModal: NgbActiveModal,
   ) {
     super('ExportFilesModalComponent', activeModal);
@@ -153,10 +155,14 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
     );
 
     const breakMarkerCode = this.annotationStoreService.breakMarker?.code ?? '<P>';
+    const uiLanguage = this.appStorage.language ?? 'en';
     for (const converter of this.converters) {
       this.exportStates.push('close');
       if (converter.options && 'breakMarkerCode' in converter.options) {
         converter.options.breakMarkerCode = breakMarkerCode;
+      }
+      if (converter.options && 'uiLanguage' in converter.options) {
+        (converter.options as any).uiLanguage = uiLanguage;
       }
     }
 

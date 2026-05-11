@@ -26,6 +26,7 @@ export class TextConverter extends Converter {
     addSpeakerId: false,
     groupByTier: false,
     breakMarkerCode: '<P>',
+    uiLanguage: '',
   };
 
   public constructor() {
@@ -179,6 +180,32 @@ export class TextConverter extends Converter {
     filename += `${this._extensions[0]}`;
 
     result = result.replace(/ +/g, ' ');
+
+    const isSwedish =
+      this.options.uiLanguage === 'sv' ||
+      indices.some((i) => {
+        const name = annotation.levels[i]?.name ?? '';
+        return name === 'Swedish' || name.toLowerCase().includes('svenska');
+      });
+
+    const englishAck = [
+      'The transcriptions below were produced using the VISP OCTRA tool, developed by Humlab at Umeå University, Språkbanken CLARIN, and our partners within CLARIN-ERIC.',
+      'Please consider including the following acknowledgement:',
+      '"This project has received technical support in its implementation from the national research infrastructure Språkbanken CLARIN, which is jointly funded by the Swedish Research Council (2025–2028, Grant No. 2023-00161-16) and the ten universities and government agencies that collaborate within the research infrastructure."',
+      'in publications or theses, so that the support provided by the Språkbanken CLARIN research infrastructure is duly acknowledged.',
+    ];
+
+    const swedishAck = [
+      'Transkriptionerna nedan skapades i verktyget VISP OCTRA, som utvecklats av Humlab vid Umeå universitet, Språkbanken CLARIN och våra samarbetspartners inom CLARIN-ERIC.',
+      'Ange gärna',
+      '"Detta projekt har fått tekniskt stöd i sitt genomförande av den nationella forskningsinfrastrukturen Språkbanken CLARIN, som finansieras gemensamt av Vetenskapsrådet (2025-2028, Dnr 2023-00161-16) och de 10 universitet och statliga myndigheter som samverkar inom forskningsinfrastrukturen."',
+      'i publikationer eller uppsatser för att så att stödet från forskningsinfrastrukturen Språkbanken CLARIN synliggörs.',
+    ];
+
+    const ackTexts = isSwedish ? swedishAck : englishAck;
+    const separator = '─'.repeat(64);
+    result = ackTexts.join('\n\n') + '\n\n' + separator + '\n\n' + result;
+
     return {
       file: {
         name: filename,

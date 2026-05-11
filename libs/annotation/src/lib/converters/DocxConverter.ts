@@ -15,12 +15,14 @@ export class DocxConverter extends Converter {
     addSpeakerId: boolean;
     groupByTier: boolean;
     breakMarkerCode: string;
+    uiLanguage: string;
   } = {
     mode: 'separate',
     addTimestamps: false,
     addSpeakerId: false,
     groupByTier: false,
     breakMarkerCode: '<P>',
+    uiLanguage: '',
   };
 
   public constructor() {
@@ -53,7 +55,34 @@ export class DocxConverter extends Converter {
     }
 
     const multi = indices.length > 1;
-    const paragraphs: { text: string; heading?: boolean }[] = [];
+    const paragraphs: { text: string; heading?: boolean; separator?: boolean }[] = [];
+
+    const isSwedish =
+      this.options.uiLanguage === 'sv' ||
+      indices.some((i) => {
+        const name = annotation.levels[i]?.name ?? '';
+        return name === 'Swedish' || name.toLowerCase().includes('svenska');
+      });
+
+    const englishAck = [
+      'The transcriptions below were produced using the VISP OCTRA tool, developed by Humlab at Umeå University, Språkbanken CLARIN, and our partners within CLARIN-ERIC.',
+      'Please consider including the following acknowledgement:',
+      '"This project has received technical support in its implementation from the national research infrastructure Språkbanken CLARIN, which is jointly funded by the Swedish Research Council (2025–2028, Grant No. 2023-00161-16) and the ten universities and government agencies that collaborate within the research infrastructure."',
+      'in publications or theses, so that the support provided by the Språkbanken CLARIN research infrastructure is duly acknowledged.',
+    ];
+
+    const swedishAck = [
+      'Transkriptionerna nedan skapades i verktyget VISP OCTRA, som utvecklats av Humlab vid Umeå universitet, Språkbanken CLARIN och våra samarbetspartners inom CLARIN-ERIC.',
+      'Ange gärna',
+      '"Detta projekt har fått tekniskt stöd i sitt genomförande av den nationella forskningsinfrastrukturen Språkbanken CLARIN, som finansieras gemensamt av Vetenskapsrådet (2025-2028, Dnr 2023-00161-16) och de 10 universitet och statliga myndigheter som samverkar inom forskningsinfrastrukturen."',
+      'i publikationer eller uppsatser för att så att stödet från forskningsinfrastrukturen Språkbanken CLARIN synliggörs.',
+    ];
+
+    const ackTexts = isSwedish ? swedishAck : englishAck;
+    for (const ackText of ackTexts) {
+      paragraphs.push({ text: ackText });
+    }
+    paragraphs.push({ text: '', separator: true });
 
     const lineFor = (seg: OSegment, prefix?: string) => {
       const text = seg.getFirstLabelWithoutName('Speaker')?.value ?? '';
@@ -143,7 +172,7 @@ export class DocxConverter extends Converter {
     return undefined;
   }
 
-  private buildDocx(paragraphs: { text: string; heading?: boolean }[]): Uint8Array {
+  private buildDocx(paragraphs: { text: string; heading?: boolean; separator?: boolean }[]): Uint8Array {
     const enc = new TextEncoder();
 
     const contentTypes = enc.encode(
@@ -178,6 +207,9 @@ export class DocxConverter extends Converter {
 
     const paras = paragraphs
       .map((p) => {
+        if (p.separator) {
+          return `<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr></w:pPr><w:r><w:t></w:t></w:r></w:p>`;
+        }
         const text = `<w:t xml:space="preserve">${this.escapeXml(p.text)}</w:t>`;
         if (p.heading) {
           return `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:rPr><w:b/></w:rPr>${text}</w:r></w:p>`;
