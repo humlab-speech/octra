@@ -41,7 +41,7 @@ async function main() {
   console.log(`Building OCTRA with ${dev}, isUpdate=${isUpdate} for ${baseHref}`);
   console.log(`Remove dist...`);
   execSync(`rm -rf "./${buildDir}"`);
-  const command = ["./node_modules/nx/bin/nx.js", "build",  "octra", "--prod", dev, `--base-href=${baseHref}`, `--deploy-url=assets/`, "--skip-nx-cache"];
+  const command = ["./node_modules/nx/bin/nx.js", "build",  "octra", "--prod", dev, `--base-href=${baseHref}`, `--deploy-url=${baseHref}assets/`, "--skip-nx-cache"];
 
   if (dev !== "") {
     command.splice(3, 1);
