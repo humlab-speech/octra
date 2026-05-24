@@ -56,7 +56,7 @@
   },
   "recording": {
     "title": "Record directly in browser",
-    "hint": "Or record audio directly with your microphone.",
+    "hint": "Direct recording using your microphone and/or camera.",
     "mode": {
       "audio": "Audio only",
       "audio+video": "Audio + video",

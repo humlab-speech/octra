@@ -4,10 +4,37 @@
 
 .recording-panel {
   background-color: var(--bs-body-bg);
-  transition: opacity 0.2s ease;
+}
 
-  &.is-disabled {
-    opacity: 0.4;
-    pointer-events: none;
+.recording-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+
+  &__left {
+    justify-self: start;
+    min-width: 0;
+  }
+
+  &__center {
+    justify-self: center;
+  }
+
+  &__right {
+    justify-self: end;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .recording-toolbar {
+    grid-template-columns: 1fr;
+
+    &__left,
+    &__center,
+    &__right {
+      justify-self: center;
+      text-align: center;
+    }
   }
 }

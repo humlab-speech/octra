@@ -7,149 +7,165 @@
 ></octra-recording-recovery-banner>
 
 <div class="recording-panel border rounded p-2 mt-2">
-  <div class="d-flex align-items-center gap-2 flex-wrap">
+  <div class="recording-toolbar">
     <ng-container *ngIf="service.state$ | async as state">
       <ng-container *ngIf="!staged">
-        <div
-          class="btn-group btn-group-sm"
-          role="group"
-          [attr.aria-label]="'recording.mode.aria label' | transloco"
-          *ngIf="state === 'idle' || state === 'error'"
-        >
-          <button
-            type="button"
-            class="btn"
-            [class.btn-secondary]="selectedMode === 'audio'"
-            [class.btn-outline-secondary]="selectedMode !== 'audio'"
-            [attr.aria-pressed]="selectedMode === 'audio'"
-            [attr.aria-label]="'recording.mode.audio' | transloco"
-            [ngbTooltip]="'recording.mode.audio' | transloco"
-            container="body"
-            (click)="onSelectMode('audio')"
+        <div class="recording-toolbar__left">
+          <span
+            class="text-muted small"
+            *ngIf="state === 'idle' || state === 'error'"
           >
-            <i class="bi bi-mic-fill"></i>
-          </button>
-          <button
-            type="button"
-            class="btn"
-            [class.btn-secondary]="selectedMode === 'audio+video'"
-            [class.btn-outline-secondary]="selectedMode !== 'audio+video'"
-            [attr.aria-pressed]="selectedMode === 'audio+video'"
-            [attr.aria-label]="'recording.mode.audio+video' | transloco"
-            [ngbTooltip]="'recording.mode.audio+video' | transloco"
-            container="body"
-            (click)="onSelectMode('audio+video')"
-          >
-            <i class="bi bi-camera-video-fill"></i>
-          </button>
+            {{ 'recording.hint' | transloco }}
+          </span>
         </div>
 
-        <button
-          type="button"
-          class="btn btn-danger btn-sm"
-          *ngIf="state === 'idle' || state === 'error'"
-          (click)="onStart()"
+        <div
+          class="recording-toolbar__center d-flex align-items-center gap-2 flex-wrap justify-content-center"
         >
-          <i class="bi bi-record-circle"></i>
-          {{ 'recording.start' | transloco }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary btn-sm"
-          *ngIf="state === 'requesting-permission'"
-          disabled
-        >
-          <span class="spinner-border spinner-border-sm" role="status"></span>
-          {{ 'recording.requesting permission' | transloco }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-dark btn-sm"
-          *ngIf="state === 'recording' || state === 'paused'"
-          (click)="onStop()"
-        >
-          <i class="bi bi-stop-circle"></i>
-          {{ 'recording.stop' | transloco }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary btn-sm"
-          *ngIf="state === 'recording' || state === 'paused'"
-          (click)="onDiscard()"
-        >
-          {{ 'recording.discard' | transloco }}
-        </button>
+          <div
+            class="btn-group btn-group-sm"
+            role="group"
+            [attr.aria-label]="'recording.mode.aria label' | transloco"
+            *ngIf="state === 'idle' || state === 'error'"
+          >
+            <button
+              type="button"
+              class="btn"
+              [class.btn-secondary]="selectedMode === 'audio'"
+              [class.btn-outline-secondary]="selectedMode !== 'audio'"
+              [attr.aria-pressed]="selectedMode === 'audio'"
+              [attr.aria-label]="'recording.mode.audio' | transloco"
+              [ngbTooltip]="'recording.mode.audio' | transloco"
+              container="body"
+              (click)="onSelectMode('audio')"
+            >
+              <i class="bi bi-mic-fill"></i>
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [class.btn-secondary]="selectedMode === 'audio+video'"
+              [class.btn-outline-secondary]="selectedMode !== 'audio+video'"
+              [attr.aria-pressed]="selectedMode === 'audio+video'"
+              [attr.aria-label]="'recording.mode.audio+video' | transloco"
+              [ngbTooltip]="'recording.mode.audio+video' | transloco"
+              container="body"
+              (click)="onSelectMode('audio+video')"
+            >
+              <i class="bi bi-camera-video-fill"></i>
+            </button>
+          </div>
 
-        <span
-          class="text-muted small ms-2"
-          *ngIf="
-            state === 'recording' || state === 'paused' || state === 'stopping'
-          "
-        >
-          {{ formatElapsed((service.elapsed$ | async) ?? 0) }}
-        </span>
-
-        <ng-container *ngIf="state === 'recording' || state === 'paused'">
-          <octra-vu-meter
-            class="ms-2"
-            *ngIf="service.levels$ | async as levels"
-            [peakDb]="levels.peakDb"
-            [rmsDb]="levels.rmsDb"
-          ></octra-vu-meter>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            *ngIf="state === 'idle' || state === 'error'"
+            (click)="onStart()"
+          >
+            <i class="bi bi-record-circle"></i>
+            {{ 'recording.start' | transloco }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            *ngIf="state === 'requesting-permission'"
+            disabled
+          >
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+            {{ 'recording.requesting permission' | transloco }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-dark btn-sm"
+            *ngIf="state === 'recording' || state === 'paused'"
+            (click)="onStop()"
+          >
+            <i class="bi bi-stop-circle"></i>
+            {{ 'recording.stop' | transloco }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            *ngIf="state === 'recording' || state === 'paused'"
+            (click)="onDiscard()"
+          >
+            {{ 'recording.discard' | transloco }}
+          </button>
 
           <span
-            class="badge text-bg-warning ms-1"
-            *ngIf="service.lowVolumeWarning$ | async"
-            role="alert"
-            aria-live="polite"
+            class="text-muted small ms-2"
+            *ngIf="
+              state === 'recording' ||
+              state === 'paused' ||
+              state === 'stopping'
+            "
           >
-            <i class="bi bi-volume-down"></i>
-            {{ 'recording.low volume warning' | transloco }}
+            {{ formatElapsed((service.elapsed$ | async) ?? 0) }}
           </span>
 
-          <span
-            class="text-muted small ms-1"
-            *ngIf="service.chunkPersisted$ | async as chunks"
-          >
-            <ng-container *ngIf="chunks.bytes > 0">
-              {{ chunks.bytes / 1048576 | number: '1.0-1' }} MB
-            </ng-container>
-          </span>
-        </ng-container>
+          <ng-container *ngIf="state === 'recording' || state === 'paused'">
+            <octra-vu-meter
+              class="ms-2"
+              *ngIf="service.levels$ | async as levels"
+              [peakDb]="levels.peakDb"
+              [rmsDb]="levels.rmsDb"
+            ></octra-vu-meter>
 
-        <span
-          class="text-muted small"
-          *ngIf="state === 'idle' || state === 'error'"
-        >
-          {{ 'recording.hint' | transloco }}
-        </span>
+            <span
+              class="badge text-bg-warning ms-1"
+              *ngIf="service.lowVolumeWarning$ | async"
+              role="alert"
+              aria-live="polite"
+            >
+              <i class="bi bi-volume-down"></i>
+              {{ 'recording.low volume warning' | transloco }}
+            </span>
+
+            <span
+              class="text-muted small ms-1"
+              *ngIf="service.chunkPersisted$ | async as chunks"
+            >
+              <ng-container *ngIf="chunks.bytes > 0">
+                {{ chunks.bytes / 1048576 | number: '1.0-1' }} MB
+              </ng-container>
+            </span>
+          </ng-container>
+        </div>
+
+        <div class="recording-toolbar__right"></div>
       </ng-container>
     </ng-container>
 
     <ng-container *ngIf="staged">
-      <span class="badge text-bg-success">
-        <i class="bi bi-check2-circle"></i>
-        {{ 'recording.ready' | transloco }}
-      </span>
-      <span class="text-muted small">{{ staged.file.name }}</span>
-      <button type="button" class="btn btn-primary btn-sm" (click)="onUse()">
-        {{ 'recording.use' | transloco }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-secondary btn-sm"
-        (click)="onDownload()"
+      <div class="recording-toolbar__left"></div>
+      <div
+        class="recording-toolbar__center d-flex align-items-center gap-2 flex-wrap justify-content-center"
       >
-        <i class="bi bi-download"></i>
-        {{ 'recording.download' | transloco }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-danger btn-sm"
-        (click)="onDiscard()"
-      >
-        {{ 'recording.discard' | transloco }}
-      </button>
+        <span class="badge text-bg-success">
+          <i class="bi bi-check2-circle"></i>
+          {{ 'recording.ready' | transloco }}
+        </span>
+        <span class="text-muted small">{{ staged.file.name }}</span>
+        <button type="button" class="btn btn-primary btn-sm" (click)="onUse()">
+          {{ 'recording.use' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="onDownload()"
+        >
+          <i class="bi bi-download"></i>
+          {{ 'recording.download' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-sm"
+          (click)="onDiscard()"
+        >
+          {{ 'recording.discard' | transloco }}
+        </button>
+      </div>
+      <div class="recording-toolbar__right"></div>
     </ng-container>
   </div>
 
