@@ -11,6 +11,7 @@ import { AuthenticationComponent } from '../../component/authentication-componen
 import { DefaultComponent } from '../../component/default.component';
 import { MaintenanceBannerComponent } from '../../component/maintenance/maintenance-banner/maint-banner.component';
 import { OctraDropzoneComponent } from '../../component/octra-dropzone/octra-dropzone.component';
+import { RecordingPanelComponent } from '../../component/recording-panel/recording-panel.component';
 import { AppSettings } from '../../obj';
 import { SessionFile } from '../../obj/SessionFile';
 import { AudioService, SettingsService } from '../../shared/service';
@@ -68,6 +69,7 @@ import { LoginService } from './login.service';
     MaintenanceBannerComponent,
     AuthenticationComponent,
     OctraDropzoneComponent,
+    RecordingPanelComponent,
     BrowserTestComponent,
     AsyncPipe,
     DecimalPipe,
@@ -85,6 +87,15 @@ export class LoginComponent
   @ViewChild('onlinemode', { static: true }) onlinemode?: ElementRef;
 
   email_link = '';
+  recordingActive = false;
+
+  onRecordingActiveChange(active: boolean): void {
+    this.recordingActive = active;
+  }
+
+  onUseRecording(file: File): void {
+    this.dropzone?.addFile(file);
+  }
 
   transcription: {
     active: boolean;

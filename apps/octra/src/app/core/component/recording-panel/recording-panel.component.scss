@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.recording-panel {
+  background-color: var(--bs-body-bg);
+  transition: opacity 0.2s ease;
+
+  &.is-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}

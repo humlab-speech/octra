@@ -50,10 +50,10 @@ export class RecordingPersistenceService {
     const now = Date.now();
     await this.db.transaction(
       'rw',
-      this.db.chunks,
+      (this.db.chunks as any),
       this.db.sessions,
       async () => {
-        await this.db.chunks.add({
+        await (this.db.chunks as any).add({
           sessionId: params.sessionId,
           index: params.index,
           kind: params.kind,
@@ -74,8 +74,8 @@ export class RecordingPersistenceService {
     sessionId: string,
     kind?: RecordingChunkKind,
   ): Promise<IRecordingChunk[]> {
-    let coll = this.db.chunks.where('sessionId').equals(sessionId);
-    const all = await coll.toArray();
+    const coll = (this.db.chunks as any).where('sessionId').equals(sessionId);
+    const all = (await coll.toArray()) as IRecordingChunk[];
     const filtered = kind ? all.filter((c) => c.kind === kind) : all;
     return filtered.sort((a, b) => a.index - b.index);
   }
@@ -99,10 +99,10 @@ export class RecordingPersistenceService {
   async discardSession(sessionId: string): Promise<void> {
     await this.db.transaction(
       'rw',
-      this.db.chunks,
+      (this.db.chunks as any),
       this.db.sessions,
       async () => {
-        await this.db.chunks
+        await (this.db.chunks as any)
           .where('sessionId')
           .equals(sessionId)
           .delete();

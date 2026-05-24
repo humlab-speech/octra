@@ -149,12 +149,22 @@
                   ></div>
                 }
                 <div style="margin-top: 40px">
-                  <octra-dropzone
-                    #dropzone
-                    [height]="'147px'"
-                    [oldFiles]="sessionfile ? [sessionfile] : []"
-                    [showAutoTranscribe]="true"
-                  ></octra-dropzone>
+                  <div [class.is-dimmed]="recordingActive">
+                    <octra-dropzone
+                      #dropzone
+                      [height]="'147px'"
+                      [oldFiles]="sessionfile ? [sessionfile] : []"
+                      [showAutoTranscribe]="true"
+                    ></octra-dropzone>
+                  </div>
+                  <octra-recording-panel
+                    [disabled]="
+                      dropzone.statistics.valid > 0 ||
+                      dropzone.statistics.progress > 0
+                    "
+                    (recordingActiveChange)="onRecordingActiveChange($event)"
+                    (useRecording)="onUseRecording($event)"
+                  ></octra-recording-panel>
                 </div>
 
                 @if ((transcription.active || transcription.error || transcription.phase === 'finalizing') && !translation.active && !translation.error) {

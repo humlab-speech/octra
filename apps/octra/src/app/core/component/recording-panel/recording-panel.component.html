@@ -1,0 +1,92 @@
+<div
+  class="recording-panel border rounded p-2 mt-2"
+  [class.is-disabled]="disabled"
+  [attr.aria-disabled]="disabled"
+>
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <ng-container *ngIf="service.state$ | async as state">
+      <ng-container *ngIf="!staged">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm"
+          *ngIf="state === 'idle' || state === 'error'"
+          [disabled]="disabled"
+          (click)="onStart()"
+        >
+          <i class="bi bi-record-circle"></i>
+          {{ 'recording.start' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          *ngIf="state === 'requesting-permission'"
+          disabled
+        >
+          <span class="spinner-border spinner-border-sm" role="status"></span>
+          {{ 'recording.requesting permission' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-dark btn-sm"
+          *ngIf="state === 'recording' || state === 'paused'"
+          (click)="onStop()"
+        >
+          <i class="bi bi-stop-circle"></i>
+          {{ 'recording.stop' | transloco }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          *ngIf="state === 'recording' || state === 'paused'"
+          (click)="onDiscard()"
+        >
+          {{ 'recording.discard' | transloco }}
+        </button>
+
+        <span
+          class="text-muted small ms-2"
+          *ngIf="state === 'recording' || state === 'paused' || state === 'stopping'"
+        >
+          {{ formatElapsed((service.elapsed$ | async) ?? 0) }}
+        </span>
+
+        <span
+          class="text-muted small"
+          *ngIf="state === 'idle' || state === 'error'"
+        >
+          {{ 'recording.hint' | transloco }}
+        </span>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="staged">
+      <span class="badge text-bg-success">
+        <i class="bi bi-check2-circle"></i>
+        {{ 'recording.ready' | transloco }}
+      </span>
+      <span class="text-muted small">{{ staged.file.name }}</span>
+      <button type="button" class="btn btn-primary btn-sm" (click)="onUse()">
+        {{ 'recording.use' | transloco }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm"
+        (click)="onDownload()"
+      >
+        <i class="bi bi-download"></i>
+        {{ 'recording.download' | transloco }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-danger btn-sm"
+        (click)="onDiscard()"
+      >
+        {{ 'recording.discard' | transloco }}
+      </button>
+    </ng-container>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger py-1 px-2 mt-2 mb-0 small">
+    {{ errorMessage }}
+  </div>
+</div>

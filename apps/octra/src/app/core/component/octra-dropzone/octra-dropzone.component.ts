@@ -135,6 +135,11 @@ export class OctraDropzoneComponent extends DefaultComponent implements OnDestro
     }
   };
 
+  /** Stage a programmatically supplied file (e.g. from the recording panel). */
+  public addFile(file: File): void {
+    this.octraDropzoneService.add(file);
+  }
+
   getDropzoneFileString(file: { name: string; size: number }) {
     const fsize: FileSize = getFileSize(file.size);
     return `${file.name} (${Math.round(fsize.size * 100) / 100} ${
