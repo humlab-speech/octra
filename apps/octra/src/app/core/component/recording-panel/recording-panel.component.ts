@@ -50,6 +50,9 @@ export class RecordingPanelComponent implements OnInit, OnDestroy {
   staged: StagedResult | null = null;
   errorMessage: string | null = null;
   recoverable: RecoverableSession[] = [];
+  selectedMode: 'audio' | 'audio+video' = 'audio';
+  previewStream: MediaStream | null = null;
+  showFirefoxWebmNotice = false;
 
   private subs = new Subscription();
 
@@ -134,16 +137,31 @@ export class RecordingPanelComponent implements OnInit, OnDestroy {
   async onStart(): Promise<void> {
     this.errorMessage = null;
     this.staged = null;
+    this.previewStream = null;
     try {
-      await this.service.start({ mode: 'audio' });
+      await this.service.start({ mode: this.selectedMode });
+      if (this.selectedMode === 'audio+video') {
+        this.previewStream = this.service.getStream() ?? null;
+        const picked = this.service.currentMimeType.toLowerCase();
+        this.showFirefoxWebmNotice = picked.startsWith('video/webm');
+      } else {
+        this.showFirefoxWebmNotice = false;
+      }
+      this.cdr.markForCheck();
     } catch {
       // error already surfaced via error$
     }
   }
 
+  onSelectMode(mode: 'audio' | 'audio+video'): void {
+    if (this.service.state$.value !== 'idle' && this.service.state$.value !== 'error') return;
+    this.selectedMode = mode;
+  }
+
   async onStop(): Promise<void> {
     try {
       this.staged = await this.service.stop();
+      this.previewStream = null;
       await this.persistence.refreshRecoverable();
     } catch (err) {
       this.errorMessage = (err as Error).message;

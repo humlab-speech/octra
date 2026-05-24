@@ -87,6 +87,10 @@ export class RecordingService {
     return this.mimeType;
   }
 
+  getStream(): MediaStream | undefined {
+    return this.stream;
+  }
+
   async start(opts: StartOptions): Promise<void> {
     if (this.state$.value !== 'idle' && this.state$.value !== 'error') {
       throw new Error('Recording already in progress');
