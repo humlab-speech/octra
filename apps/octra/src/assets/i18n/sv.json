@@ -105,6 +105,34 @@
     "file names not same": "Transkriptfilens namn matchar inte ljudfilens namn.",
     "file too large": "Filen överskrider den maximalt tillåtna storleken på {{maxSize}} MB."
   },
+  "recording": {
+    "title": "Record directly in browser",
+    "hint": "Or record audio directly with your microphone.",
+    "mode": {
+      "audio": "Audio only",
+      "audio+video": "Audio + video"
+    },
+    "start": "Start recording",
+    "stop": "Stop",
+    "pause": "Pause",
+    "resume": "Resume",
+    "use": "Use recording",
+    "download": "Download",
+    "discard": "Discard",
+    "ready": "Recording ready",
+    "requesting permission": "Requesting microphone…",
+    "low volume warning": "Volume seems low",
+    "permission denied": "Microphone permission was denied.",
+    "no microphone": "No microphone was found.",
+    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "recovery": {
+      "title": "Unfinished recording recovered.",
+      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
+      "continue": "Continue recording",
+      "download partial": "Download partial",
+      "discard": "Discard"
+    }
+  },
   "export": {
     "meta data": {
       "description": "Ladda ned metadata som loggades under ditt transkriptionsarbete. (Endast tillgängligt när loggning är aktiverad i inställningsmenyn)."
