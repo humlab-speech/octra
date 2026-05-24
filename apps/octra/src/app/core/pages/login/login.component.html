@@ -2,7 +2,10 @@
   <section class="order-1 order-md-1">
     <div class="container-md p-2">
       <hr class="d-none d-md-block" />
-      <div class="text-center mb-3 p-0 p-md-3" style="background-color: #279440">
+      <div
+        class="text-center mb-3 p-0 p-md-3"
+        style="background-color: #279440"
+      >
         <img
           src="assets/img/socialmedia/Octra2_thumbnail_github2x.webp"
           alt="octra logo"
@@ -10,12 +13,19 @@
           style="max-height: 200px"
         />
       </div>
-      <p style="text-align: justify">{{ 'login.app description' | transloco }}</p>
+      <p style="text-align: justify">
+        {{ 'login.app description' | transloco }}
+      </p>
     </div>
   </section>
 }
 
-<div [class]="localOnly ? 'section order-2 order-md-2' : 'section order-2 order-md-1'" id="login">
+<div
+  [class]="
+    localOnly ? 'section order-2 order-md-2' : 'section order-2 order-md-1'
+  "
+  id="login"
+>
   <div class="row">
     <div class="col-12" style="text-align: center">
       @if (
@@ -50,68 +60,70 @@
   @if (compatibleBrowser !== false) {
     <div class="row" id="loginrow">
       @if (!localOnly) {
-      <div class="col-md-6">
-        <div
-          class="card login-card d-flex flex-column flex-fill h-100"
-          #onlinemode
-        >
-          <div class="card-body">
-            <section class="d-flex flex-column flex-fill h-100">
-              <h4>{{ 'login.online mode' | transloco }}</h4>
-              <p style="text-align: center">
-                {{ 'login.online mode description' | transloco }}
-              </p>
-              @if (
-                !apc.octra.login?.enabled || !apc.api?.url || !apc.api?.appToken
-              ) {
-                <div
-                  id="login-disabled"
-                  style="
-                    display: table-cell;
-                    height: 100%;
-                    align-content: center;
-                  "
-                >
-                  <i class="bi bi-wifi-off fs-1"></i><br />
-                  {{ 'login.online mode disabled' | transloco }}
-                </div>
-              } @else if (
-                (authStoreService.serverOnline$ | async) === undefined
-                  ? true
-                  : (authStoreService.serverOnline$ | async)
-              ) {
-                <div class="form-horizontal">
-                  <octra-authentication-component
-                    [showTitle]="false"
-                    (submitClick)="onOnlineSubmit($event)"
-                    [authentications]="api.appProperties?.authentications"
-                    [passwordReset]="api.appProperties?.reset_password"
-                    [registrations]="api.appProperties?.registrations"
-                  ></octra-authentication-component>
-                </div>
-              } @else {
-                <div
-                  class="text-center justify-content-center d-flex flex-column flex-fill h-100 p-3 opacity-75"
-                >
-                  <i
-                    class="bi bi-exclamation-triangle-fill text-warning fs-1"
-                  ></i>
+        <div class="col-md-6">
+          <div
+            class="card login-card d-flex flex-column flex-fill h-100"
+            #onlinemode
+          >
+            <div class="card-body">
+              <section class="d-flex flex-column flex-fill h-100">
+                <h4>{{ 'login.online mode' | transloco }}</h4>
+                <p style="text-align: center">
+                  {{ 'login.online mode description' | transloco }}
+                </p>
+                @if (
+                  !apc.octra.login?.enabled ||
+                  !apc.api?.url ||
+                  !apc.api?.appToken
+                ) {
                   <div
-                    [innerHTML]="
-                      'login.api not available'
-                        | transloco
-                          : {
-                              email_link: email_link,
-                            }
+                    id="login-disabled"
+                    style="
+                      display: table-cell;
+                      height: 100%;
+                      align-content: center;
                     "
-                  ></div>
-                </div>
-              }
-              <br />
-            </section>
+                  >
+                    <i class="bi bi-wifi-off fs-1"></i><br />
+                    {{ 'login.online mode disabled' | transloco }}
+                  </div>
+                } @else if (
+                  (authStoreService.serverOnline$ | async) === undefined
+                    ? true
+                    : (authStoreService.serverOnline$ | async)
+                ) {
+                  <div class="form-horizontal">
+                    <octra-authentication-component
+                      [showTitle]="false"
+                      (submitClick)="onOnlineSubmit($event)"
+                      [authentications]="api.appProperties?.authentications"
+                      [passwordReset]="api.appProperties?.reset_password"
+                      [registrations]="api.appProperties?.registrations"
+                    ></octra-authentication-component>
+                  </div>
+                } @else {
+                  <div
+                    class="text-center justify-content-center d-flex flex-column flex-fill h-100 p-3 opacity-75"
+                  >
+                    <i
+                      class="bi bi-exclamation-triangle-fill text-warning fs-1"
+                    ></i>
+                    <div
+                      [innerHTML]="
+                        'login.api not available'
+                          | transloco
+                            : {
+                                email_link: email_link,
+                              }
+                      "
+                    ></div>
+                  </div>
+                }
+                <br />
+              </section>
+            </div>
           </div>
         </div>
-      </div>
       }
       <div [class]="localOnly ? 'col-12' : 'col-md-6'">
         <div class="card login-card position-relative" #localmode>
@@ -136,7 +148,9 @@
           <div class="card-body">
             <section>
               <h4>{{ 'login.local mode' | transloco }}</h4>
-              <div [innerHTML]="'login.local mode description' | transloco"></div>
+              <div
+                [innerHTML]="'login.local mode description' | transloco"
+              ></div>
               <div>
                 @if (appStorage.sessionfile !== undefined) {
                   <div
@@ -167,84 +181,182 @@
                   ></octra-recording-panel>
                 </div>
 
-                @if ((transcription.active || transcription.error || transcription.phase === 'finalizing') && !translation.active && !translation.error) {
-                  <div class="transcription-progress mt-3 p-3 border rounded bg-light">
+                @if (
+                  (transcription.active ||
+                    transcription.error ||
+                    transcription.phase === 'finalizing') &&
+                  !translation.active &&
+                  !translation.error
+                ) {
+                  <div
+                    class="transcription-progress mt-3 p-3 border rounded bg-light"
+                  >
                     @if (transcription.phase === 'downloading') {
                       <div>
-                        <strong>{{ 'login.auto-transcription.downloading model' | transloco }}</strong>
+                        <strong>{{
+                          'login.auto-transcription.downloading model'
+                            | transloco
+                        }}</strong>
                         @if (transcription.downloadFile) {
-                          <div class="text-muted small">{{ transcription.downloadFile }}</div>
+                          <div class="text-muted small">
+                            {{ transcription.downloadFile }}
+                          </div>
                         }
-                        @if (transcription.downloadLoaded > 0 || transcription.downloadTotal > 0 || transcription.downloadExpectedBytes > 0) {
+                        @if (
+                          transcription.downloadLoaded > 0 ||
+                          transcription.downloadTotal > 0 ||
+                          transcription.downloadExpectedBytes > 0
+                        ) {
                           <div class="progress mt-1" style="height: 18px">
                             <div
                               class="progress-bar"
                               role="progressbar"
-                              [style.width]="(transcription.downloadLoaded / (transcription.downloadTotal || transcription.downloadExpectedBytes) * 100) + '%'"
+                              [style.width]="
+                                (transcription.downloadLoaded /
+                                  (transcription.downloadTotal ||
+                                    transcription.downloadExpectedBytes)) *
+                                  100 +
+                                '%'
+                              "
                             >
-                              {{ (transcription.downloadLoaded / (transcription.downloadTotal || transcription.downloadExpectedBytes) * 100) | number:'1.0-0' }}%
+                              {{
+                                (transcription.downloadLoaded /
+                                  (transcription.downloadTotal ||
+                                    transcription.downloadExpectedBytes)) *
+                                  100 | number: '1.0-0'
+                              }}%
                             </div>
                           </div>
                           <small class="text-muted">
-                            {{ (transcription.downloadLoaded / 1048576) | number:'1.0-0' }} MB
-                            / {{ ((transcription.downloadTotal || transcription.downloadExpectedBytes) / 1048576) | number:'1.0-0' }} MB
+                            {{
+                              transcription.downloadLoaded / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB /
+                            {{
+                              (transcription.downloadTotal ||
+                                transcription.downloadExpectedBytes) / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB
                           </small>
                         } @else {
-                          <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
+                          <div
+                            class="spinner-border spinner-border-sm ms-2"
+                            role="status"
+                          ></div>
                         }
                       </div>
                     } @else if (transcription.phase === 'diarizing') {
                       <div>
-                        <strong>{{ 'login.auto-transcription.diarizingLabel' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
-                        @if (transcription.downloadLoaded > 0 || transcription.downloadTotal > 0) {
+                        <strong>{{
+                          'login.auto-transcription.diarizingLabel' | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
+                        @if (
+                          transcription.downloadLoaded > 0 ||
+                          transcription.downloadTotal > 0
+                        ) {
                           <div class="progress mt-1" style="height: 18px">
                             <div
                               class="progress-bar bg-info"
                               role="progressbar"
-                              [style.width]="(transcription.downloadLoaded / transcription.downloadTotal * 100) + '%'"
+                              [style.width]="
+                                (transcription.downloadLoaded /
+                                  transcription.downloadTotal) *
+                                  100 +
+                                '%'
+                              "
                             >
-                              {{ (transcription.downloadLoaded / transcription.downloadTotal * 100) | number:'1.0-0' }}%
+                              {{
+                                (transcription.downloadLoaded /
+                                  transcription.downloadTotal) *
+                                  100 | number: '1.0-0'
+                              }}%
                             </div>
                           </div>
                           <small class="text-muted">
-                            {{ (transcription.downloadLoaded / 1048576) | number:'1.0-0' }} MB
-                            / {{ (transcription.downloadTotal / 1048576) | number:'1.0-0' }} MB
+                            {{
+                              transcription.downloadLoaded / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB /
+                            {{
+                              transcription.downloadTotal / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB
                           </small>
                         } @else {
                           <div class="mt-1 text-muted small">
-                            {{ 'login.auto-transcription.initializing speaker segmentation' | transloco }}
+                            {{
+                              'login.auto-transcription.initializing speaker segmentation'
+                                | transloco
+                            }}
                           </div>
                         }
                       </div>
                     } @else if (transcription.phase === 'finalizing') {
                       <div>
-                        <strong>{{ 'login.auto-transcription.transcription complete' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <strong>{{
+                          'login.auto-transcription.transcription complete'
+                            | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
                       </div>
                     } @else if (transcription.phase === 'transcribing') {
                       <div>
-                        <strong>{{ 'login.auto-transcription.transcribing audio' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <strong>{{
+                          'login.auto-transcription.transcribing audio'
+                            | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
                         @if (transcription.audioDurationS > 0) {
                           <div class="progress mt-2" style="height: 14px">
                             <div
                               class="progress-bar bg-success"
                               role="progressbar"
-                              [style.width]="(transcription.segmentEndS / transcription.audioDurationS * 100) + '%'"
+                              [style.width]="
+                                (transcription.segmentEndS /
+                                  transcription.audioDurationS) *
+                                  100 +
+                                '%'
+                              "
                             ></div>
                           </div>
                           <small class="text-muted">
-                            {{ formatDuration(transcription.segmentEndS) }} / {{ formatDuration(transcription.audioDurationS) }}
-                            &nbsp;·&nbsp; {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(transcription.elapsedMs / 1000) }}
+                            {{ formatDuration(transcription.segmentEndS) }} /
+                            {{
+                              formatDuration(transcription.audioDurationS)
+                            }}
+                            &nbsp;·&nbsp;
+                            {{
+                              'login.auto-transcription.elapsed' | transloco
+                            }}
+                            {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </small>
                         } @else {
                           <div class="mt-1 text-muted small">
-                            {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(transcription.elapsedMs / 1000) }}
+                            {{
+                              'login.auto-transcription.elapsed' | transloco
+                            }}
+                            {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </div>
                         }
                         <div class="mt-1 text-muted small">
-                          {{ 'login.auto-transcription.running locally' | transloco }}
+                          {{
+                            'login.auto-transcription.running locally'
+                              | transloco
+                          }}
                         </div>
                       </div>
                     }
@@ -253,7 +365,12 @@
                       <div class="alert alert-danger mt-2 py-1 mb-0 small">
                         {{ transcription.error }}
                         @if (transcription.usedWebGPU) {
-                          <div class="mt-1" [innerHTML]="'login.auto-transcription.webgpu tip' | transloco"></div>
+                          <div
+                            class="mt-1"
+                            [innerHTML]="
+                              'login.auto-transcription.webgpu tip' | transloco
+                            "
+                          ></div>
                         }
                       </div>
                     }
@@ -263,7 +380,11 @@
                       type="button"
                       (click)="dismissTranscriptionError()"
                     >
-                      {{ transcription.active ? ('login.auto-transcription.cancel' | transloco) : ('login.auto-transcription.dismiss' | transloco) }}
+                      {{
+                        transcription.active
+                          ? ('login.auto-transcription.cancel' | transloco)
+                          : ('login.auto-transcription.dismiss' | transloco)
+                      }}
                     </button>
 
                     <small class="d-block text-muted mt-1">
@@ -277,36 +398,71 @@
                     }
                   </div>
                 }
-                @if (translation.active || translation.error || translation.phase === 'finalizing') {
-                  <div class="translation-progress mt-3 p-3 border rounded bg-light">
+                @if (
+                  translation.active ||
+                  translation.error ||
+                  translation.phase === 'finalizing'
+                ) {
+                  <div
+                    class="translation-progress mt-3 p-3 border rounded bg-light"
+                  >
                     @if (translation.phase === 'downloading') {
                       <div>
-                        <strong>{{ 'login.translation.phase.downloading' | transloco }}</strong>
+                        <strong>{{
+                          'login.translation.phase.downloading' | transloco
+                        }}</strong>
                         @if (translation.downloadFile) {
-                          <div class="text-muted small">{{ translation.downloadFile }}</div>
+                          <div class="text-muted small">
+                            {{ translation.downloadFile }}
+                          </div>
                         }
                         @if (translation.downloadTotal > 0) {
                           <div class="progress mt-1" style="height: 18px">
                             <div
                               class="progress-bar"
                               role="progressbar"
-                              [style.width]="(translation.downloadLoaded / translation.downloadTotal * 100) + '%'"
+                              [style.width]="
+                                (translation.downloadLoaded /
+                                  translation.downloadTotal) *
+                                  100 +
+                                '%'
+                              "
                             >
-                              {{ (translation.downloadLoaded / translation.downloadTotal * 100) | number:'1.0-0' }}%
+                              {{
+                                (translation.downloadLoaded /
+                                  translation.downloadTotal) *
+                                  100 | number: '1.0-0'
+                              }}%
                             </div>
                           </div>
                           <small class="text-muted">
-                            {{ (translation.downloadLoaded / 1048576) | number:'1.0-0' }} MB
-                            / {{ (translation.downloadTotal / 1048576) | number:'1.0-0' }} MB
+                            {{
+                              translation.downloadLoaded / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB /
+                            {{
+                              translation.downloadTotal / 1048576
+                                | number: '1.0-0'
+                            }}
+                            MB
                           </small>
                         } @else {
-                          <div class="spinner-border spinner-border-sm ms-2" role="status"></div>
+                          <div
+                            class="spinner-border spinner-border-sm ms-2"
+                            role="status"
+                          ></div>
                         }
                       </div>
                     } @else if (translation.phase === 'initializing') {
                       <div>
-                        <strong>{{ 'login.translation.phase.initializing' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <strong>{{
+                          'login.translation.phase.initializing' | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
                         <div class="progress mt-2" style="height: 14px">
                           <div
                             class="progress-bar progress-bar-striped progress-bar-animated"
@@ -317,24 +473,43 @@
                       </div>
                     } @else if (translation.phase === 'finalizing') {
                       <div>
-                        <strong>{{ 'login.translation.phase.finalizing' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <strong>{{
+                          'login.translation.phase.finalizing' | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
                       </div>
                     } @else if (translation.phase === 'translating') {
                       <div>
-                        <strong>{{ 'login.translation.phase.translating' | transloco }}</strong>
-                        <div class="spinner-border spinner-border-sm ms-2 d-inline-block" role="status"></div>
+                        <strong>{{
+                          'login.translation.phase.translating' | transloco
+                        }}</strong>
+                        <div
+                          class="spinner-border spinner-border-sm ms-2 d-inline-block"
+                          role="status"
+                        ></div>
                         @if (translation.segmentTotal > 0) {
                           <div class="progress mt-2" style="height: 14px">
                             <div
                               class="progress-bar bg-success"
                               role="progressbar"
-                              [style.width]="(translation.segmentIndex / translation.segmentTotal * 100) + '%'"
+                              [style.width]="
+                                (translation.segmentIndex /
+                                  translation.segmentTotal) *
+                                  100 +
+                                '%'
+                              "
                             ></div>
                           </div>
                           <small class="text-muted">
-                            {{ translation.segmentIndex }} / {{ translation.segmentTotal }}
-                            &nbsp;·&nbsp; {{ 'login.auto-transcription.elapsed' | transloco }} {{ formatDuration(translation.elapsedMs / 1000) }}
+                            {{ translation.segmentIndex }} /
+                            {{ translation.segmentTotal }} &nbsp;·&nbsp;
+                            {{
+                              'login.auto-transcription.elapsed' | transloco
+                            }}
+                            {{ formatDuration(translation.elapsedMs / 1000) }}
                           </small>
                         }
                       </div>
@@ -351,7 +526,11 @@
                       type="button"
                       (click)="dismissTranslationError()"
                     >
-                      {{ translation.active ? ('login.auto-transcription.cancel' | transloco) : ('login.auto-transcription.dismiss' | transloco) }}
+                      {{
+                        translation.active
+                          ? ('login.auto-transcription.cancel' | transloco)
+                          : ('login.auto-transcription.dismiss' | transloco)
+                      }}
                     </button>
                   </div>
                 }
@@ -402,71 +581,146 @@
 </div>
 <div class="section order-3 order-md-2">
   <footer class="footer">
-    <fieldset style="border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem 1rem 1rem; background: #fff;">
-      <legend style="float: none; width: auto; font-size: 0.85rem; padding: 0.15rem 0.5rem; color: #555; border: 1px solid #ccc; border-radius: 3px; background: #fff;">{{ 'login.funding support and development' | transloco }}</legend>
-    <div class="row row-cols-auto justify-content-center align-items-center g-3">
-      <div class="col">
-        <img alt="VISP — Visible Speech" class="logo" src="./assets/img/visp_slogan_sv.svg" />
-      </div>
-      <div class="col">
-        <a href="https://www.sweclarin.se/" target="_blank">
-          <img alt="SweCLARIN" class="logo" src="./assets/img/sweclarin_logo.png" />
-        </a>
-      </div>
-      <div class="col">
-        <a href="https://www.umu.se/en/humlab/" target="_blank">
-          <img alt="Humlab – Umeå University" class="logo" src="./assets/img/humlab_logo_left_en.png" />
-        </a>
-      </div>
-      <div class="col">
-        <a href="http://www.en.phonetik.uni-muenchen.de/" target="_blank">
+    <fieldset
+      style="
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0.5rem 1rem 1rem;
+        background: #fff;
+      "
+    >
+      <legend
+        style="
+          float: none;
+          width: auto;
+          font-size: 0.85rem;
+          padding: 0.15rem 0.5rem;
+          color: #555;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          background: #fff;
+        "
+      >
+        {{ 'login.funding support and development' | transloco }}
+      </legend>
+      <div
+        class="row row-cols-auto justify-content-center align-items-center g-3"
+      >
+        <div class="col">
           <img
-            alt="IPS LMU Munich"
+            alt="VISP — Visible Speech"
             class="logo"
-            src="./assets/img/ipsx60.png"
+            src="./assets/img/visp_slogan_sv.svg"
           />
-        </a>
+        </div>
+        <div class="col">
+          <a href="https://www.sweclarin.se/" target="_blank">
+            <img
+              alt="SweCLARIN"
+              class="logo"
+              src="./assets/img/sweclarin_logo.png"
+            />
+          </a>
+        </div>
+        <div class="col">
+          <a href="https://www.umu.se/en/humlab/" target="_blank">
+            <img
+              alt="Humlab – Umeå University"
+              class="logo"
+              src="./assets/img/humlab_logo_left_en.png"
+            />
+          </a>
+        </div>
+        <div class="col">
+          <a href="http://www.en.phonetik.uni-muenchen.de/" target="_blank">
+            <img
+              alt="IPS LMU Munich"
+              class="logo"
+              src="./assets/img/ipsx60.png"
+            />
+          </a>
+        </div>
+        <div class="col">
+          <a
+            href="https://www.bas.uni-muenchen.de/Bas/BasHomeeng.html"
+            target="_blank"
+          >
+            <img alt="BAS" class="logo" src="./assets/img/bas.png" />
+          </a>
+        </div>
+        <div class="col">
+          <a href="https://www.clarin-d.net/en/" target="_blank">
+            <img alt="Clarin-D" class="logo" src="./assets/img/clarin-d.png" />
+          </a>
+        </div>
       </div>
-      <div class="col">
-        <a
-          href="https://www.bas.uni-muenchen.de/Bas/BasHomeeng.html"
-          target="_blank"
-        >
-          <img alt="BAS" class="logo" src="./assets/img/bas.png" />
-        </a>
-      </div>
-      <div class="col">
-        <a href="https://www.clarin-d.net/en/" target="_blank">
-          <img alt="Clarin-D" class="logo" src="./assets/img/clarin-d.png" />
-        </a>
-      </div>
-    </div>
     </fieldset>
   </footer>
 </div>
 <div class="section order-4 order-md-3">
   <footer class="footer">
-    <fieldset style="border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem 1rem 1rem; background: #fff;">
-      <legend style="float: none; width: auto; font-size: 0.85rem; padding: 0.15rem 0.5rem; color: #555; border: 1px solid #ccc; border-radius: 3px; background: #fff;">{{ 'login.groups that developed the language models' | transloco }}</legend>
-      <div class="row row-cols-auto justify-content-center align-items-center g-3">
+    <fieldset
+      style="
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0.5rem 1rem 1rem;
+        background: #fff;
+      "
+    >
+      <legend
+        style="
+          float: none;
+          width: auto;
+          font-size: 0.85rem;
+          padding: 0.15rem 0.5rem;
+          color: #555;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          background: #fff;
+        "
+      >
+        {{ 'login.groups that developed the language models' | transloco }}
+      </legend>
+      <div
+        class="row row-cols-auto justify-content-center align-items-center g-3"
+      >
         <div class="col">
           <a href="https://github.com/Helsinki-NLP" target="_blank">
-            <img alt="Language Technology at the University of Helsinki" class="logo" src="./assets/img/helsinki-nlp.png" />
+            <img
+              alt="Language Technology at the University of Helsinki"
+              class="logo"
+              src="./assets/img/helsinki-nlp.png"
+            />
           </a>
         </div>
         <div class="col">
           <a href="https://huggingface.co/Finnish-NLP" target="_blank">
-            <img alt="Finnish-NLP" class="logo" src="./assets/img/finnish-nlp.png" />
+            <img
+              alt="Finnish-NLP"
+              class="logo"
+              src="./assets/img/finnish-nlp.png"
+            />
           </a>
         </div>
         <div class="col">
           <a href="https://ai.nb.no/" target="_blank">
-            <img alt="AI-lab at National Library of Norway" class="logo" src="./assets/img/nb-ai-lab.png" />
+            <img
+              alt="AI-lab at National Library of Norway"
+              class="logo"
+              src="./assets/img/nb-ai-lab.png"
+            />
           </a>
         </div>
         <div class="col">
-          <a href="https://www.kb.se/eng/research-collaboration/kblab.html" target="_blank">
-            <img alt="KBLab – National Library of Sweden" class="logo" src="./assets/img/kblab.svg" />
+          <a
+            href="https://www.kb.se/eng/research-collaboration/kblab.html"
+            target="_blank"
+          >
+            <img
+              alt="KBLab – National Library of Sweden"
+              class="logo"
+              src="./assets/img/kblab.svg"
+            />
           </a>
         </div>
         <div class="col">

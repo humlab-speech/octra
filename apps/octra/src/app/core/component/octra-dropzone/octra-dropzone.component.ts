@@ -1,25 +1,24 @@
 import { NgStyle } from '@angular/common';
-import { Component, Input, Output, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { OAnnotJSON } from '@octra/annotation';
 import { OAudiofile } from '@octra/media';
 import { OctraUtilitiesModule } from '@octra/ngx-utilities';
-import { FileSize, getFileSize } from '@octra/utilities';
+import { endonymToLanguageCode, FileSize, getFileSize } from '@octra/utilities';
 import { AudioManager } from '@octra/web-media';
 import { AppInfo } from '../../../app.info';
 import { OctraModalService } from '../../modals/octra-modal.service';
 import { SupportedFilesModalComponent } from '../../modals/supportedfiles-modal/supportedfiles-modal.component';
 import { FileProgress } from '../../obj/objects';
+import { SpeakerTurn } from '../../shared/service/local-diarization.service';
 import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
 import { TranslationOptions } from '../../shared/service/local-translation.service';
-import { SpeakerTurn } from '../../shared/service/local-diarization.service';
 import { DefaultComponent } from '../default.component';
 import { DropZoneComponent } from '../drop-zone';
 import { DropZoneComponent as DropZoneComponent_1 } from '../drop-zone/drop-zone.component';
 import { AutoTranscribeOptionsComponent } from './auto-transcribe-options.component';
 import { AutoTranslateOptionsComponent } from './auto-translate-options.component';
-import { endonymToLanguageCode } from '@octra/utilities';
 import {
   DropzoneStatistics,
   OctraDropzoneService,
@@ -40,7 +39,10 @@ import {
     AutoTranslateOptionsComponent,
   ],
 })
-export class OctraDropzoneComponent extends DefaultComponent implements OnDestroy {
+export class OctraDropzoneComponent
+  extends DefaultComponent
+  implements OnDestroy
+{
   @ViewChild('dropzone', { static: true }) dropzone!: DropZoneComponent;
   @Input() height = '250px';
   @Input() showAutoTranscribe = false;
@@ -64,7 +66,9 @@ export class OctraDropzoneComponent extends DefaultComponent implements OnDestro
     return name ? endonymToLanguageCode(name) : undefined;
   }
 
-  setAnnotationFromAnnotJson(annotJson: import('@octra/annotation').OAnnotJSON): void {
+  setAnnotationFromAnnotJson(
+    annotJson: import('@octra/annotation').OAnnotJSON,
+  ): void {
     this.octraDropzoneService.setAnnotationFromAnnotJson(annotJson);
     this.applyPendingSpeakerTurns();
   }
@@ -177,7 +181,9 @@ export class OctraDropzoneComponent extends DefaultComponent implements OnDestro
       return;
     }
 
-    this.octraDropzoneService.applySpeakerTurnsToAnnotation(this.pendingSpeakerTurns);
+    this.octraDropzoneService.applySpeakerTurnsToAnnotation(
+      this.pendingSpeakerTurns,
+    );
   }
 
   protected readonly AudioManager = AudioManager;

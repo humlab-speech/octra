@@ -12,14 +12,14 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import {
+  RecordingPersistenceService,
+  RecoverableSession,
+} from '../../shared/service/recording-persistence.service';
+import {
   RecordingResult,
   RecordingService,
   RecordingState,
 } from '../../shared/service/recording.service';
-import {
-  RecordingPersistenceService,
-  RecoverableSession,
-} from '../../shared/service/recording-persistence.service';
 import { RecordingRecoveryBannerComponent } from './recording-recovery-banner.component';
 import { VuMeterComponent } from './vu-meter.component';
 
@@ -154,7 +154,11 @@ export class RecordingPanelComponent implements OnInit, OnDestroy {
   }
 
   onSelectMode(mode: 'audio' | 'audio+video'): void {
-    if (this.service.state$.value !== 'idle' && this.service.state$.value !== 'error') return;
+    if (
+      this.service.state$.value !== 'idle' &&
+      this.service.state$.value !== 'error'
+    )
+      return;
     this.selectedMode = mode;
   }
 

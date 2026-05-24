@@ -83,14 +83,14 @@
 
         <span
           class="text-muted small ms-2"
-          *ngIf="state === 'recording' || state === 'paused' || state === 'stopping'"
+          *ngIf="
+            state === 'recording' || state === 'paused' || state === 'stopping'
+          "
         >
           {{ formatElapsed((service.elapsed$ | async) ?? 0) }}
         </span>
 
-        <ng-container
-          *ngIf="state === 'recording' || state === 'paused'"
-        >
+        <ng-container *ngIf="state === 'recording' || state === 'paused'">
           <octra-vu-meter
             class="ms-2"
             *ngIf="service.levels$ | async as levels"
@@ -113,7 +113,7 @@
             *ngIf="service.chunkPersisted$ | async as chunks"
           >
             <ng-container *ngIf="chunks.bytes > 0">
-              {{ (chunks.bytes / 1048576) | number:'1.0-1' }} MB
+              {{ chunks.bytes / 1048576 | number: '1.0-1' }} MB
             </ng-container>
           </span>
         </ng-container>
@@ -154,11 +154,7 @@
     </ng-container>
   </div>
 
-  <div
-    *ngIf="previewStream"
-    class="mt-2"
-    style="max-width: 240px"
-  >
+  <div *ngIf="previewStream" class="mt-2" style="max-width: 240px">
     <video
       autoplay
       muted
@@ -168,15 +164,15 @@
     ></video>
   </div>
 
-  <div
-    *ngIf="showFirefoxWebmNotice"
-    class="text-muted small mt-1"
-  >
+  <div *ngIf="showFirefoxWebmNotice" class="text-muted small mt-1">
     <i class="bi bi-info-circle"></i>
     {{ 'recording.firefox webm notice' | transloco }}
   </div>
 
-  <div *ngIf="errorMessage" class="alert alert-danger py-1 px-2 mt-2 mb-0 small">
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger py-1 px-2 mt-2 mb-0 small"
+  >
     {{ errorMessage }}
   </div>
 </div>

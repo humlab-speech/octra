@@ -50,7 +50,7 @@ export class RecordingPersistenceService {
     const now = Date.now();
     await this.db.transaction(
       'rw',
-      (this.db.chunks as any),
+      this.db.chunks as any,
       this.db.sessions,
       async () => {
         await (this.db.chunks as any).add({
@@ -80,9 +80,9 @@ export class RecordingPersistenceService {
     return filtered.sort((a, b) => a.index - b.index);
   }
 
-  async listSessions(opts: { finalized?: boolean } = {}): Promise<
-    IRecordingSession[]
-  > {
+  async listSessions(
+    opts: { finalized?: boolean } = {},
+  ): Promise<IRecordingSession[]> {
     const all = await this.db.sessions.toArray();
     if (opts.finalized === undefined) return all;
     const target = opts.finalized ? 1 : 0;
@@ -99,7 +99,7 @@ export class RecordingPersistenceService {
   async discardSession(sessionId: string): Promise<void> {
     await this.db.transaction(
       'rw',
-      (this.db.chunks as any),
+      this.db.chunks as any,
       this.db.sessions,
       async () => {
         await (this.db.chunks as any)

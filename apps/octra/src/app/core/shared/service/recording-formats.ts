@@ -13,7 +13,11 @@ const VIDEO_MIME_PREFERENCE = [
 ];
 
 function isSupported(mime: string): boolean {
-  const MR = (globalThis as any).MediaRecorder;
+  const MR = (
+    globalThis as unknown as {
+      MediaRecorder?: { isTypeSupported?: (type: string) => boolean };
+    }
+  ).MediaRecorder;
   if (!MR || typeof MR.isTypeSupported !== 'function') return false;
   try {
     return MR.isTypeSupported(mime);

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { RecordingMode } from '../octra-recording-database';
 import {
   assemblePcmToWav,
   extensionForMime,
@@ -7,7 +8,6 @@ import {
   pickBestVideoMime,
 } from './recording-formats';
 import { RecordingPersistenceService } from './recording-persistence.service';
-import { RecordingMode } from '../octra-recording-database';
 
 export type RecordingState =
   | 'idle'
@@ -41,6 +41,7 @@ const TIMESLICE_MS = 2000;
 const LOW_VOLUME_WINDOW = 90;
 const LOW_VOLUME_RAISE_DB = -50;
 const LOW_VOLUME_CLEAR_DB = -40;
+const MAX_RECORDING_BYTES = 500 * 1024 * 1024;
 
 @Injectable({ providedIn: 'root' })
 export class RecordingService {
@@ -122,9 +123,7 @@ export class RecordingService {
     }
 
     this.mimeType =
-      opts.mode === 'audio+video'
-        ? pickBestVideoMime()
-        : pickBestAudioMime();
+      opts.mode === 'audio+video' ? pickBestVideoMime() : pickBestAudioMime();
 
     if (opts.sessionId) {
       this.sessionId = opts.sessionId;
@@ -350,7 +349,9 @@ export class RecordingService {
   private stopMediaRecorder(): Promise<Blob> {
     return new Promise<Blob>((resolve) => {
       if (!this.mediaRecorder) {
-        resolve(new Blob([], { type: this.mimeType || 'application/octet-stream' }));
+        resolve(
+          new Blob([], { type: this.mimeType || 'application/octet-stream' }),
+        );
         return;
       }
       const rec = this.mediaRecorder;
@@ -475,6 +476,17 @@ export class RecordingService {
       count: this.totalChunkCount,
       bytes: this.totalChunkBytes,
     });
+    if (
+      this.totalChunkBytes >= MAX_RECORDING_BYTES &&
+      this.state$.value === 'recording'
+    ) {
+      this.emitError(
+        new Error(
+          'Recording exceeded 500 MB safety cap — stopping automatically.',
+        ),
+      );
+      void this.stop().catch(() => undefined);
+    }
   }
 
   private resetCounters(): void {

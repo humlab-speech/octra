@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import type { OAnnotJSON } from '@octra/annotation';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
 import { FileSize, getFileSize } from '@octra/utilities';
@@ -10,6 +11,10 @@ import { filter, firstValueFrom, Observable, Subscription, tap } from 'rxjs';
 import { AuthenticationComponent } from '../../component/authentication-component/authentication-component.component';
 import { DefaultComponent } from '../../component/default.component';
 import { MaintenanceBannerComponent } from '../../component/maintenance/maintenance-banner/maint-banner.component';
+import {
+  KB_WHISPER_MODELS,
+  OPENAI_WHISPER_MODELS,
+} from '../../component/octra-dropzone/auto-transcribe-options.component';
 import { OctraDropzoneComponent } from '../../component/octra-dropzone/octra-dropzone.component';
 import { RecordingPanelComponent } from '../../component/recording-panel/recording-panel.component';
 import { AppSettings } from '../../obj';
@@ -17,18 +22,26 @@ import { SessionFile } from '../../obj/SessionFile';
 import { AudioService, SettingsService } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
 import { CompatibilityService } from '../../shared/service/compatibility.service';
-import { KB_WHISPER_MODELS, OPENAI_WHISPER_MODELS } from '../../component/octra-dropzone/auto-transcribe-options.component';
-import { LocalTranscriptionService, TranscriptionEvent } from '../../shared/service/local-transcription.service';
-import { LocalTranslationService, TranslationEvent, TranslationOptions } from '../../shared/service/local-translation.service';
-import { TranscriptionOptions } from '../../shared/service/local-transcription.service';
-import type { OAnnotJSON } from '@octra/annotation';
 import {
-  DiarizationEvent,
   DIARIZATION_DEFAULT_MODEL_ID,
+  DiarizationEvent,
   LocalDiarizationRuntimeService,
 } from '../../shared/service/local-diarization-runtime.service';
 import { LOCAL_DIARIZATION_WORKER_FACTORY } from '../../shared/service/local-diarization-worker.token';
+import {
+  LocalTranscriptionService,
+  TranscriptionEvent,
+  TranscriptionOptions,
+} from '../../shared/service/local-transcription.service';
+import {
+  LocalTranslationService,
+  TranslationEvent,
+} from '../../shared/service/local-translation.service';
+import { AuthenticationStoreService } from '../../store/authentication';
+import { BrowserTestComponent } from '../browser-test/browser-test.component';
 import { applyOptionalSpeakerSegmentation } from './local-offline-transcription.helpers';
+import { ComponentCanDeactivate } from './login.deactivateguard';
+import { LoginService } from './login.service';
 
 type TranslationPhase =
   | 'idle'
@@ -45,10 +58,6 @@ function formatDuration(seconds: number): string {
   const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
-import { AuthenticationStoreService } from '../../store/authentication';
-import { BrowserTestComponent } from '../browser-test/browser-test.component';
-import { ComponentCanDeactivate } from './login.deactivateguard';
-import { LoginService } from './login.service';
 
 @Component({
   selector: 'octra-login',
@@ -60,9 +69,12 @@ import { LoginService } from './login.service';
     {
       provide: LOCAL_DIARIZATION_WORKER_FACTORY,
       useValue: () =>
-        new Worker(new URL('../../workers/pyannote-diarization.worker', import.meta.url), {
-          type: 'module',
-        }),
+        new Worker(
+          new URL('../../workers/pyannote-diarization.worker', import.meta.url),
+          {
+            type: 'module',
+          },
+        ),
     },
   ],
   imports: [
@@ -156,7 +168,8 @@ export class LoginComponent
     error: null,
   };
 
-  private _translationElapsedIntervalId: ReturnType<typeof setInterval> | null = null;
+  private _translationElapsedIntervalId: ReturnType<typeof setInterval> | null =
+    null;
   private _translationStartTime = 0;
   private _translationStallTimerId: ReturnType<typeof setTimeout> | null = null;
 
@@ -302,7 +315,8 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.transcription.segmentEndS = 0;
       this._transcriptionStartTime = Date.now();
       this._elapsedIntervalId = setInterval(() => {
-        this.transcription.elapsedMs = Date.now() - this._transcriptionStartTime;
+        this.transcription.elapsedMs =
+          Date.now() - this._transcriptionStartTime;
       }, 1000);
     } else if (event.type === 'segment-progress') {
       this.transcription.segmentEndS = event.segmentEndS;
@@ -311,7 +325,8 @@ I just want to let you know, that the OCTRA server is currently offline.
       this.transcription.phase = 'downloading';
       this.transcription.downloadLoaded = 0;
       this.transcription.downloadTotal = 0;
-      this.transcription.downloadFile = 'Retrying with WASM after WebGPU startup failure';
+      this.transcription.downloadFile =
+        'Retrying with WASM after WebGPU startup failure';
     } else if (event.type === 'result') {
       this._clearElapsedInterval();
       this._transcriptionSub = null;
@@ -320,7 +335,9 @@ I just want to let you know, that the OCTRA server is currently offline.
     }
   }
 
-  private async handleCompletedTranscription(annotJson: OAnnotJSON): Promise<void> {
+  private async handleCompletedTranscription(
+    annotJson: OAnnotJSON,
+  ): Promise<void> {
     const opts = this.dropzone?.transcribeOptions;
     const diarizationEnabled = !!opts?.diarization;
 
@@ -338,22 +355,23 @@ I just want to let you know, that the OCTRA server is currently offline.
         };
 
         const result = await firstValueFrom(
-          this.localDiarizationRuntimeService.diarize(
-            this.dropzone!.audioManager,
-            diarizationOptions,
-          ).pipe(
-            tap((event: DiarizationEvent) => {
-              if (event.type === 'download-progress') {
-                this.transcription.downloadLoaded = event.loaded;
-                this.transcription.downloadTotal = event.total;
-                this.transcription.downloadFile = event.file;
-              }
-            }),
-            filter(
-              (event: DiarizationEvent): event is Extract<DiarizationEvent, { type: 'result' }> =>
-                event.type === 'result',
+          this.localDiarizationRuntimeService
+            .diarize(this.dropzone!.audioManager, diarizationOptions)
+            .pipe(
+              tap((event: DiarizationEvent) => {
+                if (event.type === 'download-progress') {
+                  this.transcription.downloadLoaded = event.loaded;
+                  this.transcription.downloadTotal = event.total;
+                  this.transcription.downloadFile = event.file;
+                }
+              }),
+              filter(
+                (
+                  event: DiarizationEvent,
+                ): event is Extract<DiarizationEvent, { type: 'result' }> =>
+                  event.type === 'result',
+              ),
             ),
-          ),
         );
 
         return result.turns;
@@ -519,12 +537,18 @@ I just want to let you know, that the OCTRA server is currently offline.
   private proceedWithLogin(removeData: boolean): void {
     const manager = this.dropzone?.audioManager;
     if (!manager) {
-      console.error('[proceedWithLogin] audioManager is null/undefined — cannot proceed');
+      console.error(
+        '[proceedWithLogin] audioManager is null/undefined — cannot proceed',
+      );
       return;
     }
-    const files = this.dropzone!.files.map((a) => a.file.file!).filter(Boolean) as File[];
+    const files = this.dropzone!.files.map((a) => a.file.file!).filter(
+      Boolean,
+    ) as File[];
     if (files.length === 0) {
-      console.error('[proceedWithLogin] no valid File objects in dropzone — cannot proceed');
+      console.error(
+        '[proceedWithLogin] no valid File objects in dropzone — cannot proceed',
+      );
       return;
     }
     this.audioService.registerAudioManager(manager);

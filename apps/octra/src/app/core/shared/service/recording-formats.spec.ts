@@ -25,28 +25,30 @@ describe('recording-formats', () => {
   });
 
   describe('mime pickers', () => {
-    const realMR = (globalThis as any).MediaRecorder;
+    const realMR = (globalThis as unknown as { MediaRecorder?: unknown })
+      .MediaRecorder;
 
     afterEach(() => {
-      (globalThis as any).MediaRecorder = realMR;
+      (globalThis as unknown as { MediaRecorder?: unknown }).MediaRecorder =
+        realMR;
     });
 
     it('pickBestAudioMime falls back through preference list', () => {
-      (globalThis as any).MediaRecorder = {
+      (globalThis as unknown as { MediaRecorder?: unknown }).MediaRecorder = {
         isTypeSupported: (m: string) => m === 'audio/mp4',
       };
       expect(pickBestAudioMime()).toBe('audio/mp4');
     });
 
     it('pickBestAudioMime returns empty string when nothing supported', () => {
-      (globalThis as any).MediaRecorder = {
+      (globalThis as unknown as { MediaRecorder?: unknown }).MediaRecorder = {
         isTypeSupported: () => false,
       };
       expect(pickBestAudioMime()).toBe('');
     });
 
     it('pickBestVideoMime prefers mp4 over webm', () => {
-      (globalThis as any).MediaRecorder = {
+      (globalThis as unknown as { MediaRecorder?: unknown }).MediaRecorder = {
         isTypeSupported: (m: string) =>
           m === 'video/mp4' || m.startsWith('video/webm'),
       };
@@ -55,7 +57,8 @@ describe('recording-formats', () => {
     });
 
     it('pickBestVideoMime returns empty string when MediaRecorder missing', () => {
-      delete (globalThis as any).MediaRecorder;
+      delete (globalThis as unknown as { MediaRecorder?: unknown })
+        .MediaRecorder;
       expect(pickBestVideoMime()).toBe('');
     });
   });

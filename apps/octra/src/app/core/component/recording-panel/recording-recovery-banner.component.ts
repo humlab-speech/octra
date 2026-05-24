@@ -28,7 +28,7 @@ import { RecoverableSession } from '../../shared/service/recording-persistence.s
                     mode: s.mode,
                     started: (s.startedAt | date: 'short'),
                     seconds: (s.durationMs / 1000 | number: '1.0-0'),
-                    mb: (s.totalBytes / 1048576 | number: '1.0-1')
+                    mb: (s.totalBytes / 1048576 | number: '1.0-1'),
                   }
           }}
         </span>
