@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,6 +14,7 @@ import {
   RecordingService,
   RecordingState,
 } from '../../shared/service/recording.service';
+import { VuMeterComponent } from './vu-meter.component';
 
 type StagedResult = RecordingResult;
 
@@ -22,7 +23,7 @@ type StagedResult = RecordingResult;
   standalone: true,
   templateUrl: './recording-panel.component.html',
   styleUrls: ['./recording-panel.component.scss'],
-  imports: [AsyncPipe, NgIf, TranslocoPipe],
+  imports: [AsyncPipe, DecimalPipe, NgIf, TranslocoPipe, VuMeterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecordingPanelComponent implements OnDestroy {
