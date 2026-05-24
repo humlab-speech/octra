@@ -59,7 +59,8 @@
     "hint": "Or record audio directly with your microphone.",
     "mode": {
       "audio": "Audio only",
-      "audio+video": "Audio + video"
+      "audio+video": "Audio + video",
+      "aria label": "Recording source"
     },
     "start": "Start recording",
     "stop": "Stop",
@@ -302,7 +303,11 @@
     },
     "app description": "OCTRA è un'applicazione web gratuita per la trascrizione in testo normale (ortografica) di registrazioni vocali. Dispone di tre editor diversi che soddisfano esigenze differenti durante la trascrizione e permette di passare liberamente da uno all'altro nel corso di una sessione.",
     "funding support and development": "Finanziatori e collaborazioni",
-    "groups that developed the language models": "Sviluppatori dei modelli linguistici utilizzati"
+    "groups that developed the language models": "Sviluppatori dei modelli linguistici utilizzati",
+    "tabs": {
+      "upload": "Upload file",
+      "record": "Record now"
+    }
   },
   "logout": {
     "login again": "Ripeti l'accesso",

@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import type { OAnnotJSON } from '@octra/annotation';
 import { AccountLoginMethod } from '@octra/api-types';
 import { OctraAPIService } from '@octra/ngx-octra-api';
@@ -83,6 +84,7 @@ function formatDuration(seconds: number): string {
     OctraDropzoneComponent,
     RecordingPanelComponent,
     BrowserTestComponent,
+    NgbNavModule,
     AsyncPipe,
     DecimalPipe,
     TranslocoPipe,
@@ -99,14 +101,11 @@ export class LoginComponent
   @ViewChild('onlinemode', { static: true }) onlinemode?: ElementRef;
 
   email_link = '';
-  recordingActive = false;
-
-  onRecordingActiveChange(active: boolean): void {
-    this.recordingActive = active;
-  }
+  activeTab: 'upload' | 'record' = 'upload';
 
   onUseRecording(file: File): void {
     this.dropzone?.addFile(file);
+    this.activeTab = 'upload';
   }
 
   transcription: {

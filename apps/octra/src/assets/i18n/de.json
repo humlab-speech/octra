@@ -103,7 +103,8 @@
     "hint": "Or record audio directly with your microphone.",
     "mode": {
       "audio": "Audio only",
-      "audio+video": "Audio + video"
+      "audio+video": "Audio + video",
+      "aria label": "Recording source"
     },
     "start": "Start recording",
     "stop": "Stop",
@@ -395,7 +396,11 @@
     },
     "app description": "OCTRA ist eine kostenlose Web-Anwendung für die Klartexttranskription (Orthografie) von Sprachaufnahmen. Sie bietet drei verschiedene Editoren für unterschiedliche Bedürfnisse beim Transkribieren, und Sie können während einer Sitzung frei zwischen ihnen wechseln.",
     "funding support and development": "Förderer und Kooperationen",
-    "groups that developed the language models": "Entwickler der verwendeten Sprachmodelle"
+    "groups that developed the language models": "Entwickler der verwendeten Sprachmodelle",
+    "tabs": {
+      "upload": "Upload file",
+      "record": "Record now"
+    }
   },
   "logout": {
     "login again": "Erneut anmelden",

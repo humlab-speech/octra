@@ -6,18 +6,14 @@
   (discardSession)="onDiscardRecovery($event)"
 ></octra-recording-recovery-banner>
 
-<div
-  class="recording-panel border rounded p-2 mt-2"
-  [class.is-disabled]="disabled"
-  [attr.aria-disabled]="disabled"
->
+<div class="recording-panel border rounded p-2 mt-2">
   <div class="d-flex align-items-center gap-2 flex-wrap">
     <ng-container *ngIf="service.state$ | async as state">
       <ng-container *ngIf="!staged">
         <div
           class="btn-group btn-group-sm"
           role="group"
-          aria-label="Recording mode"
+          [attr.aria-label]="'recording.mode.aria label' | transloco"
           *ngIf="state === 'idle' || state === 'error'"
         >
           <button
@@ -25,22 +21,26 @@
             class="btn"
             [class.btn-secondary]="selectedMode === 'audio'"
             [class.btn-outline-secondary]="selectedMode !== 'audio'"
-            [disabled]="disabled"
+            [attr.aria-pressed]="selectedMode === 'audio'"
+            [attr.aria-label]="'recording.mode.audio' | transloco"
+            [ngbTooltip]="'recording.mode.audio' | transloco"
+            container="body"
             (click)="onSelectMode('audio')"
           >
-            <i class="bi bi-mic"></i>
-            {{ 'recording.mode.audio' | transloco }}
+            <i class="bi bi-mic-fill"></i>
           </button>
           <button
             type="button"
             class="btn"
             [class.btn-secondary]="selectedMode === 'audio+video'"
             [class.btn-outline-secondary]="selectedMode !== 'audio+video'"
-            [disabled]="disabled"
+            [attr.aria-pressed]="selectedMode === 'audio+video'"
+            [attr.aria-label]="'recording.mode.audio+video' | transloco"
+            [ngbTooltip]="'recording.mode.audio+video' | transloco"
+            container="body"
             (click)="onSelectMode('audio+video')"
           >
-            <i class="bi bi-camera-video"></i>
-            {{ 'recording.mode.audio+video' | transloco }}
+            <i class="bi bi-camera-video-fill"></i>
           </button>
         </div>
 
@@ -48,7 +48,6 @@
           type="button"
           class="btn btn-danger btn-sm"
           *ngIf="state === 'idle' || state === 'error'"
-          [disabled]="disabled"
           (click)="onStart()"
         >
           <i class="bi bi-record-circle"></i>

@@ -163,22 +163,44 @@
                   ></div>
                 }
                 <div style="margin-top: 40px">
-                  <div [class.is-dimmed]="recordingActive">
-                    <octra-dropzone
-                      #dropzone
-                      [height]="'147px'"
-                      [oldFiles]="sessionfile ? [sessionfile] : []"
-                      [showAutoTranscribe]="true"
-                    ></octra-dropzone>
-                  </div>
-                  <octra-recording-panel
-                    [disabled]="
-                      dropzone.statistics.valid > 0 ||
-                      dropzone.statistics.progress > 0
-                    "
-                    (recordingActiveChange)="onRecordingActiveChange($event)"
-                    (useRecording)="onUseRecording($event)"
-                  ></octra-recording-panel>
+                  <ul
+                    ngbNav
+                    #localNav="ngbNav"
+                    [(activeId)]="activeTab"
+                    [destroyOnHide]="false"
+                    class="nav-tabs"
+                  >
+                    <li [ngbNavItem]="'upload'">
+                      <button ngbNavLink type="button">
+                        <i class="bi bi-folder2-open me-1"></i>
+                        {{ 'login.tabs.upload' | transloco }}
+                      </button>
+                      <ng-template ngbNavContent>
+                        <div class="pt-3">
+                          <octra-dropzone
+                            #dropzone
+                            [height]="'147px'"
+                            [oldFiles]="sessionfile ? [sessionfile] : []"
+                            [showAutoTranscribe]="true"
+                          ></octra-dropzone>
+                        </div>
+                      </ng-template>
+                    </li>
+                    <li [ngbNavItem]="'record'">
+                      <button ngbNavLink type="button">
+                        <i class="bi bi-mic-fill me-1"></i>
+                        {{ 'login.tabs.record' | transloco }}
+                      </button>
+                      <ng-template ngbNavContent>
+                        <div class="pt-3">
+                          <octra-recording-panel
+                            (useRecording)="onUseRecording($event)"
+                          ></octra-recording-panel>
+                        </div>
+                      </ng-template>
+                    </li>
+                  </ul>
+                  <div [ngbNavOutlet]="localNav"></div>
                 </div>
 
                 @if (
@@ -335,20 +357,14 @@
                           </div>
                           <small class="text-muted">
                             {{ formatDuration(transcription.segmentEndS) }} /
-                            {{
-                              formatDuration(transcription.audioDurationS)
-                            }}
+                            {{ formatDuration(transcription.audioDurationS) }}
                             &nbsp;·&nbsp;
-                            {{
-                              'login.auto-transcription.elapsed' | transloco
-                            }}
+                            {{ 'login.auto-transcription.elapsed' | transloco }}
                             {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </small>
                         } @else {
                           <div class="mt-1 text-muted small">
-                            {{
-                              'login.auto-transcription.elapsed' | transloco
-                            }}
+                            {{ 'login.auto-transcription.elapsed' | transloco }}
                             {{ formatDuration(transcription.elapsedMs / 1000) }}
                           </div>
                         }
@@ -506,9 +522,7 @@
                           <small class="text-muted">
                             {{ translation.segmentIndex }} /
                             {{ translation.segmentTotal }} &nbsp;·&nbsp;
-                            {{
-                              'login.auto-transcription.elapsed' | transloco
-                            }}
+                            {{ 'login.auto-transcription.elapsed' | transloco }}
                             {{ formatDuration(translation.elapsedMs / 1000) }}
                           </small>
                         }
@@ -534,17 +548,17 @@
                     </button>
                   </div>
                 }
-                @if (dropzone.statistics && dropzone.statistics.new === 0) {
+                @if (dropzone?.statistics && dropzone?.statistics?.new === 0) {
                   <button
                     (click)="onOfflineSubmit(false)"
                     [disabled]="
                       transcription.active ||
                       translation.active ||
-                      dropzone.files.length === 0 ||
-                      !dropzone.statistics ||
-                      dropzone.statistics.invalid > 0 ||
-                      dropzone.statistics.progress > 0 ||
-                      dropzone.statistics.waiting > 0
+                      (dropzone?.files?.length ?? 0) === 0 ||
+                      !dropzone?.statistics ||
+                      (dropzone?.statistics?.invalid ?? 0) > 0 ||
+                      (dropzone?.statistics?.progress ?? 0) > 0 ||
+                      (dropzone?.statistics?.waiting ?? 0) > 0
                     "
                     class="btn btn-raised btn-primary"
                     id="offline-submit"
@@ -558,11 +572,11 @@
                     [disabled]="
                       transcription.active ||
                       translation.active ||
-                      dropzone.files.length === 0 ||
-                      !dropzone.statistics ||
-                      dropzone.statistics.invalid > 0 ||
-                      dropzone.statistics.progress > 0 ||
-                      dropzone.statistics.waiting > 0
+                      (dropzone?.files?.length ?? 0) === 0 ||
+                      !dropzone?.statistics ||
+                      (dropzone?.statistics?.invalid ?? 0) > 0 ||
+                      (dropzone?.statistics?.progress ?? 0) > 0 ||
+                      (dropzone?.statistics?.waiting ?? 0) > 0
                     "
                     class="btn btn-raised btn-danger offline-delete-btn"
                   >

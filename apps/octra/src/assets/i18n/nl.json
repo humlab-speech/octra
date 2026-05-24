@@ -59,7 +59,8 @@
     "hint": "Or record audio directly with your microphone.",
     "mode": {
       "audio": "Audio only",
-      "audio+video": "Audio + video"
+      "audio+video": "Audio + video",
+      "aria label": "Recording source"
     },
     "start": "Start recording",
     "stop": "Stop",
@@ -302,7 +303,11 @@
     },
     "app description": "OCTRA is een gratis webapplicatie voor transcriptie van spraakopnamen in platte tekst (orthografisch). Het beschikt over drie verschillende editors die tegemoetkomen aan uiteenlopende behoeften bij het transcriberen, en u kunt er tijdens een sessie vrij tussen wisselen.",
     "funding support and development": "Financiers en samenwerkingen",
-    "groups that developed the language models": "Ontwikkelaars van de gebruikte taalmodellen"
+    "groups that developed the language models": "Ontwikkelaars van de gebruikte taalmodellen",
+    "tabs": {
+      "upload": "Upload file",
+      "record": "Record now"
+    }
   },
   "logout": {
     "login again": "Log opnieuw in",

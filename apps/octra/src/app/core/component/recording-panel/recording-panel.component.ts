@@ -4,12 +4,12 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import {
   RecordingPersistenceService,
@@ -36,6 +36,7 @@ type StagedResult = RecordingResult;
     AsyncPipe,
     DecimalPipe,
     NgIf,
+    NgbTooltipModule,
     TranslocoPipe,
     RecordingRecoveryBannerComponent,
     VuMeterComponent,
@@ -43,7 +44,6 @@ type StagedResult = RecordingResult;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecordingPanelComponent implements OnInit, OnDestroy {
-  @Input() disabled = false;
   @Output() recordingActiveChange = new EventEmitter<boolean>();
   @Output() useRecording = new EventEmitter<File>();
 

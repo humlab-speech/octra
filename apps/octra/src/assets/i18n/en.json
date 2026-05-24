@@ -110,7 +110,8 @@
     "hint": "Or record audio directly with your microphone.",
     "mode": {
       "audio": "Audio only",
-      "audio+video": "Audio + video"
+      "audio+video": "Audio + video",
+      "aria label": "Recording source"
     },
     "start": "Start recording",
     "stop": "Stop",
@@ -308,6 +309,10 @@
   "login": {
     "api not available": "The server is currently unavailable. Please try again later. If this error message is still visible after 15 minutes, please send an e-mail to {{email_link}}.",
     "demo": "Open demo",
+    "tabs": {
+      "upload": "Upload file",
+      "record": "Record now"
+    },
     "last used": "recently used",
     "local and remove": "Remove online mode data & continue",
     "local mode": "Transcribe conversations locally in your web browser",
