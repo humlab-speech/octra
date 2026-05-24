@@ -1,3 +1,11 @@
+<octra-recording-recovery-banner
+  *ngIf="recoverable.length > 0"
+  [sessions]="recoverable"
+  (continueSession)="onContinueRecovery($event)"
+  (downloadSession)="onDownloadRecovery($event)"
+  (discardSession)="onDiscardRecovery($event)"
+></octra-recording-recovery-banner>
+
 <div
   class="recording-panel border rounded p-2 mt-2"
   [class.is-disabled]="disabled"
