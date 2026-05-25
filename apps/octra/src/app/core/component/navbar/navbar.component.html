@@ -283,6 +283,12 @@
                           }
                           @if ($any(level).linkedToLevelId) {
                             <i
+                              class="bi bi-translate"
+                              (mousedown)="onTranslateLinkedClick(level)"
+                              style="margin-left: 3px; cursor: pointer"
+                              [title]="'modal.translate linked level.icon title' | transloco"
+                            ></i>
+                            <i
                               class="bi bi-link-45deg"
                               (mousedown)="onDetachLinkedClick(level)"
                               style="margin-left: 3px; cursor: pointer"
@@ -294,14 +300,32 @@
                     }
                     <tr>
                       <td colspan="3" class="level-add-row rounded rounded-bottom-3">
-                        <button
-                          type="button"
-                          class="btn btn-link w-100 p-0"
-                          (click)="onLevelAddClick()"
-                        >
-                          <i class="bi bi-plus-lg"></i>
-                          <span class="visually-hidden">Add level</span>
-                        </button>
+                        <div ngbDropdown placement="top">
+                          <button
+                            type="button"
+                            class="btn btn-link w-100 p-0"
+                            ngbDropdownToggle
+                          >
+                            <i class="bi bi-plus-lg"></i>
+                            <span class="visually-hidden">Add level</span>
+                          </button>
+                          <div ngbDropdownMenu>
+                            <button
+                              type="button"
+                              ngbDropdownItem
+                              (click)="onLevelAddClick()"
+                            >
+                              {{ 'g.add empty level' | transloco }}
+                            </button>
+                            <button
+                              type="button"
+                              ngbDropdownItem
+                              (click)="onAddTranslatedLevelClick()"
+                            >
+                              {{ 'g.add translated level' | transloco }}
+                            </button>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   </tbody>

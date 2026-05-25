@@ -267,14 +267,67 @@ export class OctraAnnotation<
   }
 
   changeCurrentItemByIndex(index: number, item: OItem | OEvent | T) {
-    if (this.currentLevel) {
-      if (index > -1) {
-        this.currentLevel.changeItem(item as any);
-      }
-    } else {
+    if (!this.currentLevel) {
       throw new Error('Current level not selected');
     }
+    if (index < 0) {
+      return this;
+    }
+
+    const curr = this.currentLevel;
+
+    // Linked-tier guard + source→linked time mirror (segment levels only).
+    if (curr instanceof OctraAnnotationSegmentLevel) {
+      const prev = curr.items[index] as OctraAnnotationSegment | undefined;
+      const prevSamples = prev?.time.samples;
+      const newSamples = (item as any)?.time?.samples as number | undefined;
+      const boundaryChanged =
+        prevSamples !== undefined &&
+        newSamples !== undefined &&
+        newSamples !== prevSamples;
+
+      if (curr.linkedToLevelId !== undefined && boundaryChanged) {
+        console.warn(
+          `Cannot move segment boundary on linked level "${curr.name}". Detach the level first to edit boundaries.`,
+        );
+        return this;
+      }
+
+      curr.changeItem(item as any);
+
+      if (
+        curr.linkedToLevelId === undefined &&
+        boundaryChanged &&
+        (item as any).time
+      ) {
+        const newTime = (item as any).time as SampleUnit;
+        for (const linked of this.getLinkedLevelsOf(curr.id)) {
+          if (index < linked.items.length) {
+            const linkedItem = linked.items[index] as OctraAnnotationSegment;
+            const updated = linkedItem.clone() as T;
+            updated.time = newTime;
+            linked.changeItem(updated as any);
+          }
+        }
+      }
+      return this;
+    }
+
+    this.currentLevel.changeItem(item as any);
     return this;
+  }
+
+  /**
+   * Returns all segment levels linked to the given source level id. Used to
+   * mirror boundary edits, inserts, and removes from a source tier to all
+   * translation tiers derived from it.
+   */
+  private getLinkedLevelsOf(sourceId: number): OctraAnnotationSegmentLevel<T>[] {
+    return this._levels.filter(
+      (l) =>
+        l instanceof OctraAnnotationSegmentLevel &&
+        l.linkedToLevelId === sourceId,
+    ) as OctraAnnotationSegmentLevel<T>[];
   }
 
   getCurrentSegmentIndexBySamplePosition(samples: SampleUnit): number {
@@ -320,43 +373,11 @@ export class OctraAnnotation<
         return this;
       }
       if (this.currentLevel.type === 'SEGMENT') {
-        // check situation
         const level = this.currentLevel as OctraAnnotationSegmentLevel<T>;
-        let items: T[] = level.items.map((a) => a.clone() as T);
-
-        if (items.length > 0) {
-          //insert
-          const index = items.findIndex((a) => a.time.samples > time!.samples);
-
-          if (index > -1) {
-            const oldLabels =
-              index === 0
-                ? [new OLabel(level.name, '')]
-                : [...items[index].labels];
-            items[index].labels =
-              index === 0 ? items[index].labels : [new OLabel(level.name, '')];
-            items = [
-              ...items,
-              new OctraAnnotationSegment(
-                this.idCounters.item++,
-                time!,
-                labels && labels.length > 0 ? labels : oldLabels,
-                context ?? {},
-              ) as any,
-            ];
-            items.sort(this.sortSegmentsBySampleUnit);
-          }
-        } else {
-          items.push(
-            new OctraAnnotationSegment(
-              this.idCounters.item++,
-              time!,
-              labels,
-              context ?? {},
-            ) as any,
-          );
+        this.insertSegmentIntoLevel(level, time!, labels, context);
+        for (const linked of this.getLinkedLevelsOf(level.id)) {
+          this.insertSegmentIntoLevel(linked, time!);
         }
-        this.currentLevel.overwriteItems(items as any);
       } else if (this.currentLevel.type === 'ITEM') {
         this.currentLevel.overwriteItems([
           ...this.currentLevel.items,
@@ -401,71 +422,30 @@ export class OctraAnnotation<
       index > -1 &&
       index < this.currentLevel.items.length
     ) {
-      if (
-        index < this.currentLevel.items.length - 1 &&
-        this.currentLevel.type === 'SEGMENT'
-      ) {
-        const nextSegment = this.currentLevel.items[
-          index + 1
-        ] as OctraAnnotationSegment;
-        let transcript = (
-          this.currentLevel.items[index] as OctraAnnotationSegment
-        ).getFirstLabelWithoutName('Speaker')?.value;
-
-        if (
-          !silenceValue ||
-          (nextSegment.getFirstLabelWithoutName('Speaker')?.value !==
-            silenceValue &&
-            transcript !== silenceValue &&
-            mergeTranscripts)
-        ) {
-          // concat transcripts
-          if (
-            nextSegment.getFirstLabelWithoutName('Speaker') &&
-            transcript !== ''
-          ) {
-            transcript =
-              transcript +
-              ' ' +
-              nextSegment.getFirstLabelWithoutName('Speaker')?.value;
-
-            if (changeTranscript) {
-              transcript = changeTranscript(transcript);
-            }
-
-            nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
-          } else if (
-            !nextSegment.getFirstLabelWithoutName('Speaker') &&
-            transcript !== ''
-          ) {
-            transcript = transcript ?? '';
-
-            if (changeTranscript) {
-              transcript = changeTranscript(transcript);
-            }
-
-            nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
-          }
-        } else if (
-          silenceValue &&
-          nextSegment.getFirstLabelWithoutName('Speaker')?.value ===
-            silenceValue
-        ) {
-          // delete pause
-          transcript = transcript ?? '';
-
-          if (changeTranscript) {
-            transcript = changeTranscript(transcript);
-          }
-          nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
+      if (this.currentLevel.type === 'SEGMENT') {
+        const level = this.currentLevel as OctraAnnotationSegmentLevel<T>;
+        this.removeSegmentFromLevel(
+          level,
+          index,
+          silenceValue,
+          mergeTranscripts,
+          changeTranscript,
+        );
+        for (const linked of this.getLinkedLevelsOf(level.id)) {
+          this.removeSegmentFromLevel(
+            linked,
+            index,
+            silenceValue,
+            mergeTranscripts,
+            undefined,
+          );
         }
-        this.currentLevel.changeItem(nextSegment as any);
+      } else {
+        this.currentLevel.overwriteItems([
+          ...this.currentLevel.items.slice(0, index),
+          ...this.currentLevel.items.slice(index + 1),
+        ] as any);
       }
-
-      this.currentLevel.overwriteItems([
-        ...this.currentLevel.items.slice(0, index),
-        ...this.currentLevel.items.slice(index + 1),
-      ] as any);
     }
 
     return this;
@@ -516,6 +496,112 @@ export class OctraAnnotation<
     } else {
       throw new Error(`Can't find link with index ${index}`);
     }
+  }
+
+  private insertSegmentIntoLevel(
+    level: OctraAnnotationSegmentLevel<T>,
+    time: SampleUnit,
+    labels?: OLabel[],
+    context?: S,
+  ) {
+    let items: T[] = level.items.map((a) => a.clone() as T);
+
+    if (items.length > 0) {
+      const index = items.findIndex((a) => a.time.samples > time.samples);
+      if (index > -1) {
+        const oldLabels =
+          index === 0
+            ? [new OLabel(level.name, '')]
+            : [...items[index].labels];
+        items[index].labels =
+          index === 0 ? items[index].labels : [new OLabel(level.name, '')];
+        items = [
+          ...items,
+          new OctraAnnotationSegment(
+            this.idCounters.item++,
+            time,
+            labels && labels.length > 0 ? labels : oldLabels,
+            context ?? ({} as any),
+          ) as any,
+        ];
+        items.sort(this.sortSegmentsBySampleUnit);
+      }
+    } else {
+      items.push(
+        new OctraAnnotationSegment(
+          this.idCounters.item++,
+          time,
+          labels,
+          context ?? ({} as any),
+        ) as any,
+      );
+    }
+    level.overwriteItems(items as any);
+  }
+
+  private removeSegmentFromLevel(
+    level: OctraAnnotationSegmentLevel<T>,
+    index: number,
+    silenceValue?: string,
+    mergeTranscripts?: boolean,
+    changeTranscript?: (transcript: string) => string,
+  ) {
+    if (index < 0 || index >= level.items.length) {
+      return;
+    }
+
+    if (index < level.items.length - 1) {
+      const nextSegment = level.items[index + 1] as OctraAnnotationSegment;
+      let transcript = (
+        level.items[index] as OctraAnnotationSegment
+      ).getFirstLabelWithoutName('Speaker')?.value;
+
+      if (
+        !silenceValue ||
+        (nextSegment.getFirstLabelWithoutName('Speaker')?.value !==
+          silenceValue &&
+          transcript !== silenceValue &&
+          mergeTranscripts)
+      ) {
+        if (
+          nextSegment.getFirstLabelWithoutName('Speaker') &&
+          transcript !== ''
+        ) {
+          transcript =
+            transcript +
+            ' ' +
+            nextSegment.getFirstLabelWithoutName('Speaker')?.value;
+          if (changeTranscript) {
+            transcript = changeTranscript(transcript);
+          }
+          nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
+        } else if (
+          !nextSegment.getFirstLabelWithoutName('Speaker') &&
+          transcript !== ''
+        ) {
+          transcript = transcript ?? '';
+          if (changeTranscript) {
+            transcript = changeTranscript(transcript);
+          }
+          nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
+        }
+      } else if (
+        silenceValue &&
+        nextSegment.getFirstLabelWithoutName('Speaker')?.value === silenceValue
+      ) {
+        transcript = transcript ?? '';
+        if (changeTranscript) {
+          transcript = changeTranscript(transcript);
+        }
+        nextSegment.changeFirstLabelWithoutName('Speaker', transcript);
+      }
+      level.changeItem(nextSegment as any);
+    }
+
+    level.overwriteItems([
+      ...level.items.slice(0, index),
+      ...level.items.slice(index + 1),
+    ] as any);
   }
 
   private sortSegmentsBySampleUnit(a: T, b: T) {

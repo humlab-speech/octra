@@ -247,6 +247,124 @@ export class AnnotationStateReducers {
         },
       ),
       on(
+        AnnotationActions.addTranslatedLevel.do,
+        (
+          state: AnnotationState,
+          { sourceLevelId, targetLanguageLabel, mode },
+        ) => {
+          if (this.mode !== mode) {
+            return state;
+          }
+          const transcript = state.transcript.clone();
+          const source = transcript.levels.find((l) => l.id === sourceLevelId);
+          if (!(source instanceof OctraAnnotationSegmentLevel)) {
+            console.warn(
+              `addTranslatedLevel: source level ${sourceLevelId} is not a segment level.`,
+            );
+            return state;
+          }
+          if (source.linkedToLevelId !== undefined) {
+            console.warn(
+              `addTranslatedLevel: source level "${source.name}" is itself linked. Pick the original source instead.`,
+            );
+            return state;
+          }
+
+          const usedNames = new Set(transcript.levels.map((l) => l.name));
+          let uniqueName = targetLanguageLabel;
+          let counter = 2;
+          while (usedNames.has(uniqueName)) {
+            uniqueName = `${targetLanguageLabel} (${counter++})`;
+          }
+
+          const targetItems = source.items.map((item) => {
+            const cloned = (item as OctraAnnotationSegment).clone(
+              transcript.idCounters.item++,
+            );
+            const speakerLabel = item.labels.find((l) => l.name === 'Speaker');
+            cloned.labels = [
+              new OLabel(uniqueName, ''),
+              ...(speakerLabel ? [new OLabel('Speaker', speakerLabel.value)] : []),
+            ];
+            return cloned;
+          });
+
+          const targetLevel = new OctraAnnotationSegmentLevel<
+            OctraAnnotationSegment<ASRContext>
+          >(
+            transcript.idCounters.level++,
+            uniqueName,
+            targetItems as any,
+            source.id,
+            'translation',
+          );
+          transcript.addLevel(targetLevel as any);
+          return { ...state, transcript };
+        },
+      ),
+      on(
+        AnnotationActions.applyTranslationToLinkedLevel.do,
+        (state: AnnotationState, { linkedLevelId, translated, mode }) => {
+          if (this.mode !== mode) {
+            return state;
+          }
+          const transcript = state.transcript.clone();
+          const level = transcript.levels.find((l) => l.id === linkedLevelId);
+          if (
+            !(level instanceof OctraAnnotationSegmentLevel) ||
+            level.linkedToLevelId === undefined
+          ) {
+            console.warn(
+              `applyTranslationToLinkedLevel: level ${linkedLevelId} is not a linked translation tier.`,
+            );
+            return state;
+          }
+
+          const updatedItems = level.items.map((item, idx) => {
+            const tr = translated.find((t) => t.id === idx);
+            if (!tr || !tr.text || !tr.text.trim()) {
+              return item;
+            }
+
+            // Find the primary translation label — the one whose name matches
+            // the level name (mirrors local-translation.service.ts:351-358).
+            // Fall back to the first non-Speaker label.
+            const primaryIdx = item.labels.findIndex(
+              (l) => l.name === level.name,
+            );
+            const targetIdx =
+              primaryIdx >= 0
+                ? primaryIdx
+                : item.labels.findIndex((l) => l.name !== 'Speaker');
+
+            if (targetIdx < 0) {
+              const cloned = (item as OctraAnnotationSegment).clone();
+              cloned.labels = [
+                new OLabel(level.name, tr.text),
+                ...item.labels,
+              ];
+              return cloned;
+            }
+
+            const existing = item.labels[targetIdx];
+            if (existing.value && existing.value.trim().length > 0) {
+              // Only-fill-empty policy: preserve manual edits.
+              return item;
+            }
+            const cloned = (item as OctraAnnotationSegment).clone();
+            cloned.labels = [
+              ...item.labels.slice(0, targetIdx),
+              new OLabel(existing.name, tr.text),
+              ...item.labels.slice(targetIdx + 1),
+            ];
+            return cloned;
+          });
+
+          level.overwriteItems(updatedItems as any);
+          return { ...state, transcript };
+        },
+      ),
+      on(
         AnnotationActions.detachLinkedLevel.do,
         (state: AnnotationState, { id, mode }) => {
           if (this.mode === mode) {

@@ -411,6 +411,29 @@ export class AnnotationStoreService {
     );
   }
 
+  addTranslatedLevel(sourceLevelId: number, targetLanguageLabel: string) {
+    this.store.dispatch(
+      AnnotationActions.addTranslatedLevel.do({
+        sourceLevelId,
+        targetLanguageLabel,
+        mode: this.appStorage.useMode,
+      }),
+    );
+  }
+
+  applyTranslationToLinkedLevel(
+    linkedLevelId: number,
+    translated: import('../../../workers/translation.worker').TranslationSegment[],
+  ) {
+    this.store.dispatch(
+      AnnotationActions.applyTranslationToLinkedLevel.do({
+        linkedLevelId,
+        translated,
+        mode: this.appStorage.useMode,
+      }),
+    );
+  }
+
   /***
    * destroys audio service and transcr service. Call this after quit.
    * @param destroyaudio

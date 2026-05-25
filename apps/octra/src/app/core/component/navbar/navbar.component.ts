@@ -7,6 +7,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
   NgbCollapse,
   NgbDropdown,
+  NgbDropdownItem,
   NgbDropdownMenu,
   NgbDropdownToggle,
   NgbModalRef,
@@ -26,7 +27,12 @@ import { environment } from '../../../../environments/environment';
 import { AppInfo } from '../../../app.info';
 import { editorComponents } from '../../../editors/components';
 import { AboutModalComponent } from '../../modals/about-modal/about-modal.component';
+import {
+  AddTranslatedLevelModalComponent,
+  AddTranslatedLevelResult,
+} from '../../modals/add-translated-level-modal/add-translated-level-modal.component';
 import { ExportFilesModalComponent } from '../../modals/export-files-modal/export-files-modal.component';
+import { TranslateLinkedLevelModalComponent } from '../../modals/translate-linked-level-modal/translate-linked-level-modal.component';
 import { OctraModalService } from '../../modals/octra-modal.service';
 import { StatisticsModalComponent } from '../../modals/statistics-modal/statistics-modal.component';
 import { ToolsModalComponent } from '../../modals/tools-modal/tools-modal.component';
@@ -66,6 +72,7 @@ import { NavbarService } from './navbar.service';
     NgStyle,
     NgbDropdownToggle,
     NgbDropdownMenu,
+    NgbDropdownItem,
     UpperCasePipe,
     TranslocoPipe,
     TimespanPipe,
@@ -313,6 +320,45 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.annotationStoreService.addAnnotationLevel(AnnotationLevelType.SEGMENT);
   }
 
+  onAddTranslatedLevelClick() {
+    const sourceLevels =
+      this.annotationStoreService.transcript?.levels ?? [];
+    this.modalService
+      .openModal<typeof AddTranslatedLevelModalComponent, AddTranslatedLevelResult>(
+        AddTranslatedLevelModalComponent,
+        AddTranslatedLevelModalComponent.options,
+        { sourceLevels },
+      )
+      .then((result) => {
+        if (!result) return;
+        this.annotationStoreService.addTranslatedLevel(
+          result.sourceLevelId,
+          result.targetLanguageLabel,
+        );
+        if (!result.autoTranslate) return;
+        // Locate the just-created linked level (same source, matching name).
+        const transcript = this.annotationStoreService.transcript;
+        const created = transcript?.levels.find(
+          (l: any) =>
+            l.linkedToLevelId === result.sourceLevelId &&
+            l.name === result.targetLanguageLabel,
+        );
+        const sourceLevel = transcript?.levels.find(
+          (l) => l.id === result.sourceLevelId,
+        );
+        if (created && sourceLevel) {
+          this.openTranslateLinkedLevelModal(
+            created.id,
+            created.name,
+            sourceLevel.name,
+          );
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
   onLevelRemoveClick(level: OctraAnnotationAnyLevel<OctraAnnotationSegment>) {
     this.modalService
       .openModal(YesNoModalComponent, YesNoModalComponent.options, {
@@ -338,6 +384,39 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
 
   onDetachLinkedClick(level: OctraAnnotationAnyLevel<OctraAnnotationSegment>) {
     this.annotationStoreService.detachLinkedLevel(level.id);
+  }
+
+  onTranslateLinkedClick(level: OctraAnnotationAnyLevel<OctraAnnotationSegment>) {
+    const linkedToLevelId = (level as any).linkedToLevelId as number | undefined;
+    if (linkedToLevelId === undefined) return;
+    const sourceLevel = this.annotationStoreService.transcript?.levels.find(
+      (l) => l.id === linkedToLevelId,
+    );
+    this.openTranslateLinkedLevelModal(
+      level.id,
+      level.name,
+      sourceLevel?.name ?? '',
+    );
+  }
+
+  private openTranslateLinkedLevelModal(
+    linkedLevelId: number,
+    linkedLevelName: string,
+    sourceLevelName: string,
+  ) {
+    this.modalService
+      .openModal(
+        TranslateLinkedLevelModalComponent,
+        TranslateLinkedLevelModalComponent.options,
+        {
+          linkedLevelId,
+          linkedLevelName,
+          sourceLevelName,
+        },
+      )
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   public selectLevel(tiernum: number) {

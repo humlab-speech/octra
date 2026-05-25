@@ -42,6 +42,11 @@ export interface TranslationResult {
   annotJson: OAnnotJSON;
 }
 
+export interface TranslationSegmentsResult {
+  type: 'segments';
+  translated: TranslationSegment[];
+}
+
 export interface TranslationError {
   type: 'error';
   message: string;
@@ -53,6 +58,7 @@ export type TranslationEvent =
   | TranslationStart
   | TranslationSegmentProgress
   | TranslationResult
+  | TranslationSegmentsResult
   | TranslationError;
 
 export interface TranslationOptions {
@@ -160,25 +166,73 @@ export class LocalTranslationService implements OnDestroy {
     annotJson: OAnnotJSON,
     options: TranslationOptions,
   ): Observable<TranslationEvent> {
-    this.cancel();
-
-    const subject = new Subject<TranslationEvent>();
-    this.subject = subject;
-
     const sourceLevel = (annotJson.levels ?? []).find(
       (l): l is OSegmentLevel<OSegment> => l instanceof OSegmentLevel,
     );
 
     if (!sourceLevel) {
+      this.cancel();
+      const subject = new Subject<TranslationEvent>();
+      this.subject = subject;
       queueMicrotask(() =>
         subject.error(new Error('No segment level found to translate')),
       );
       return subject.asObservable();
     }
 
-    const segments: TranslationSegment[] = sourceLevel.items.map((item, idx) => ({
+    const sourceTexts = sourceLevel.items.map(
+      (item) => item.labels?.[0]?.value ?? '',
+    );
+
+    return this.runWorker(sourceTexts, options, (translated, subject) => {
+      try {
+        const augmented = this.appendTranslatedLevel(
+          annotJson,
+          sourceLevel,
+          translated,
+          options,
+        );
+        subject.next({ type: 'result', annotJson: augmented });
+      } catch (err: unknown) {
+        subject.error(err);
+        return;
+      }
+      subject.complete();
+    });
+  }
+
+  /**
+   * Translate an arbitrary array of source texts and emit a `'segments'`
+   * event with the translated array — used by the editor-time linked-tier
+   * translate flow, which patches an existing linked level rather than
+   * appending new levels.
+   */
+  translateSegments(
+    sourceTexts: string[],
+    options: TranslationOptions,
+  ): Observable<TranslationEvent> {
+    return this.runWorker(sourceTexts, options, (translated, subject) => {
+      subject.next({ type: 'segments', translated });
+      subject.complete();
+    });
+  }
+
+  private runWorker(
+    sourceTexts: string[],
+    options: TranslationOptions,
+    onResult: (
+      translated: TranslationSegment[],
+      subject: Subject<TranslationEvent>,
+    ) => void,
+  ): Observable<TranslationEvent> {
+    this.cancel();
+
+    const subject = new Subject<TranslationEvent>();
+    this.subject = subject;
+
+    const segments: TranslationSegment[] = sourceTexts.map((text, idx) => ({
       id: idx,
-      text: item.labels?.[0]?.value ?? '',
+      text,
     }));
 
     if (!segments.some((s) => s.text.trim().length > 0)) {
@@ -237,20 +291,21 @@ export class LocalTranslationService implements OnDestroy {
         options.sourceLanguage,
         options.targetLanguage,
       );
-      this.spawnWorker(annotJson, sourceLevel, segments, options, subject, skipCache, plan);
+      this.spawnWorker(segments, subject, skipCache, plan, onResult);
     })();
 
     return subject.asObservable();
   }
 
   private spawnWorker(
-    annotJson: OAnnotJSON,
-    sourceLevel: OSegmentLevel<OSegment>,
     segments: TranslationSegment[],
-    options: TranslationOptions,
     subject: Subject<TranslationEvent>,
     skipCache: boolean,
     plan: TranslationPlan,
+    onResult: (
+      translated: TranslationSegment[],
+      subject: Subject<TranslationEvent>,
+    ) => void,
   ): void {
     const worker = new Worker(
       new URL('../../workers/translation.worker', import.meta.url),
@@ -262,14 +317,7 @@ export class LocalTranslationService implements OnDestroy {
       this.ngZone.run(() => {
         if (data.type === 'result') {
           try {
-            const augmented = this.appendTranslatedLevel(
-              annotJson,
-              sourceLevel,
-              data.translated,
-              options,
-            );
-            subject.next({ type: 'result', annotJson: augmented });
-            subject.complete();
+            onResult(data.translated, subject);
           } catch (err: unknown) {
             subject.error(err);
           }

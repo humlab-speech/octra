@@ -183,6 +183,8 @@
     "Type": "Type",
     "abort": "Abort",
     "about": "About",
+    "add empty level": "Add empty level",
+    "add translated level": "Add translated tier…",
     "access code": "Access Code",
     "account": "Account",
     "action": "Action",
@@ -461,6 +463,28 @@
   "modal": {
     "about": {
       "header": "About OCTRA"
+    },
+    "add translated level": {
+      "title": "Add translated tier",
+      "source": "Source tier",
+      "target": "Target language",
+      "hint": "Creates a new linked tier with empty text labels. Segment boundaries stay in sync with the source tier automatically.",
+      "no source": "No eligible source tier found. The current annotation has no standalone segment level to translate from.",
+      "create": "Create empty",
+      "create and translate": "Create & translate"
+    },
+    "translate linked level": {
+      "title": "Translate linked tier",
+      "icon title": "Auto-translate this linked tier",
+      "description": "Translate text from \"{{source}}\" into \"{{target}}\". Only empty segments are filled; manually edited translations are preserved.",
+      "source": "Source language",
+      "target": "Target language",
+      "translate": "Translate",
+      "downloading": "Downloading model ({{loaded}} / {{total}})…",
+      "initializing": "Loading translation model…",
+      "translating": "Translating segment {{index}} of {{total}}…",
+      "done": "Done. Filled {{filled}} empty segment(s).",
+      "cancelled": "Translation cancelled."
     },
     "backup-notice": {
       "body": "Your progress is going to be saved on the server. Due to a known issue, it is recommended that you also download a local backup. This measure is temporarily necessary. Click on 'Download backup' to download the backup file and then on 'Continue'.<br/><br/>You can delete the backup files after the task has been completed.",

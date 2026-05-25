@@ -16,6 +16,7 @@ import { FeedBackForm } from '../../../obj/FeedbackForm/FeedBackForm';
 import { ILog } from '../../../obj/Settings/logging';
 import { ASRQueueItemType, ASRTimeInterval } from '../../asr';
 import { LoginMode } from '../../index';
+import type { TranslationSegment } from '../../../workers/translation.worker';
 import { GuidelinesItem } from './index';
 
 export class AnnotationActions {
@@ -151,6 +152,28 @@ export class AnnotationActions {
     events: {
       do: props<{
         id: number;
+        mode: LoginMode;
+      }>(),
+    },
+  });
+
+  static addTranslatedLevel = createActionGroup({
+    source: `annotation/ add translated level`,
+    events: {
+      do: props<{
+        sourceLevelId: number;
+        targetLanguageLabel: string;
+        mode: LoginMode;
+      }>(),
+    },
+  });
+
+  static applyTranslationToLinkedLevel = createActionGroup({
+    source: `annotation/ apply translation to linked level`,
+    events: {
+      do: props<{
+        linkedLevelId: number;
+        translated: TranslationSegment[];
         mode: LoginMode;
       }>(),
     },
