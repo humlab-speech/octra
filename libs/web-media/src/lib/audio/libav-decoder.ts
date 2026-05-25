@@ -42,7 +42,7 @@ async function getLibAV(): Promise<any> {
   // thread responsive. The fat variant must use noworker:true due to a postMessage
   // incompatibility in its IIFE, but the default variant supports worker mode fine.
   const libavPath = new URL('/assets/libav/libav-default.mjs', window.location.origin).href;
-  const m = await import(libavPath as any);
+  const m = await import(/* webpackIgnore: true */ libavPath as any);
   libavInstance = await m.LibAV();
   return libavInstance;
 }
@@ -64,7 +64,7 @@ async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   try {
     const libavPath = new URL('/assets/libav/libav-fat.mjs', window.location.origin).href;
     const wasmUrl = new URL('/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm', window.location.origin).href;
-    const m = await import(libavPath as any);
+    const m = await import(/* webpackIgnore: true */ libavPath as any);
     libavFatInstance = await m.default.LibAV({
       noworker: true,
       wasmurl: wasmUrl,
