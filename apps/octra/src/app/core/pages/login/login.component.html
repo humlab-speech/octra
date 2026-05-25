@@ -187,7 +187,11 @@
                       </ng-template>
                     </li>
                     <li [ngbNavItem]="'record'">
-                      <button ngbNavLink type="button">
+                      <button
+                        ngbNavLink
+                        type="button"
+                        style="color: #000"
+                      >
                         <i class="bi bi-mic-fill me-1"></i>
                         {{ 'login.tabs.record' | transloco }}
                       </button>

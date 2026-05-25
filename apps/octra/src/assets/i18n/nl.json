@@ -55,44 +55,44 @@
     "file selected": "{{file_label}} geselecteerd"
   },
   "recording": {
-    "title": "Record directly in browser",
-    "hint": "Direct recording using your microphone and/or camera.",
+    "title": "Direct in browser opnemen",
+    "hint": "Directe opname met je microfoon en/of camera.",
     "mode": {
-      "audio": "Audio only",
+      "audio": "Alleen audio",
       "audio+video": "Audio + video",
-      "aria label": "Recording source"
+      "aria label": "Opnamebron"
     },
-    "start": "Start recording",
-    "stop": "Stop",
-    "pause": "Pause",
-    "resume": "Resume",
-    "use": "Use recording",
-    "download": "Download",
-    "discard": "Discard",
-    "ready": "Recording ready",
-    "requesting permission": "Requesting microphone…",
-    "low volume warning": "Volume seems low",
-    "permission denied": "Microphone permission was denied.",
-    "no microphone": "No microphone was found.",
-    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "start": "Opname starten",
+    "stop": "Stoppen",
+    "pause": "Pauzeren",
+    "resume": "Hervatten",
+    "use": "Opname gebruiken",
+    "download": "Downloaden",
+    "discard": "Verwijderen",
+    "ready": "Opname klaar",
+    "requesting permission": "Microfoon aanvragen…",
+    "low volume warning": "Volume lijkt laag",
+    "permission denied": "Microfoontoegang werd geweigerd.",
+    "no microphone": "Geen microfoon gevonden.",
+    "firefox webm notice": "Je browser ondersteunt geen MP4-opname — opslaan als WebM. De transcriptiepijplijn accepteert beide.",
     "recovery": {
-      "title": "Unfinished recording recovered.",
-      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
-      "continue": "Continue recording",
-      "download partial": "Download partial",
-      "discard": "Discard"
+      "title": "Onvoltooide opname hersteld.",
+      "found": "{{mode}}-sessie gestart {{started}}, ca. {{seconds}} s, {{mb}} MB.",
+      "continue": "Opname hervatten",
+      "download partial": "Gedeelte downloaden",
+      "discard": "Verwijderen"
     },
     "devices": {
-      "aria label": "Choose input devices",
-      "tooltip": "Input devices",
-      "mic": "Microphone",
+      "aria label": "Invoerapparaten kiezen",
+      "tooltip": "Invoerapparaten",
+      "mic": "Microfoon",
       "camera": "Camera",
-      "unnamed": "Unnamed device",
-      "refresh": "Refresh devices",
-      "no permission": "Grant access to list available devices.",
-      "request access": "Request access",
-      "selection cleared": "Selected device was disconnected — using default.",
-      "default": "System default"
+      "unnamed": "Naamloos apparaat",
+      "refresh": "Apparaten vernieuwen",
+      "no permission": "Verleen toegang om beschikbare apparaten te tonen.",
+      "request access": "Toegang aanvragen",
+      "selection cleared": "Geselecteerd apparaat losgekoppeld — standaard wordt gebruikt.",
+      "default": "Systeemstandaard"
     }
   },
   "export": {
@@ -317,8 +317,8 @@
     "funding support and development": "Financiers en samenwerkingen",
     "groups that developed the language models": "Ontwikkelaars van de gebruikte taalmodellen",
     "tabs": {
-      "upload": "Upload file",
-      "record": "Record now"
+      "upload": "Bestand uploaden",
+      "record": "Nu opnemen"
     }
   },
   "logout": {

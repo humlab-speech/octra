@@ -106,44 +106,44 @@
     "file too large": "Filen överskrider den maximalt tillåtna storleken på {{maxSize}} MB."
   },
   "recording": {
-    "title": "Record directly in browser",
-    "hint": "Direct recording using your microphone and/or camera.",
+    "title": "Spela in direkt i webbläsaren",
+    "hint": "Direktinspelning med din mikrofon och/eller kamera.",
     "mode": {
-      "audio": "Audio only",
-      "audio+video": "Audio + video",
-      "aria label": "Recording source"
+      "audio": "Endast ljud",
+      "audio+video": "Ljud + video",
+      "aria label": "Inspelningskälla"
     },
-    "start": "Start recording",
-    "stop": "Stop",
-    "pause": "Pause",
-    "resume": "Resume",
-    "use": "Use recording",
-    "download": "Download",
-    "discard": "Discard",
-    "ready": "Recording ready",
-    "requesting permission": "Requesting microphone…",
-    "low volume warning": "Volume seems low",
-    "permission denied": "Microphone permission was denied.",
-    "no microphone": "No microphone was found.",
-    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "start": "Starta inspelning",
+    "stop": "Stopp",
+    "pause": "Paus",
+    "resume": "Återuppta",
+    "use": "Använd inspelning",
+    "download": "Ladda ner",
+    "discard": "Kassera",
+    "ready": "Inspelning klar",
+    "requesting permission": "Begär mikrofon…",
+    "low volume warning": "Volymen verkar låg",
+    "permission denied": "Mikrofonbehörighet nekades.",
+    "no microphone": "Ingen mikrofon hittades.",
+    "firefox webm notice": "Din webbläsare stöder inte MP4-inspelning — sparar som WebM. Transkriptionspipelinen accepterar båda.",
     "recovery": {
-      "title": "Unfinished recording recovered.",
-      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
-      "continue": "Continue recording",
-      "download partial": "Download partial",
-      "discard": "Discard"
+      "title": "Oavslutad inspelning återställd.",
+      "found": "{{mode}}-session startad {{started}}, ca {{seconds}} s, {{mb}} MB.",
+      "continue": "Fortsätt inspelning",
+      "download partial": "Ladda ner delvis",
+      "discard": "Kassera"
     },
     "devices": {
-      "aria label": "Choose input devices",
-      "tooltip": "Input devices",
-      "mic": "Microphone",
-      "camera": "Camera",
-      "unnamed": "Unnamed device",
-      "refresh": "Refresh devices",
-      "no permission": "Grant access to list available devices.",
-      "request access": "Request access",
-      "selection cleared": "Selected device was disconnected — using default.",
-      "default": "System default"
+      "aria label": "Välj inmatningsenheter",
+      "tooltip": "Inmatningsenheter",
+      "mic": "Mikrofon",
+      "camera": "Kamera",
+      "unnamed": "Namnlös enhet",
+      "refresh": "Uppdatera enheter",
+      "no permission": "Bevilja åtkomst för att lista tillgängliga enheter.",
+      "request access": "Begär åtkomst",
+      "selection cleared": "Vald enhet kopplades bort — använder standard.",
+      "default": "Systemstandard"
     }
   },
   "export": {
@@ -418,8 +418,8 @@
     "funding support and development": "Finansiärer och samarbeten",
     "groups that developed the language models": "Utvecklare av språkmodellerna som används",
     "tabs": {
-      "upload": "Upload file",
-      "record": "Record now"
+      "upload": "Ladda upp fil",
+      "record": "Spela in nu"
     }
   },
   "logout": {

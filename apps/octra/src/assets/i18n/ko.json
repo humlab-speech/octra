@@ -55,44 +55,44 @@
     "file selected": "{{file_label}} 선택됨"
   },
   "recording": {
-    "title": "Record directly in browser",
-    "hint": "Direct recording using your microphone and/or camera.",
+    "title": "브라우저에서 직접 녹음",
+    "hint": "마이크 및/또는 카메라로 직접 녹음하세요.",
     "mode": {
-      "audio": "Audio only",
-      "audio+video": "Audio + video",
-      "aria label": "Recording source"
+      "audio": "오디오만",
+      "audio+video": "오디오 + 비디오",
+      "aria label": "녹음 소스"
     },
-    "start": "Start recording",
-    "stop": "Stop",
-    "pause": "Pause",
-    "resume": "Resume",
-    "use": "Use recording",
-    "download": "Download",
-    "discard": "Discard",
-    "ready": "Recording ready",
-    "requesting permission": "Requesting microphone…",
-    "low volume warning": "Volume seems low",
-    "permission denied": "Microphone permission was denied.",
-    "no microphone": "No microphone was found.",
-    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "start": "녹음 시작",
+    "stop": "정지",
+    "pause": "일시정지",
+    "resume": "재개",
+    "use": "녹음 사용",
+    "download": "다운로드",
+    "discard": "삭제",
+    "ready": "녹음 준비됨",
+    "requesting permission": "마이크 요청 중…",
+    "low volume warning": "음량이 낮은 것 같습니다",
+    "permission denied": "마이크 권한이 거부되었습니다.",
+    "no microphone": "마이크를 찾을 수 없습니다.",
+    "firefox webm notice": "브라우저가 MP4 녹화를 지원하지 않아 WebM으로 저장합니다. 전사 파이프라인은 둘 다 허용합니다.",
     "recovery": {
-      "title": "Unfinished recording recovered.",
-      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
-      "continue": "Continue recording",
-      "download partial": "Download partial",
-      "discard": "Discard"
+      "title": "미완료 녹음이 복구되었습니다.",
+      "found": "{{mode}} 세션 {{started}} 시작, 약 {{seconds}}초, {{mb}} MB.",
+      "continue": "녹음 계속",
+      "download partial": "부분 다운로드",
+      "discard": "삭제"
     },
     "devices": {
-      "aria label": "Choose input devices",
-      "tooltip": "Input devices",
-      "mic": "Microphone",
-      "camera": "Camera",
-      "unnamed": "Unnamed device",
-      "refresh": "Refresh devices",
-      "no permission": "Grant access to list available devices.",
-      "request access": "Request access",
-      "selection cleared": "Selected device was disconnected — using default.",
-      "default": "System default"
+      "aria label": "입력 장치 선택",
+      "tooltip": "입력 장치",
+      "mic": "마이크",
+      "camera": "카메라",
+      "unnamed": "이름 없는 장치",
+      "refresh": "장치 새로고침",
+      "no permission": "사용 가능한 장치를 표시하려면 접근 권한을 부여하세요.",
+      "request access": "접근 요청",
+      "selection cleared": "선택한 장치 연결 해제됨 — 기본값을 사용합니다.",
+      "default": "시스템 기본값"
     }
   },
   "export": {
@@ -317,8 +317,8 @@
     "funding support and development": "후원자 및 협력",
     "groups that developed the language models": "사용된 언어 모델 개발자",
     "tabs": {
-      "upload": "Upload file",
-      "record": "Record now"
+      "upload": "파일 업로드",
+      "record": "지금 녹음"
     }
   },
   "logout": {

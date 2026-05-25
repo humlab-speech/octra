@@ -55,44 +55,44 @@
     "file selected": "{{file_label}} 已选中"
   },
   "recording": {
-    "title": "Record directly in browser",
-    "hint": "Direct recording using your microphone and/or camera.",
+    "title": "直接在浏览器中录制",
+    "hint": "使用您的麦克风和/或摄像头直接录制。",
     "mode": {
-      "audio": "Audio only",
-      "audio+video": "Audio + video",
-      "aria label": "Recording source"
+      "audio": "仅音频",
+      "audio+video": "音频 + 视频",
+      "aria label": "录制源"
     },
-    "start": "Start recording",
-    "stop": "Stop",
-    "pause": "Pause",
-    "resume": "Resume",
-    "use": "Use recording",
-    "download": "Download",
-    "discard": "Discard",
-    "ready": "Recording ready",
-    "requesting permission": "Requesting microphone…",
-    "low volume warning": "Volume seems low",
-    "permission denied": "Microphone permission was denied.",
-    "no microphone": "No microphone was found.",
-    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "start": "开始录制",
+    "stop": "停止",
+    "pause": "暂停",
+    "resume": "继续",
+    "use": "使用录制",
+    "download": "下载",
+    "discard": "丢弃",
+    "ready": "录制就绪",
+    "requesting permission": "请求麦克风权限…",
+    "low volume warning": "音量似乎过低",
+    "permission denied": "麦克风权限被拒绝。",
+    "no microphone": "未找到麦克风。",
+    "firefox webm notice": "您的浏览器不支持 MP4 录制 — 将保存为 WebM。转录管道支持两者。",
     "recovery": {
-      "title": "Unfinished recording recovered.",
-      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
-      "continue": "Continue recording",
-      "download partial": "Download partial",
-      "discard": "Discard"
+      "title": "已恢复未完成的录制。",
+      "found": "{{mode}} 会话开始于 {{started}}，约 {{seconds}} 秒，{{mb}} MB。",
+      "continue": "继续录制",
+      "download partial": "下载部分",
+      "discard": "丢弃"
     },
     "devices": {
-      "aria label": "Choose input devices",
-      "tooltip": "Input devices",
-      "mic": "Microphone",
-      "camera": "Camera",
-      "unnamed": "Unnamed device",
-      "refresh": "Refresh devices",
-      "no permission": "Grant access to list available devices.",
-      "request access": "Request access",
-      "selection cleared": "Selected device was disconnected — using default.",
-      "default": "System default"
+      "aria label": "选择输入设备",
+      "tooltip": "输入设备",
+      "mic": "麦克风",
+      "camera": "摄像头",
+      "unnamed": "未命名设备",
+      "refresh": "刷新设备",
+      "no permission": "请授予访问权限以列出可用设备。",
+      "request access": "请求访问",
+      "selection cleared": "所选设备已断开 — 使用默认设备。",
+      "default": "系统默认"
     }
   },
   "export": {
@@ -317,8 +317,8 @@
     "funding support and development": "资助方与合作",
     "groups that developed the language models": "所用语言模型的开发者",
     "tabs": {
-      "upload": "Upload file",
-      "record": "Record now"
+      "upload": "上传文件",
+      "record": "立即录制"
     }
   },
   "logout": {

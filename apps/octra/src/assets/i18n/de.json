@@ -99,44 +99,44 @@
     "file selected": "{{file_label}} ausgewählt"
   },
   "recording": {
-    "title": "Record directly in browser",
-    "hint": "Direct recording using your microphone and/or camera.",
+    "title": "Direkt im Browser aufnehmen",
+    "hint": "Direktaufnahme mit Mikrofon und/oder Kamera.",
     "mode": {
-      "audio": "Audio only",
-      "audio+video": "Audio + video",
-      "aria label": "Recording source"
+      "audio": "Nur Audio",
+      "audio+video": "Audio + Video",
+      "aria label": "Aufnahmequelle"
     },
-    "start": "Start recording",
-    "stop": "Stop",
+    "start": "Aufnahme starten",
+    "stop": "Stopp",
     "pause": "Pause",
-    "resume": "Resume",
-    "use": "Use recording",
-    "download": "Download",
-    "discard": "Discard",
-    "ready": "Recording ready",
-    "requesting permission": "Requesting microphone…",
-    "low volume warning": "Volume seems low",
-    "permission denied": "Microphone permission was denied.",
-    "no microphone": "No microphone was found.",
-    "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "resume": "Fortsetzen",
+    "use": "Aufnahme verwenden",
+    "download": "Herunterladen",
+    "discard": "Verwerfen",
+    "ready": "Aufnahme bereit",
+    "requesting permission": "Frage Mikrofon an…",
+    "low volume warning": "Lautstärke scheint zu gering",
+    "permission denied": "Mikrofonberechtigung wurde verweigert.",
+    "no microphone": "Kein Mikrofon gefunden.",
+    "firefox webm notice": "Ihr Browser unterstützt keine MP4-Aufnahme – speichere als WebM. Die Transkriptionspipeline akzeptiert beide.",
     "recovery": {
-      "title": "Unfinished recording recovered.",
-      "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
-      "continue": "Continue recording",
-      "download partial": "Download partial",
-      "discard": "Discard"
+      "title": "Nicht abgeschlossene Aufnahme wiederhergestellt.",
+      "found": "{{mode}}-Sitzung gestartet {{started}}, ca. {{seconds}} s, {{mb}} MB.",
+      "continue": "Aufnahme fortsetzen",
+      "download partial": "Teilstück herunterladen",
+      "discard": "Verwerfen"
     },
     "devices": {
-      "aria label": "Choose input devices",
-      "tooltip": "Input devices",
-      "mic": "Microphone",
-      "camera": "Camera",
-      "unnamed": "Unnamed device",
-      "refresh": "Refresh devices",
-      "no permission": "Grant access to list available devices.",
-      "request access": "Request access",
-      "selection cleared": "Selected device was disconnected — using default.",
-      "default": "System default"
+      "aria label": "Eingabegeräte wählen",
+      "tooltip": "Eingabegeräte",
+      "mic": "Mikrofon",
+      "camera": "Kamera",
+      "unnamed": "Unbenanntes Gerät",
+      "refresh": "Geräte aktualisieren",
+      "no permission": "Zugriff gewähren, um verfügbare Geräte anzuzeigen.",
+      "request access": "Zugriff anfordern",
+      "selection cleared": "Ausgewähltes Gerät wurde getrennt – verwende Standard.",
+      "default": "Systemstandard"
     }
   },
   "export": {
@@ -410,8 +410,8 @@
     "funding support and development": "Förderer und Kooperationen",
     "groups that developed the language models": "Entwickler der verwendeten Sprachmodelle",
     "tabs": {
-      "upload": "Upload file",
-      "record": "Record now"
+      "upload": "Datei hochladen",
+      "record": "Jetzt aufnehmen"
     }
   },
   "logout": {
