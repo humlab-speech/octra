@@ -20,6 +20,7 @@ import {
   RecordingService,
   RecordingState,
 } from '../../shared/service/recording.service';
+import { DevicePickerComponent } from './device-picker.component';
 import { RecordingRecoveryBannerComponent } from './recording-recovery-banner.component';
 import { VuMeterComponent } from './vu-meter.component';
 
@@ -38,6 +39,7 @@ type StagedResult = RecordingResult;
     NgIf,
     NgbTooltipModule,
     TranslocoPipe,
+    DevicePickerComponent,
     RecordingRecoveryBannerComponent,
     VuMeterComponent,
   ],

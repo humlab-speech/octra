@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { RecordingMode } from '../octra-recording-database';
+import { RecordingDevicesService } from './recording-devices.service';
 import {
   assemblePcmToWav,
   extensionForMime,
@@ -78,7 +79,10 @@ export class RecordingService {
   private totalChunkCount = 0;
   private totalChunkBytes = 0;
 
-  constructor(private persistence: RecordingPersistenceService) {}
+  constructor(
+    private persistence: RecordingPersistenceService,
+    private devices: RecordingDevicesService,
+  ) {}
 
   get currentMode(): RecordingMode {
     return this.mode;
@@ -100,27 +104,40 @@ export class RecordingService {
     this.mode = opts.mode;
     this.resetCounters();
 
+    const audioId = this.devices.selectedAudioId$.value;
+    const videoId = this.devices.selectedVideoId$.value;
+    const audioConstraint: MediaTrackConstraints = {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: false,
+      ...(audioId ? { deviceId: { exact: audioId } } : {}),
+    };
+    const videoConstraint: MediaTrackConstraints = {
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+      ...(videoId ? { deviceId: { exact: videoId } } : {}),
+    };
+    const constraints: MediaStreamConstraints =
+      opts.mode === 'audio+video'
+        ? { audio: audioConstraint, video: videoConstraint }
+        : { audio: audioConstraint, video: false };
+
     try {
-      const constraints: MediaStreamConstraints =
-        opts.mode === 'audio+video'
-          ? {
-              audio: true,
-              video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-            }
-          : {
-              audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: false,
-              },
-              video: false,
-            };
       this.stream = await navigator.mediaDevices.getUserMedia(constraints);
     } catch (err) {
+      if (err instanceof Error && err.name === 'OverconstrainedError') {
+        if (audioId) this.devices.selectAudio(null);
+        if (videoId && opts.mode === 'audio+video') {
+          this.devices.selectVideo(null);
+        }
+      }
       this.state$.next('error');
       this.emitError(err);
       throw err;
     }
+
+    this.devices.notePermissionGranted();
+    void this.devices.refresh();
 
     this.mimeType =
       opts.mode === 'audio+video' ? pickBestVideoMime() : pickBestAudioMime();

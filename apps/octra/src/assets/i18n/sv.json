@@ -132,6 +132,18 @@
       "continue": "Continue recording",
       "download partial": "Download partial",
       "discard": "Discard"
+    },
+    "devices": {
+      "aria label": "Choose input devices",
+      "tooltip": "Input devices",
+      "mic": "Microphone",
+      "camera": "Camera",
+      "unnamed": "Unnamed device",
+      "refresh": "Refresh devices",
+      "no permission": "Grant access to list available devices.",
+      "request access": "Request access",
+      "selection cleared": "Selected device was disconnected — using default.",
+      "default": "System default"
     }
   },
   "export": {

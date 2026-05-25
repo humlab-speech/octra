@@ -1,0 +1,25 @@
+:host {
+  display: contents;
+}
+
+.device-picker {
+  display: inline-block;
+}
+
+.device-picker__toggle {
+  width: 18px;
+  padding: 0;
+  line-height: 1;
+  font-size: 0.7rem;
+
+  &::after {
+    display: none;
+  }
+}
+
+.device-picker__menu {
+  min-width: 220px;
+  max-width: 320px;
+  max-height: 360px;
+  overflow-y: auto;
+}

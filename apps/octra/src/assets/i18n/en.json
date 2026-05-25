@@ -126,6 +126,18 @@
     "permission denied": "Microphone permission was denied.",
     "no microphone": "No microphone was found.",
     "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",
+    "devices": {
+      "aria label": "Choose input devices",
+      "tooltip": "Input devices",
+      "mic": "Microphone",
+      "camera": "Camera",
+      "unnamed": "Unnamed device",
+      "default": "System default",
+      "refresh": "Refresh devices",
+      "no permission": "Grant access to list available devices.",
+      "request access": "Request access",
+      "selection cleared": "Selected device was disconnected — using default."
+    },
     "recovery": {
       "title": "Unfinished recording recovered.",
       "found": "{{mode}} session started {{started}}, approx. {{seconds}} s, {{mb}} MB.",
