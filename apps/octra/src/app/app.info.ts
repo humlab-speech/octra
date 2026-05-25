@@ -16,6 +16,7 @@ import {
   WhisperJSONConverter,
 } from '@octra/annotation';
 import { LibavFormat, MusicMetadataFormat, WavFormat } from '@octra/web-media';
+import { BUILD_INFO } from './build-info';
 
 export class AppInfo {
   public static readonly audioformats = [
@@ -51,9 +52,5 @@ export class AppInfo {
     preserveFragment: false,
   };
 
-  public static BUILD = {
-    version: '1.0.0',
-    hash: '2893u092i349i23904',
-    timestamp: new Date().toISOString(),
-  };
+  public static BUILD: typeof BUILD_INFO = { ...BUILD_INFO };
 }
