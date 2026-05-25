@@ -3,14 +3,12 @@
 }
 
 .device-picker {
-  display: inline-block;
+  display: contents;
 }
 
 .device-picker__toggle {
-  width: 18px;
-  padding: 0;
-  line-height: 1;
-  font-size: 0.7rem;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
 
   &::after {
     display: none;
