@@ -7,8 +7,13 @@
 }
 
 .device-picker__toggle {
-  padding-left: 0.35rem;
-  padding-right: 0.35rem;
+  width: 17px;
+  padding-left: 0;
+  padding-right: 0;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &::after {
     display: none;
