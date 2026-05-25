@@ -41,7 +41,10 @@ async function getLibAV(): Promise<any> {
   // Worker mode (default) runs WASM in a background thread, keeping the main
   // thread responsive. The fat variant must use noworker:true due to a postMessage
   // incompatibility in its IIFE, but the default variant supports worker mode fine.
-  const libavPath = new URL('/assets/libav/libav-default.mjs', window.location.origin).href;
+  const libavPath = new URL(
+    '/assets/libav/libav-default.mjs',
+    window.location.origin,
+  ).href;
   const m = await import(/* webpackIgnore: true */ libavPath as any);
   libavInstance = await m.LibAV();
   return libavInstance;
@@ -62,8 +65,14 @@ async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   const hadGlobal = 'global' in globalThis;
   if (!hadGlobal) (globalThis as any).global = globalThis;
   try {
-    const libavPath = new URL('/assets/libav/libav-fat.mjs', window.location.origin).href;
-    const wasmUrl = new URL('/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm', window.location.origin).href;
+    const libavPath = new URL(
+      '/assets/libav/libav-fat.mjs',
+      window.location.origin,
+    ).href;
+    const wasmUrl = new URL(
+      '/assets/libav/libav-6.0.0-nightly.29.f420ff.ffmpeg.6.1.1-fat.wasm.wasm',
+      window.location.origin,
+    ).href;
     const m = await import(/* webpackIgnore: true */ libavPath as any);
     libavFatInstance = await m.default.LibAV({
       noworker: true,
@@ -75,9 +84,15 @@ async function getLibAVFat(onStatus?: (msg: string) => void): Promise<any> {
   return libavFatInstance;
 }
 
-export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.audio', onStatus?: (msg: string) => void): Promise<AudioBufferLike> {
+export async function decodeWithLibAV(
+  buf: ArrayBuffer,
+  sourceFilename = 'input.audio',
+  onStatus?: (msg: string) => void,
+): Promise<AudioBufferLike> {
   const ext = sourceFilename.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? '';
-  const libav = ASF_EXTENSIONS.has(ext) ? await getLibAVFat(onStatus) : await getLibAV();
+  const libav = ASF_EXTENSIONS.has(ext)
+    ? await getLibAVFat(onStatus)
+    : await getLibAV();
 
   // Use the original filename so libav can detect the container format by extension
   // (e.g. .wma → ASF demuxer) before falling back to content probing.
@@ -97,7 +112,9 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     console.timeEnd('[libav] demux');
     fmt_ctx = _fmt_ctx;
 
-    const audioStream = streams.find((s: any) => s.codec_type === libav.AVMEDIA_TYPE_AUDIO);
+    const audioStream = streams.find(
+      (s: any) => s.codec_type === libav.AVMEDIA_TYPE_AUDIO,
+    );
     if (!audioStream) {
       throw new Error('No audio stream found in file.');
     }
@@ -106,7 +123,10 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     // preventing H.264/video data from being loaded into WASM memory.
     for (const s of streams) {
       if (s.codec_type !== libav.AVMEDIA_TYPE_AUDIO) {
-        const streamPtr = await libav.AVFormatContext_streams_a(fmt_ctx, s.index);
+        const streamPtr = await libav.AVFormatContext_streams_a(
+          fmt_ctx,
+          s.index,
+        );
         await libav.AVStream_discard_s(streamPtr, 48 /* AVDISCARD_ALL */);
       }
     }
@@ -115,11 +135,15 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
       audioStream.codec_id,
       audioStream.codecpar,
     );
-    c = _c; pkt = _pkt; frame = _frame;
+    c = _c;
+    pkt = _pkt;
+    frame = _frame;
 
     onStatus?.('Reading audio packets…');
     console.time('[libav] readFrames');
-    const [, allPackets] = await libav.ff_read_frame_multi(fmt_ctx, pkt, { limit: 64 * 1024 * 1024 });
+    const [, allPackets] = await libav.ff_read_frame_multi(fmt_ctx, pkt, {
+      limit: 64 * 1024 * 1024,
+    });
     console.timeEnd('[libav] readFrames');
     const packets = allPackets[audioStream.index] || [];
 
@@ -133,14 +157,16 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     }
 
     const sampleRate = frames[0].sample_rate;
-    const numChannels = frames[0].channels || frames[0].ch_layout_nb_channels || 1;
+    const numChannels =
+      frames[0].channels || frames[0].ch_layout_nb_channels || 1;
     const sampleFormat = frames[0].format;
 
     let totalSamples = 0;
     for (const f of frames) totalSamples += f.nb_samples;
 
     const channels: Float32Array[] = [];
-    for (let ch = 0; ch < numChannels; ch++) channels.push(new Float32Array(totalSamples));
+    for (let ch = 0; ch < numChannels; ch++)
+      channels.push(new Float32Array(totalSamples));
 
     let offset = 0;
     for (const f of frames) {
@@ -165,9 +191,16 @@ export async function decodeWithLibAV(buf: ArrayBuffer, sourceFilename = 'input.
     return new AudioBufferLikeImpl(channels, sampleRate);
   } finally {
     // Always free resources, even on error, to prevent WASM memory leaks.
-    try { if (c !== undefined && pkt !== undefined && frame !== undefined) await libav.ff_free_decoder(c, pkt, frame); } catch (_) {}
-    try { if (fmt_ctx !== undefined) await libav.avformat_close_input_js(fmt_ctx); } catch (_) {}
-    try { await libav.unlink(filename); } catch (_) {}
+    try {
+      if (c !== undefined && pkt !== undefined && frame !== undefined)
+        await libav.ff_free_decoder(c, pkt, frame);
+    } catch (_) {}
+    try {
+      if (fmt_ctx !== undefined) await libav.avformat_close_input_js(fmt_ctx);
+    } catch (_) {}
+    try {
+      await libav.unlink(filename);
+    } catch (_) {}
   }
 }
 

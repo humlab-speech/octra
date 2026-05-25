@@ -27,25 +27,24 @@ import {
   ShortcutGroup,
   ShortcutManager,
 } from '@octra/web-media';
-import { Stage } from 'konva/lib/Stage';
-import { Layer } from 'konva/lib/Layer';
-import { Group } from 'konva/lib/Group';
-import { Shape } from 'konva/lib/Shape';
-import { Rect } from 'konva/lib/shapes/Rect';
-import { Line } from 'konva/lib/shapes/Line';
-import { Circle } from 'konva/lib/shapes/Circle';
-import { Text } from 'konva/lib/shapes/Text';
 import { Animation } from 'konva/lib/Animation';
 import { Context } from 'konva/lib/Context';
-import { Util } from 'konva/lib/Util';
-import type { Vector2d } from 'konva/lib/types';
+import { Group } from 'konva/lib/Group';
+import { Layer } from 'konva/lib/Layer';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { Shape } from 'konva/lib/Shape';
+import { Stage } from 'konva/lib/Stage';
+import { Util } from 'konva/lib/Util';
+import { Circle } from 'konva/lib/shapes/Circle';
+import { Line } from 'konva/lib/shapes/Line';
+import { Rect } from 'konva/lib/shapes/Rect';
+import { Text } from 'konva/lib/shapes/Text';
+import type { Vector2d } from 'konva/lib/types';
 import { ReplaySubject, Subject, timer } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MultiThreadingService } from '../../../multi-threading.service';
-import { Position, Size } from '../../../obj';
+import { OCTRA_COLORS, Position, Size } from '../../../obj';
 import { PlayCursor } from '../../../obj/play-cursor';
-import { OCTRA_COLORS } from '../../../obj';
 import { AudioViewerShortcutEvent } from './audio-viewer.component';
 import { AudioviewerConfig } from './audio-viewer.config';
 import {
@@ -1051,11 +1050,7 @@ export class AudioViewerService {
     return group;
   }
 
-  private createLine(
-    size: Size,
-    position: Position,
-    lineNum: number,
-  ): Group {
+  private createLine(size: Size, position: Position, lineNum: number): Group {
     const result = new Group({
       name: 'line',
       x: position.x,
@@ -1603,8 +1598,8 @@ export class AudioViewerService {
 
         // Speaker label for the segment starting at this boundary
         if (this.annotation && this.currentLevel) {
-          const allSegments =
-            this.currentLevel.items as OctraAnnotationSegment[];
+          const allSegments = this.currentLevel
+            .items as OctraAnnotationSegment[];
           const boundarySegIndex = allSegments.findIndex(
             (s) => s.id === boundary.id,
           );
@@ -1650,8 +1645,8 @@ export class AudioViewerService {
 
             labelGroup.on('click tap', () => {
               if (!this.annotation || !this.currentLevel) return;
-              const currentAllSegments =
-                this.currentLevel.items as OctraAnnotationSegment[];
+              const currentAllSegments = this.currentLevel
+                .items as OctraAnnotationSegment[];
               const currentBoundarySegIndex = currentAllSegments.findIndex(
                 (s) => s.id === boundary.id,
               );
@@ -1663,10 +1658,14 @@ export class AudioViewerService {
               // no early return on empty — cycleNextSpeaker handles it
               const currentIds = getSpeakerIds(this.annotation);
               const nextId = cycleNextSpeaker(currentSpeakerId, currentIds);
-              const clonedSeg = currentNextSeg.clone() as OctraAnnotationSegment;
+              const clonedSeg =
+                currentNextSeg.clone() as OctraAnnotationSegment;
               const changed = clonedSeg.changeLabel('Speaker', nextId);
               if (!changed) {
-                clonedSeg.labels = [...clonedSeg.labels, new OLabel('Speaker', nextId)];
+                clonedSeg.labels = [
+                  ...clonedSeg.labels,
+                  new OLabel('Speaker', nextId),
+                ];
               }
               this.currentLevelChange.emit({
                 type: 'change',
@@ -1787,11 +1786,11 @@ export class AudioViewerService {
 
             overlayGroup.add(overlaySegment);
 
-              if (this.settings.showTranscripts) {
-                const textBackground = new Shape({
-                  x: this.settings.margin.left,
-                  y: 0,
-                  width: this.innerWidth,
+            if (this.settings.showTranscripts) {
+              const textBackground = new Shape({
+                x: this.settings.margin.left,
+                y: 0,
+                width: this.innerWidth,
                 listening: false,
                 height: segmentHeight,
                 transformsEnabled: 'position',
@@ -2665,6 +2664,22 @@ export class AudioViewerService {
                               });
                             }
                           } else {
+                            console.warn(
+                              '[audio-viewer.play_selection] segment invisible guard rejected',
+                              {
+                                segmentI,
+                                currentLevelName: this.currentLevel?.name,
+                                currentLevelLinkedKind: (
+                                  this.currentLevel as any
+                                )?.linkedKind,
+                                segSamples: segment?.time?.samples,
+                                startSamples: (startTime as any)?.samples,
+                                chunkStart: this.audioChunk?.time.start.samples,
+                                chunkEnd: this.audioChunk?.time.end.samples,
+                                audioTCalculator:
+                                  this.audioTCalculator !== undefined,
+                              },
+                            );
                             this.alert.emit({
                               type: 'error',
                               message: 'segment invisible',
@@ -3048,15 +3063,36 @@ export class AudioViewerService {
 
       const startTime = getStartTimeBySegmentID(items, segment.id);
 
-      // make shure, that segments boundaries are visible
-      if (
-        segment?.time?.samples !== undefined &&
-        this.audioTCalculator !== undefined &&
-        (startTime as any).samples >= this.audioChunk.time.start.samples &&
-        segment.time.samples <= this.audioChunk.time.end.samples + 1 &&
-        this.innerWidth !== undefined
-      ) {
-        const absX = this.audioTCalculator.samplestoAbsX(segment.time);
+      // Width fallback: innerWidth is laid out lazily by the viewer's resize
+      // observer. For linked levels (e.g. translation) the level switch can
+      // outrun layout, leaving innerWidth undefined at click time even though
+      // every other geometry condition holds. Fall back to AudioPxWidth — the
+      // pre-computed full canvas width — so the popup-open path is not blocked
+      // by transient layout state.
+      const effectiveInnerWidth = this.innerWidth ?? this.AudioPxWidth;
+
+      const segSamples = segment?.time?.samples;
+      const segStartSamples = (startTime as any)?.samples;
+      const chunkStart = this.audioChunk.time.start.samples;
+      const chunkEnd = this.audioChunk.time.end.samples;
+      const guardChecks = {
+        hasSegSamples: segSamples !== undefined,
+        hasCalculator: this.audioTCalculator !== undefined,
+        startInChunk: segStartSamples >= chunkStart,
+        endInChunk: segSamples !== undefined && segSamples <= chunkEnd + 1,
+        hasWidth: effectiveInnerWidth !== undefined,
+      };
+      const guardPasses =
+        guardChecks.hasSegSamples &&
+        guardChecks.hasCalculator &&
+        guardChecks.startInChunk &&
+        guardChecks.endInChunk &&
+        guardChecks.hasWidth;
+
+      if (guardPasses) {
+        const tcalc = this.audioTCalculator!;
+        const widthForLayout = effectiveInnerWidth!;
+        const absX = tcalc.samplestoAbsX(segment.time);
         let begin: OctraAnnotationSegment;
 
         if (segIndex > 0) {
@@ -3069,19 +3105,19 @@ export class AudioViewerService {
           );
         }
 
-        const beginX = this.audioTCalculator.samplestoAbsX(begin.time);
+        const beginX = tcalc.samplestoAbsX(begin.time);
         const posY1 =
-          this.innerWidth < this.AudioPxWidth
-            ? Math.floor(beginX / this.innerWidth + 1) *
+          widthForLayout < this.AudioPxWidth
+            ? Math.floor(beginX / widthForLayout + 1) *
                 (this.settings.lineheight + this.settings.margin.bottom) -
               this.settings.margin.bottom
             : 0;
 
         let posY2 = 0;
 
-        if (this.innerWidth < this.AudioPxWidth) {
+        if (widthForLayout < this.AudioPxWidth) {
           posY2 =
-            Math.floor(absX / this.innerWidth + 1) *
+            Math.floor(absX / widthForLayout + 1) *
               (this.settings.lineheight + this.settings.margin.bottom) -
             this.settings.margin.bottom;
         }
@@ -3107,6 +3143,25 @@ export class AudioViewerService {
 
         return { posY1, posY2 };
       } else {
+        // Emit a diagnostic to the dev console so an operator can see which
+        // specific subcondition rejected — otherwise the user only sees the
+        // 'segment invisible' toast which gives no actionable detail.
+        console.warn(
+          '[audio-viewer.selectSegment] visibility guard rejected segment',
+          {
+            segIndex,
+            currentLevelName: this.currentLevel?.name,
+            currentLevelLinkedKind: (this.currentLevel as any)?.linkedKind,
+            guardChecks,
+            segSamples,
+            segStartSamples,
+            chunkStart,
+            chunkEnd,
+            innerWidth: this.innerWidth,
+            audioPxWidth: this.AudioPxWidth,
+            audioTCalculator: this.audioTCalculator !== undefined,
+          },
+        );
         throw new Error('Segment not selected.');
       }
     } else {
