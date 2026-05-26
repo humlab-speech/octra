@@ -56,7 +56,7 @@
   },
   "recording": {
     "title": "Direct in browser opnemen",
-    "hint": "Directe opname met je microfoon en/of camera.",
+    "hint": "Directe opname met je microfoon en/of camera",
     "mode": {
       "audio": "Alleen audio",
       "audio+video": "Audio + video",

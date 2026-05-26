@@ -107,7 +107,7 @@
   },
   "recording": {
     "title": "Spela in direkt i webbläsaren",
-    "hint": "Direktinspelning med din mikrofon och/eller kamera.",
+    "hint": "Direktinspelning med din mikrofon och/eller kamera",
     "mode": {
       "audio": "Endast ljud",
       "audio+video": "Ljud + video",

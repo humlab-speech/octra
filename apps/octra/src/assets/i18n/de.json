@@ -100,7 +100,7 @@
   },
   "recording": {
     "title": "Direkt im Browser aufnehmen",
-    "hint": "Direktaufnahme mit Mikrofon und/oder Kamera.",
+    "hint": "Direktaufnahme mit Mikrofon und/oder Kamera",
     "mode": {
       "audio": "Nur Audio",
       "audio+video": "Audio + Video",

@@ -56,7 +56,7 @@
   },
   "recording": {
     "title": "Registra direttamente nel browser",
-    "hint": "Registrazione diretta con microfono e/o telecamera.",
+    "hint": "Registrazione diretta con microfono e/o telecamera",
     "mode": {
       "audio": "Solo audio",
       "audio+video": "Audio + video",
