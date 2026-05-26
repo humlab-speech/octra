@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "object_language": "swe",
+    "language": "sv",
+    "project": "Speakers",
+    "authors": "Test Person (testperson@email.de)",
+    "version": "1.0",
+    "date": "2017-04-10",
+    "encoding": "UTF-8",
+    "validation_url": "config/localmode/functions.js"
+  },
+  "instructions": [
+    {
+      "group": "Spelling",
+      "entries": [
+        {
+          "code": "R01",
+          "priority": 100,
+          "title": "Make use of correct spelling",
+          "description": "Please take attention to correct spelling.",
+          "examples": []
+        }
+      ]
+    },
+    {
+      "group": "Punctuation",
+      "entries": [
+        {
+          "code": "R06",
+          "priority": 100,
+          "title": "No punctuation characters",
+          "description": "Do not use any punctuation characters.",
+          "examples": [
+            {
+              "annotation": "Do not use any of <code>(.,!?;-)</code>",
+              "url": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "markers": [
+    {
+      "id": 1,
+      "name": "truncation marker start",
+      "code": "[~abc]",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/truncation_start.png",
+      "button_text": "~abc",
+      "description": "Set this marker at the beginning of the annotation if a word was cutted off.",
+      "shortcut": {
+        "mac": "ALT + 1",
+        "pc": "ALT + 1"
+      }
+    },
+    {
+      "id": 2,
+      "name": "filled pause",
+      "code": "<nib>",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/fil.png",
+      "button_text": "filled pause",
+      "description": "This marker is for the speakers hesitations like 'hm', 'ähm' and others.",
+      "shortcut": {
+        "mac": "ALT + 2",
+        "pc": "ALT + 2"
+      }
+    },
+    {
+      "id": 3,
+      "name": "intermittent noise",
+      "code": "[int]",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/int.png",
+      "button_text": "intermittent noise",
+      "description": "This marker is for noise like door slam, touching the microphone or something like that.",
+      "shortcut": {
+        "mac": "ALT + 3",
+        "pc": "ALT + 3"
+      }
+    },
+    {
+      "id": 4,
+      "name": "speaker noise",
+      "code": "[spk]",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/spk.png",
+      "button_text": "speaker noise",
+      "description": "This marker is for noise which was produced by the speaker, e.g. breathing loudly, laughing or something like that.",
+      "shortcut": {
+        "mac": "ALT + 4",
+        "pc": "ALT + 4"
+      }
+    },
+    {
+      "id": 5,
+      "name": "stationary noise",
+      "code": "[sta]",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/sta.png",
+      "button_text": "stationary noise",
+      "description": "This marker is for continuous, loud noise like traffic jam, music or radio in the background",
+      "shortcut": {
+        "mac": "ALT + 5",
+        "pc": "ALT + 5"
+      }
+    },
+    {
+      "id": 6,
+      "name": "unclear word",
+      "code": "**",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/stars.png",
+      "button_text": "**",
+      "description": "Set this marker before a word if it is not recognizable or if it is from another language.",
+      "shortcut": {
+        "mac": "ALT + 6",
+        "pc": "ALT + 6"
+      }
+    },
+    {
+      "id": 7,
+      "name": "truncation marker end",
+      "code": "[abc~]",
+      "type": "normal",
+      "icon": "assets/img/components/transcr-editor/default_markers/truncation_end.png",
+      "button_text": "abc~",
+      "description": "Set this marker only at the end of the annotation if the last word was cutted off",
+      "shortcut": {
+        "mac": "ALT + 7",
+        "pc": "ALT + 7"
+      }
+    },
+    {
+      "id": 8,
+      "name": "break",
+      "code": "<P>",
+      "type": "break",
+      "icon": "assets/img/components/transcr-editor/default_markers/break.png",
+      "button_text": "Break",
+      "description": "This marker represents a break that means a audio chunk without any speaking",
+      "shortcut": {
+        "mac": "ALT + P",
+        "pc": "ALT + P"
+      }
+    }
+  ]
+}

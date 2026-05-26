@@ -77,7 +77,11 @@ export class ApplicationSessionEffects {
 
         this.transloco.setAvailableLangs(a.settings.octra.languages);
 
-        if (a.settings.api?.url && a.settings.api?.appToken) {
+        if (
+          a.settings.api?.url &&
+          a.settings.api?.appToken &&
+          a.settings.octraBackend?.enabled !== false
+        ) {
           return of(
             APIActions.init.do({
               url: a.settings.api.url,

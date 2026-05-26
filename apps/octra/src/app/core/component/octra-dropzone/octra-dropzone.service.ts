@@ -33,8 +33,7 @@ export interface DropzoneStatistics {
 
 @Injectable()
 export class OctraDropzoneService {
-  get oannotation(): OAnnotJSON {
-    if (!this._oannotation) throw new Error('oannotation accessed before initialization');
+  get oannotation(): OAnnotJSON | undefined {
     return this._oannotation;
   }
 

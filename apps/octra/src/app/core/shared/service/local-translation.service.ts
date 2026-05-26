@@ -80,6 +80,32 @@ export const OPUS_MT_BYTES_PER_PAIR = 80_000_000;
 
 const HF_BASE = 'https://huggingface.co';
 
+/**
+ * Curated list of `Xenova/opus-mt-<src>-<tgt>` model pairs known to exist on
+ * Hugging Face. Probing any pair outside this set returns 401 (the CDN does
+ * not return 404 for unknown opus-mt paths), spamming the DevTools console.
+ * Extend this list as Xenova publishes more pairs.
+ *
+ * Source coverage is intentionally narrow — for an absent target the
+ * translate-modal still pivots through English when both legs exist here.
+ */
+const OPUS_MT_AVAILABLE: ReadonlySet<string> = new Set<string>([
+  // English ↔ many languages (well covered by Helsinki-NLP / Xenova)
+  'en-de', 'en-fr', 'en-es', 'en-it', 'en-pt', 'en-nl', 'en-sv', 'en-da',
+  'en-fi', 'en-pl', 'en-cs', 'en-hu', 'en-ro', 'en-ru', 'en-uk', 'en-ar',
+  'en-zh', 'en-hi', 'en-vi', 'en-id',
+  'de-en', 'fr-en', 'es-en', 'it-en', 'pt-en', 'nl-en', 'sv-en', 'da-en',
+  'fi-en', 'pl-en', 'cs-en', 'hu-en', 'ro-en', 'ru-en', 'uk-en', 'ar-en',
+  'zh-en', 'hi-en', 'vi-en', 'id-en',
+  // A few non-English direct pairs that exist
+  'de-fr', 'fr-de', 'de-es', 'es-de', 'fr-es', 'es-fr',
+]);
+
+function opusMtPairKey(modelId: string): string | undefined {
+  const m = /^Xenova\/opus-mt-([a-z]{2,3})-([a-z]{2,3})$/.exec(modelId);
+  return m ? `${m[1]}-${m[2]}` : undefined;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LocalTranslationService implements OnDestroy {
   private worker: Worker | null = null;
@@ -154,6 +180,16 @@ export class LocalTranslationService implements OnDestroy {
   private probeModel(modelId: string): Promise<boolean> {
     const hit = this.probeCache.get(modelId);
     if (hit) return hit;
+
+    // Short-circuit known-absent OPUS-MT pairs to avoid 401 console noise.
+    // The HF CDN returns 401 (not 404) for opus-mt paths that do not exist.
+    const pairKey = opusMtPairKey(modelId);
+    if (pairKey && !OPUS_MT_AVAILABLE.has(pairKey)) {
+      const p = Promise.resolve(false);
+      this.probeCache.set(modelId, p);
+      return p;
+    }
+
     const url = `${HF_BASE}/${modelId}/resolve/main/config.json`;
     const p = fetch(url, { method: 'HEAD' })
       .then((r) => r.ok)

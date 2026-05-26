@@ -52,7 +52,7 @@
     }
   },
   "octraBackend": {
-    "enabled": true,
+    "enabled": false,
     "url": "http://localhost:3000"
   }
 }

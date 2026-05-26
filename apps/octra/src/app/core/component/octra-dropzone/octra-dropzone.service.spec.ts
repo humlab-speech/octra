@@ -20,7 +20,7 @@ describe('OctraDropzoneService speaker injection', () => {
       { startS: 1.0, endS: 2.0, speakerId: 'SPEAKER_01' },
     ]);
 
-    const level = service.oannotation.levels[0] as OSegmentLevel<OSegment>;
+    const level = service.oannotation!.levels[0] as OSegmentLevel<OSegment>;
     expect(level.items[0].labels.find((label) => label.name === 'Speaker')?.value).toBe(
       'Speaker 1',
     );
