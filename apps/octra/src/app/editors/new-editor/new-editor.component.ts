@@ -34,6 +34,6 @@ export class NewEditorComponent
 
    
   openSegment(index: number) {
-    // only needed if an segment can be opened. For audio files smaller than 35 sec
+    // no-op: this stub editor does not implement segment-focused popup editing.
   }
 }

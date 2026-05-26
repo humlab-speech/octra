@@ -1,9 +1,4 @@
 import { EventEmitter } from '@angular/core';
-import {
-  ASRContext,
-  OctraAnnotationAnyLevel,
-  OctraAnnotationSegment,
-} from '@octra/annotation';
 import { AudioSelection, SampleUnit } from '@octra/media';
 import { AudioViewerComponent } from '@octra/ngx-components';
 import { AudioChunk, AudioManager } from '@octra/web-media';
@@ -85,24 +80,4 @@ export abstract class OCTRAEditor extends DefaultComponent {
   }
 
   abstract openSegment(index: number): void;
-
-  protected checkIfSmallAudioChunk(
-    audioChunk: AudioChunk,
-    currentLevel: OctraAnnotationAnyLevel<OctraAnnotationSegment<ASRContext>>,
-  ) {
-    const emptySegmentIndex = currentLevel.items.findIndex((a) => {
-      return a instanceof OctraAnnotationSegment
-        ? a.getFirstLabelWithoutName('Speaker')?.value === undefined ||
-            a.getFirstLabelWithoutName('Speaker')?.value === ''
-        : false;
-    });
-
-    if (audioChunk.time.duration.seconds <= 35) {
-      if (emptySegmentIndex > -1) {
-        this.openSegment(emptySegmentIndex);
-      } else if (currentLevel.items.length === 1) {
-        this.openSegment(0);
-      }
-    }
-  }
 }

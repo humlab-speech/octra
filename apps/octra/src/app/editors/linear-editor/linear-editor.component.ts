@@ -1016,10 +1016,8 @@ export class LinearEditorComponent
   }
 
   afterFirstInitialization() {
-    this.checkIfSmallAudioChunk(
-      this.audioChunkTop,
-      this.annotationStoreService.currentLevel!,
-    );
+    // no-op: short-audio auto-open of the TranscrWindow popup was removed.
+    // Users still open the popup explicitly by clicking a segment.
   }
 
   onKeyUp() {

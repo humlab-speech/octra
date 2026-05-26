@@ -1057,10 +1057,6 @@ export class TwoDEditorComponent
   }
 
   afterFirstInitialization() {
-    this.checkIfSmallAudioChunk(
-      this.audioChunkLines,
-      this.annotationStoreService.currentLevel!,
-    );
     this.cd.detectChanges();
   }
 
