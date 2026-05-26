@@ -72,6 +72,11 @@
     "ready": "녹음 준비됨",
     "requesting permission": "마이크 요청 중…",
     "low volume warning": "음량이 낮은 것 같습니다",
+    "level light": {
+      "red": "음량 낮음 — 마이크 확인",
+      "orange": "음량 부족",
+      "green": "음량 양호"
+    },
     "permission denied": "마이크 권한이 거부되었습니다.",
     "no microphone": "마이크를 찾을 수 없습니다.",
     "firefox webm notice": "브라우저가 MP4 녹화를 지원하지 않아 WebM으로 저장합니다. 전사 파이프라인은 둘 다 허용합니다.",

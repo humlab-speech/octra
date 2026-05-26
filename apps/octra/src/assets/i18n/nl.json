@@ -72,6 +72,11 @@
     "ready": "Opname klaar",
     "requesting permission": "Microfoon aanvragen…",
     "low volume warning": "Volume lijkt laag",
+    "level light": {
+      "red": "Laag volume — controleer microfoon",
+      "orange": "Marginaal volume",
+      "green": "Goed volume"
+    },
     "permission denied": "Microfoontoegang werd geweigerd.",
     "no microphone": "Geen microfoon gevonden.",
     "firefox webm notice": "Je browser ondersteunt geen MP4-opname — opslaan als WebM. De transcriptiepijplijn accepteert beide.",

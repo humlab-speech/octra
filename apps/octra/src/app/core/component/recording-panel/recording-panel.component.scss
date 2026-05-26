@@ -26,6 +26,26 @@
   }
 }
 
+.level-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: color 120ms ease-in-out;
+
+  &--green {
+    color: #2ecc71;
+  }
+  &--orange {
+    color: #f39c12;
+  }
+  &--red {
+    color: #e74c3c;
+  }
+}
+
 @media (max-width: 575.98px) {
   .recording-toolbar {
     grid-template-columns: 1fr;

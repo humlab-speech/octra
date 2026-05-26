@@ -105,22 +105,33 @@
           </span>
 
           <ng-container *ngIf="state === 'recording' || state === 'paused'">
-            <octra-vu-meter
-              class="ms-2"
-              *ngIf="service.levels$ | async as levels"
-              [peakDb]="levels.peakDb"
-              [rmsDb]="levels.rmsDb"
-            ></octra-vu-meter>
+            <ng-container *ngIf="service.levels$ | async as levels">
+              <octra-vu-meter
+                class="ms-2"
+                [peakDb]="levels.peakDb"
+                [rmsDb]="levels.rmsDb"
+              ></octra-vu-meter>
 
-            <span
-              class="badge text-bg-warning ms-1"
-              *ngIf="service.lowVolumeWarning$ | async"
-              role="alert"
-              aria-live="polite"
-            >
-              <i class="bi bi-volume-down"></i>
-              {{ 'recording.low volume warning' | transloco }}
-            </span>
+              <span
+                class="level-light ms-1"
+                [class.level-light--red]="levelLightStatus(levels.rmsDb) === 'red'"
+                [class.level-light--orange]="levelLightStatus(levels.rmsDb) === 'orange'"
+                [class.level-light--green]="levelLightStatus(levels.rmsDb) === 'green'"
+                role="status"
+                aria-live="polite"
+                [attr.aria-label]="
+                  'recording.level light.' + levelLightStatus(levels.rmsDb)
+                    | transloco
+                "
+                [ngbTooltip]="
+                  'recording.level light.' + levelLightStatus(levels.rmsDb)
+                    | transloco
+                "
+                container="body"
+              >
+                <i class="bi bi-circle-fill"></i>
+              </span>
+            </ng-container>
 
             <span
               class="text-muted small ms-1"

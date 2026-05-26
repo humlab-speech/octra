@@ -116,6 +116,11 @@
     "ready": "Aufnahme bereit",
     "requesting permission": "Frage Mikrofon an…",
     "low volume warning": "Lautstärke scheint zu gering",
+    "level light": {
+      "red": "Lautstärke zu gering — Mikrofon prüfen",
+      "orange": "Lautstärke grenzwertig",
+      "green": "Lautstärke gut"
+    },
     "permission denied": "Mikrofonberechtigung wurde verweigert.",
     "no microphone": "Kein Mikrofon gefunden.",
     "firefox webm notice": "Ihr Browser unterstützt keine MP4-Aufnahme – speichere als WebM. Die Transkriptionspipeline akzeptiert beide.",

@@ -72,6 +72,11 @@
     "ready": "录制就绪",
     "requesting permission": "请求麦克风权限…",
     "low volume warning": "音量似乎过低",
+    "level light": {
+      "red": "音量过低 — 请检查麦克风",
+      "orange": "音量偏低",
+      "green": "音量正常"
+    },
     "permission denied": "麦克风权限被拒绝。",
     "no microphone": "未找到麦克风。",
     "firefox webm notice": "您的浏览器不支持 MP4 录制 — 将保存为 WebM。转录管道支持两者。",

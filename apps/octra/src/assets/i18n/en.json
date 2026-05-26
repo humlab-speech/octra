@@ -123,6 +123,11 @@
     "ready": "Recording ready",
     "requesting permission": "Requesting microphone…",
     "low volume warning": "Volume seems low",
+    "level light": {
+      "red": "Low volume — check microphone",
+      "orange": "Marginal volume",
+      "green": "Good volume"
+    },
     "permission denied": "Microphone permission was denied.",
     "no microphone": "No microphone was found.",
     "firefox webm notice": "Your browser does not support MP4 recording — saving as WebM. The transcription pipeline accepts both.",

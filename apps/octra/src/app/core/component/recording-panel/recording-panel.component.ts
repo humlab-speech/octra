@@ -203,4 +203,17 @@ export class RecordingPanelComponent implements OnInit, OnDestroy {
     const s = total % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
+
+  /**
+   * Three-state level indicator beside the VU meter. Always rendered while
+   * recording so the surrounding buttons don't jump around when the warning
+   * appears or clears. Thresholds mirror recording.service.ts:
+   *   LOW_VOLUME_RAISE_DB = -50 dB → red
+   *   LOW_VOLUME_CLEAR_DB = -40 dB → still orange margin
+   */
+  levelLightStatus(rmsDb: number): 'red' | 'orange' | 'green' {
+    if (!isFinite(rmsDb) || rmsDb < -50) return 'red';
+    if (rmsDb < -30) return 'orange';
+    return 'green';
+  }
 }

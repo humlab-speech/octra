@@ -123,6 +123,11 @@
     "ready": "Inspelning klar",
     "requesting permission": "Begär mikrofon…",
     "low volume warning": "Volymen verkar låg",
+    "level light": {
+      "red": "Låg volym — kontrollera mikrofonen",
+      "orange": "Marginell volym",
+      "green": "Bra volym"
+    },
     "permission denied": "Mikrofonbehörighet nekades.",
     "no microphone": "Ingen mikrofon hittades.",
     "firefox webm notice": "Din webbläsare stöder inte MP4-inspelning — sparar som WebM. Transkriptionspipelinen accepterar båda.",

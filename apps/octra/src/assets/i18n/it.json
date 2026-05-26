@@ -72,6 +72,11 @@
     "ready": "Registrazione pronta",
     "requesting permission": "Richiesta microfono…",
     "low volume warning": "Volume sembra basso",
+    "level light": {
+      "red": "Volume basso — controllare il microfono",
+      "orange": "Volume marginale",
+      "green": "Volume buono"
+    },
     "permission denied": "Autorizzazione microfono negata.",
     "no microphone": "Nessun microfono trovato.",
     "firefox webm notice": "Il browser non supporta la registrazione MP4 — salvataggio come WebM. La pipeline di trascrizione accetta entrambi.",
