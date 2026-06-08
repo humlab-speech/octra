@@ -143,7 +143,10 @@ export class RecordingPanelComponent implements OnInit, OnDestroy {
     try {
       await this.service.start({ mode: this.selectedMode });
       if (this.selectedMode === 'audio+video') {
-        this.previewStream = this.service.getStream() ?? null;
+        const stream = this.service.getStream();
+        this.previewStream = stream
+          ? new MediaStream(stream.getVideoTracks())
+          : null;
         const picked = this.service.currentMimeType.toLowerCase();
         this.showFirefoxWebmNotice = picked.startsWith('video/webm');
       } else {
