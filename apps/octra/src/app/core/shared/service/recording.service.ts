@@ -110,6 +110,7 @@ export class RecordingService {
       echoCancellation: true,
       noiseSuppression: true,
       autoGainControl: false,
+      channelCount: 1,
       ...(audioId ? { deviceId: { exact: audioId } } : {}),
     };
     const videoConstraint: MediaTrackConstraints = {

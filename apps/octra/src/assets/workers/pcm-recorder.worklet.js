@@ -10,16 +10,13 @@ class PcmRecorderProcessor extends AudioWorkletProcessor {
     const input = inputs[0];
     if (!input || input.length === 0) return true;
 
-    const channels = input.length;
     const frames = input[0].length;
-    const interleaved = new Float32Array(frames * channels);
+    const mono = new Float32Array(frames);
     for (let f = 0; f < frames; f++) {
-      for (let c = 0; c < channels; c++) {
-        interleaved[f * channels + c] = input[c][f];
-      }
+      mono[f] = input[0][f];
     }
 
-    this._buffer.push(interleaved);
+    this._buffer.push(mono);
     this._bufferedFrames += frames;
 
     if (this._bufferedFrames >= this._frameTarget) {
@@ -30,7 +27,7 @@ class PcmRecorderProcessor extends AudioWorkletProcessor {
         merged.set(chunk, offset);
         offset += chunk.length;
       }
-      this.port.postMessage({ samples: merged, channels }, [merged.buffer]);
+      this.port.postMessage({ samples: merged }, [merged.buffer]);
       this._buffer = [];
       this._bufferedFrames = 0;
     }
