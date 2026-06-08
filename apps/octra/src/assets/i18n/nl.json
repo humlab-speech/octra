@@ -152,6 +152,7 @@
     "description": "Beschrijving",
     "dismissed": "afgewezen in {{waarde}}s",
     "download": "Download",
+    "download recording": "Opname downloaden",
     "duration": "Duur",
     "email": "E-mail",
     "errors found": "({{fouten}}) fouten gevonden",

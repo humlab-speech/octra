@@ -44,6 +44,7 @@ import {
   UserInteractionsService,
 } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
+import { RecordedFileService } from '../../shared/service/recorded-file.service';
 import {
   BugReportService,
   ConsoleEntry,
@@ -172,6 +173,7 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     private offcanvasService: NgbOffcanvas,
     protected asrStoreService: AsrStoreService,
     private router: Router,
+    public recordedFileService: RecordedFileService,
   ) {
     super();
   }
@@ -457,6 +459,7 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
   }
 
   logout(redirectToProjects = false) {
+    this.recordedFileService.clear();
     if (
       this.appStorage.snapshot.application.mode === LoginMode.ONLINE &&
       this.appStorage.snapshot.onlineMode.currentSession.currentProject

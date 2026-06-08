@@ -152,6 +152,7 @@
     "description": "描述",
     "dismissed": "在{{value}}秒内消失",
     "download": "下载",
+    "download recording": "下载录音",
     "duration": "时长",
     "email": "电子邮箱",
     "errors found": "出现错误({{errors}}) ",

@@ -627,6 +627,16 @@
     </table>
   </div>
   <div class="modal-footer">
+    @if (recordedFileService.recordedFile) {
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="recordedFileService.triggerDownload()"
+      >
+        <i class="bi bi-mic-fill"></i>
+        {{ 'g.download recording' | transloco }}
+      </button>
+    }
     <button
       type="button"
       class="btn btn-primary"

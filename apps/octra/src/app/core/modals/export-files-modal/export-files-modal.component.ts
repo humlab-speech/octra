@@ -19,6 +19,7 @@ import { AppInfo } from '../../../app.info';
 import { NavbarService } from '../../component/navbar/navbar.service';
 import { AudioService, UserInteractionsService } from '../../shared/service';
 import { AppStorageService } from '../../shared/service/appstorage.service';
+import { RecordedFileService } from '../../shared/service/recorded-file.service';
 import { AnnotationStoreService } from '../../store/login-mode/annotation/annotation.store.service';
 import { NamingDragAndDropComponent } from '../../tools/naming-drag-and-drop/naming-drag-and-drop.component';
 import { TableConfiguratorComponent } from '../../tools/table-configurator/table-configurator.component';
@@ -126,6 +127,7 @@ export class ExportFilesModalComponent extends OctraModal implements OnInit {
     public annotationStoreService: AnnotationStoreService,
     private appStorage: AppStorageService,
     protected override activeModal: NgbActiveModal,
+    public recordedFileService: RecordedFileService,
   ) {
     super('ExportFilesModalComponent', activeModal);
     this.converters = AppInfo.converters;

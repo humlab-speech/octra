@@ -57,6 +57,7 @@ import {
   UserInteractionsService,
 } from '../../../shared/service';
 import { AppStorageService } from '../../../shared/service/appstorage.service';
+import { RecordedFileService } from '../../../shared/service/recorded-file.service';
 import { RoutingService } from '../../../shared/service/routing.service';
 import { ShortcutService } from '../../../shared/service/shortcut.service';
 import { LoginMode } from '../../../store';
@@ -351,6 +352,7 @@ export class TranscriptionComponent
     private alertService: AlertService,
     public annotationStoreService: AnnotationStoreService,
     private authService: AuthenticationStoreService,
+    public recordedFileService: RecordedFileService,
   ) {
     super();
     this.audioManager = this.audio.audiomanagers[0];

@@ -165,6 +165,24 @@
             }
           </button>
         }
+        @if (
+          (useMode === 'local' ||
+            (useMode === 'url' && routingService.staticQueryParams.bottomNav)) &&
+          recordedFileService.recordedFile
+        ) {
+          <button
+            (click)="recordedFileService.triggerDownload()"
+            class="col-md-6 btn btn-secondary"
+            type="button"
+          >
+            <i class="bi bi-mic-fill"></i>
+            @if (!appStorage.easyMode) {
+              <span class="d-none d-md-inline">
+                {{ 'g.download recording' | transloco }}</span
+              >
+            }
+          </button>
+        }
         @if (useMode === 'online' || useMode === 'demo') {
           <button
             (click)="onSendButtonClick()"

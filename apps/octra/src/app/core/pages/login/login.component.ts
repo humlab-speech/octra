@@ -38,6 +38,7 @@ import {
   LocalTranslationService,
   TranslationEvent,
 } from '../../shared/service/local-translation.service';
+import { RecordedFileService } from '../../shared/service/recorded-file.service';
 import { AuthenticationStoreService } from '../../store/authentication';
 import { BrowserTestComponent } from '../browser-test/browser-test.component';
 import { applyOptionalSpeakerSegmentation } from './local-offline-transcription.helpers';
@@ -104,6 +105,7 @@ export class LoginComponent
   activeTab: 'upload' | 'record' = 'upload';
 
   onUseRecording(file: File): void {
+    this.recordedFileService.recordedFile = file;
     this.dropzone?.addFile(file);
     this.activeTab = 'upload';
   }
@@ -225,6 +227,7 @@ export class LoginComponent
     private localDiarizationRuntimeService: LocalDiarizationRuntimeService,
     private localTranslationService: LocalTranslationService,
     private route: ActivatedRoute,
+    public recordedFileService: RecordedFileService,
   ) {
     super();
     this.localOnly = !!this.route.snapshot.data['localOnly'];
