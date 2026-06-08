@@ -87,6 +87,11 @@
       "download partial": "부분 다운로드",
       "discard": "삭제"
     },
+    "unsaved": {
+      "title": "내보내지 않은 녹음",
+      "body": "아직 내보내지 않은 녹음이 있습니다. 지금 나가면 녹음이 손실됩니다.",
+      "leave": "내보내지 않고 나가기"
+    },
     "devices": {
       "aria label": "입력 장치 선택",
       "tooltip": "입력 장치",
@@ -145,6 +150,7 @@
     "bad": "나쁨",
     "bitspersecond": "초당 비트",
     "bug report": "버그 알리기",
+    "cancel": "취소",
     "close": "닫기",
     "continue": "계속",
     "custom formats": "파일 형식 설정",
@@ -158,6 +164,7 @@
     "example": "예시",
     "export": "내보내기",
     "export data": "데이터 내보내기",
+    "export recording": "녹음 내보내기",
     "faq": "FAQ",
     "features": "특성",
     "feedback": "피드백",

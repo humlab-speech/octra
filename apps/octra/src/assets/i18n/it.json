@@ -87,6 +87,11 @@
       "download partial": "Scarica parziale",
       "discard": "Scarta"
     },
+    "unsaved": {
+      "title": "Registrazione non esportata",
+      "body": "È presente una registrazione non ancora esportata. Se si esce adesso, la registrazione andrà persa.",
+      "leave": "Esci senza esportare"
+    },
     "devices": {
       "aria label": "Scegli dispositivi di input",
       "tooltip": "Dispositivi di input",
@@ -145,6 +150,7 @@
     "bad": "Cattivo",
     "bitspersecond": "Bit per secondo",
     "bug report": "Segnalazione Bug",
+    "cancel": "Annulla",
     "close": "Chiudi",
     "continue": "Continua",
     "custom formats": "Formati personalizzati",
@@ -158,6 +164,7 @@
     "example": "Esempio",
     "export": "Esporta",
     "export data": "Esporta Dati",
+    "export recording": "Esporta registrazione",
     "faq": "FAQ",
     "features": "Funzionalità",
     "feedback": "Feedback",

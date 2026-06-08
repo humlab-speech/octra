@@ -138,6 +138,11 @@
       "download partial": "Ladda ner delvis",
       "discard": "Kassera"
     },
+    "unsaved": {
+      "title": "Ej exporterad inspelning",
+      "body": "Du har en inspelning som inte har exporterats ännu. Om du lämnar nu kommer inspelningen att gå förlorad.",
+      "leave": "Lämna utan att exportera"
+    },
     "devices": {
       "aria label": "Välj inmatningsenheter",
       "tooltip": "Inmatningsenheter",
@@ -205,6 +210,7 @@
     "bad": "Dåligt",
     "bitspersecond": "Bitar per sekund",
     "bug report": "Buggrapport",
+    "cancel": "Avbryt",
     "close": "Stäng",
     "continue": "Fortsätt",
     "continue transcription": "Fortsätt transkription nu",
@@ -223,6 +229,7 @@
     "example": "Exempel",
     "export": "Exportera",
     "export data": "Exportera data",
+    "export recording": "Exportera inspelning",
     "faq": "Vanliga frågor",
     "features": "Funktioner",
     "feedback": "Återkoppling",
