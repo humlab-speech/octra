@@ -62,6 +62,7 @@ export class RecordingService {
   private stream?: MediaStream;
   private audioCtx?: AudioContext;
   private analyser?: AnalyserNode;
+  private monoDestination?: MediaStreamAudioDestinationNode;
   private workletNode?: AudioWorkletNode;
   private mediaRecorder?: MediaRecorder;
 
@@ -295,6 +296,12 @@ export class RecordingService {
     this.analyser.fftSize = 1024;
     this.analyser.smoothingTimeConstant = 0.4;
     source.connect(this.analyser);
+    if (this.mode === 'audio+video') {
+      this.monoDestination = this.audioCtx.createMediaStreamDestination();
+      this.monoDestination.channelCount = 1;
+      this.monoDestination.channelCountMode = 'explicit';
+      source.connect(this.monoDestination);
+    }
   }
 
   private async setupPcmTap(): Promise<void> {
@@ -345,7 +352,13 @@ export class RecordingService {
     const options: MediaRecorderOptions = this.mimeType
       ? { mimeType: this.mimeType }
       : {};
-    this.mediaRecorder = new MediaRecorder(this.stream!, options);
+    const streamForRecording = this.monoDestination
+      ? new MediaStream([
+          this.monoDestination.stream.getAudioTracks()[0],
+          ...this.stream!.getVideoTracks(),
+        ])
+      : this.stream!;
+    this.mediaRecorder = new MediaRecorder(streamForRecording, options);
     if (!this.mimeType) {
       this.mimeType = this.mediaRecorder.mimeType || '';
     }
@@ -410,6 +423,12 @@ export class RecordingService {
       // ignore
     }
     this.analyser = undefined;
+    try {
+      this.monoDestination?.disconnect();
+    } catch {
+      // ignore
+    }
+    this.monoDestination = undefined;
     if (this.audioCtx) {
       try {
         await this.audioCtx.close();
