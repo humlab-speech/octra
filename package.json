@@ -55,6 +55,7 @@
     "release:lib:web-media": "node runner.js build:lib web-media && nx run web-media:version --push",
     "publish:lib:web-media": "node runner.js build:lib web-media && nx npm web-media",
     "analyze:octra": "nx build octra --configuration production --stats-json && webpack-bundle-analyzer dist/apps/octra/stats.json",
+    "validate:i18n": "node apps/octra/scripts/validate-i18n.js",
     "lint": "nx lint octra",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",

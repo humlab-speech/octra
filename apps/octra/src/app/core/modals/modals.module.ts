@@ -1,13 +1,8 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Injectable, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  Translation,
-  TranslocoLoader,
-  TranslocoModule,
-} from '@jsverse/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import {
   NgbAccordionCollapse,
   NgbCollapseModule,
@@ -54,15 +49,6 @@ import { TranscriptionSendingModalComponent } from './transcription-sending-moda
 import { TranscriptionStopModalComponent } from './transcription-stop-modal/transcription-stop-modal.component';
 import { WaitingModalComponent } from './waiting-modal/waiting-modal.component';
 import { YesNoModalComponent } from './yes-no-modal/yes-no-modal.component';
-
-@Injectable({ providedIn: 'root' })
-export class TranslocoHttpLoader implements TranslocoLoader {
-  constructor(private http: HttpClient) {}
-
-  getTranslation(lang: string) {
-    return this.http.get<Translation>(`./assets/i18n/${lang}.json`);
-  }
-}
 
 /**
  * @deprecated Use MODALS_PROVIDERS from modals.providers.ts instead
