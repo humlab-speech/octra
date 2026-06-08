@@ -1,0 +1,19 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title">{{ 'recording.unsaved.title' | transloco }}</h5>
+  </div>
+  <div class="modal-body">
+    {{ 'recording.unsaved.body' | transloco }}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close('cancel')">
+      {{ 'g.cancel' | transloco }}
+    </button>
+    <button type="button" class="btn btn-warning" (click)="close('leave')">
+      {{ 'recording.unsaved.leave' | transloco }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="close('export')">
+      {{ 'g.export recording' | transloco }}
+    </button>
+  </div>
+</div>

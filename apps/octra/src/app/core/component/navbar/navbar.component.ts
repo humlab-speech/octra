@@ -458,7 +458,8 @@ export class NavigationComponent extends DefaultComponent implements OnInit {
     this.logout(true);
   }
 
-  logout(redirectToProjects = false) {
+  async logout(redirectToProjects = false) {
+    if (!await this.recordedFileService.checkUnsaved(this.modalService)) return;
     this.recordedFileService.clear();
     if (
       this.appStorage.snapshot.application.mode === LoginMode.ONLINE &&

@@ -149,6 +149,11 @@
       "continue": "Continue recording",
       "download partial": "Download partial",
       "discard": "Discard"
+    },
+    "unsaved": {
+      "title": "Unsaved recording",
+      "body": "You have a recording that has not been exported yet. If you leave now, the recording will be lost.",
+      "leave": "Leave without exporting"
     }
   },
   "export": {
@@ -217,7 +222,7 @@
     "dismissed": "dismissed in {{value}}s",
     "divers": "Divers",
     "download": "Download",
-    "download recording": "Download recording",
+    "export recording": "Export recording",
     "duration": "Duration",
     "e-mail": "Email",
     "error": "Error",

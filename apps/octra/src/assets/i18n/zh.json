@@ -87,6 +87,11 @@
       "download partial": "下载部分",
       "discard": "丢弃"
     },
+    "unsaved": {
+      "title": "未导出的录音",
+      "body": "您有一段尚未导出的录音。如果您现在离开，录音将会丢失。",
+      "leave": "不导出直接离开"
+    },
     "devices": {
       "aria label": "选择输入设备",
       "tooltip": "输入设备",
@@ -152,7 +157,7 @@
     "description": "描述",
     "dismissed": "在{{value}}秒内消失",
     "download": "下载",
-    "download recording": "下载录音",
+    "export recording": "导出录音",
     "duration": "时长",
     "email": "电子邮箱",
     "errors found": "出现错误({{errors}}) ",

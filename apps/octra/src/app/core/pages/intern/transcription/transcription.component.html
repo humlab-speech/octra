@@ -171,14 +171,14 @@
           recordedFileService.recordedFile
         ) {
           <button
-            (click)="recordedFileService.triggerDownload()"
+            (click)="recordedFileService.triggerExport()"
             class="col-md-6 btn btn-secondary"
             type="button"
           >
             <i class="bi bi-mic-fill"></i>
             @if (!appStorage.easyMode) {
               <span class="d-none d-md-inline">
-                {{ 'g.download recording' | transloco }}</span
+                {{ 'g.export recording' | transloco }}</span
               >
             }
           </button>

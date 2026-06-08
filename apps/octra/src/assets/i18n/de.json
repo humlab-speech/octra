@@ -131,6 +131,11 @@
       "download partial": "Teilstück herunterladen",
       "discard": "Verwerfen"
     },
+    "unsaved": {
+      "title": "Nicht exportierte Aufnahme",
+      "body": "Es gibt eine Aufnahme, die noch nicht exportiert wurde. Wenn Sie jetzt verlassen, geht die Aufnahme verloren.",
+      "leave": "Ohne Export verlassen"
+    },
     "devices": {
       "aria label": "Eingabegeräte wählen",
       "tooltip": "Eingabegeräte",
@@ -208,7 +213,7 @@
     "dismissed": "verschwindet in {{value}}s",
     "divers": "Divers",
     "download": "Herunterladen",
-    "download recording": "Aufnahme herunterladen",
+    "export recording": "Aufnahme exportieren",
     "duration": "Dauer",
     "e-mail": "Email",
     "error": "Fehler",

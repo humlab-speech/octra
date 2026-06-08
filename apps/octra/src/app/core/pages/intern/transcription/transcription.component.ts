@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -421,7 +422,8 @@ export class TranscriptionComponent
     });
   }
 
-  abortTranscription = () => {
+  abortTranscription = async () => {
+    if (!await this.recordedFileService.checkUnsaved(this.modService)) return;
     if ([LoginMode.ONLINE, LoginMode.URL].includes(this.appStorage.useMode)) {
       this.modService
         .openModal(
@@ -443,6 +445,14 @@ export class TranscriptionComponent
       this.annotationStoreService.quit(false, false, false);
     }
   };
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.recordedFileService.recordedFile && !this.recordedFileService.exported) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
 
   ngOnInit() {
     this._useMode = this.appStorage.useMode;

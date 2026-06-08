@@ -87,6 +87,11 @@
       "download partial": "Gedeelte downloaden",
       "discard": "Verwijderen"
     },
+    "unsaved": {
+      "title": "Niet-geëxporteerde opname",
+      "body": "U heeft een opname die nog niet is geëxporteerd. Als u nu vertrekt, gaat de opname verloren.",
+      "leave": "Verlaten zonder exporteren"
+    },
     "devices": {
       "aria label": "Invoerapparaten kiezen",
       "tooltip": "Invoerapparaten",
@@ -152,7 +157,7 @@
     "description": "Beschrijving",
     "dismissed": "afgewezen in {{waarde}}s",
     "download": "Download",
-    "download recording": "Opname downloaden",
+    "export recording": "Opname exporteren",
     "duration": "Duur",
     "email": "E-mail",
     "errors found": "({{fouten}}) fouten gevonden",
