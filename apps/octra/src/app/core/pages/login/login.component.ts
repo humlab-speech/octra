@@ -553,6 +553,12 @@ I just want to let you know, that the OCTRA server is currently offline.
       );
       return;
     }
+    if (
+      this.recordedFileService.recordedFile &&
+      !files.includes(this.recordedFileService.recordedFile)
+    ) {
+      this.recordedFileService.clear();
+    }
     this.audioService.registerAudioManager(manager);
     this.dropzone!.releaseAudioManager();
     this.authStoreService.loginLocal(
