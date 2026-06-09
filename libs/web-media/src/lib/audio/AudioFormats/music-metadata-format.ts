@@ -39,22 +39,23 @@ export class MusicMetadataFormat extends AudioFormat {
     );
     const format = parsed.format;
 
-    if (
-      !format.sampleRate ||
-      !(format.numberOfSamples || format.duration) ||
-      !format.numberOfChannels
-    ) {
+    if (!format.sampleRate || !format.numberOfChannels) {
       throw new Error(
-        "Can't read one of the following audio information: sampleRate, numberOfSamples, numberOfChannels.",
+        "Can't read audio information: sampleRate or numberOfChannels missing.",
       );
     } else {
+      // duration/numberOfSamples may be absent for MPEG-2 Layer 3 files that
+      // lack a Xing/Info header; use 0 as placeholder — the Web Audio decode
+      // step overwrites info.duration with the correct value from AudioBuffer.
       const numberOfSamples =
         format.numberOfSamples ??
-        Math.ceil(format.duration! * format.sampleRate);
+        (format.duration != null
+          ? Math.ceil(format.duration * format.sampleRate)
+          : 0);
       this._sampleRate = format.sampleRate;
       this._duration = {
         samples: numberOfSamples,
-        seconds: format.duration!,
+        seconds: format.duration ?? 0,
       };
       this._channels = format.numberOfChannels;
     }

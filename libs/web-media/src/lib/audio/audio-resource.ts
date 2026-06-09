@@ -31,7 +31,7 @@ export class AudioResource extends MediaResource {
     if (
       info.duration &&
       info.sampleRate &&
-      info.duration.samples > 0 &&
+      info.duration.samples >= 0 &&
       info.sampleRate > 0
     ) {
       this._info = info;

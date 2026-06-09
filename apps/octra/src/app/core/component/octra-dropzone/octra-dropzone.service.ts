@@ -148,9 +148,12 @@ export class OctraDropzoneService {
 
       this._subscrManager.add(
         this.readFile(progressFile).subscribe({
-          error: (error: Error) => {
+          error: (error: unknown) => {
             progressFile.status = 'invalid';
-            progressFile.error = error.message;
+            progressFile.error =
+              typeof error === 'string'
+                ? error
+                : (error as Error)?.message ?? String(error);
             this.updateStatistics();
           },
         }),
