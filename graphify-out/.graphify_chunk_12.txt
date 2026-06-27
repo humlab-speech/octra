@@ -1,6 +1,0 @@
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/tools/table-configurator/table-configurator.component.ts
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/tools/table-configurator/table-configurator.component.html
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/workers/whisper-transcription.worker.ts
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/workers/pyannote-diarization.worker.ts
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/workers/translation.worker.ts
-/Users/frkkan96/Documents/src/octra/apps/octra/src/app/core/workers/flores-codes.ts
